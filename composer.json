@@ -1,0 +1,40 @@
+{
+    "name": "koshetsyan/laravel-repository",
+    "type": "library",
+    "description": "Repository design pattern implementation for Laravel framework.",
+    "keywords": [
+        "repository",
+        "laravel",
+        "data"
+    ],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tigran Koshetsyan",
+            "email": "koshetsyan.tigran@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "^8",
+        "laravel/framework": "^8.0",
+        "reedware/laravel-relation-joins": "^2.4"
+    },
+    "config": {
+        "process-timeout": 0,
+        "sort-packages": true
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "LaravelRepository\\ServiceProvider"
+            ]
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "LaravelRepository\\": "src/"
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
