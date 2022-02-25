@@ -13,7 +13,6 @@ use LaravelRepository\SearchCriteria;
  */
 trait MapsSearchCriteriaAttrs
 {
-
     /**
      * Replaces the search criteria public attributes with the corresponding
      * internal attributes.

@@ -9,22 +9,22 @@ class FilterMode
      *
      * @var string
      */
-    const IS_LIKE = 'like';
-    const IS_NOT_LIKE = '!like';
-    const EQUALS_TO = '=';
-    const NOT_EQUALS_TO = '!=';
-    const INCLUDED_IN = 'included';
-    const NOT_INCLUDED_IN = '!included';
-    const CONTAINS = 'contains';
-    const DOES_NOT_CONTAIN = '!contains';
-    const IN_RANGE = 'range';
-    const NOT_IN_RANGE = '!range';
-    const IS_GREATER = '>';
-    const IS_GREATER_OR_EQUAL = '>=';
-    const IS_LOWER = '<';
-    const IS_LOWER_OR_EQUAL = '<=';
-    const IS_NULL = 'null';
-    const IS_NOT_NULL = '!null';
+    public const IS_LIKE = 'like';
+    public const IS_NOT_LIKE = '!like';
+    public const EQUALS_TO = '=';
+    public const NOT_EQUALS_TO = '!=';
+    public const INCLUDED_IN = 'included';
+    public const NOT_INCLUDED_IN = '!included';
+    public const CONTAINS = 'contains';
+    public const DOES_NOT_CONTAIN = '!contains';
+    public const IN_RANGE = 'range';
+    public const NOT_IN_RANGE = '!range';
+    public const IS_GREATER = '>';
+    public const IS_GREATER_OR_EQUAL = '>=';
+    public const IS_LOWER = '<';
+    public const IS_LOWER_OR_EQUAL = '<=';
+    public const IS_NULL = 'null';
+    public const IS_NOT_NULL = '!null';
 
     /**
      * Get valid cases.

@@ -9,8 +9,8 @@ class FilterGroupMode
      *
      * @var string
      */
-    const HAS = 'has';
-    const DOES_NOT_HAVE = '!has';
+    public const HAS = 'has';
+    public const DOES_NOT_HAVE = '!has';
 
     /**
      * Get valid cases.

@@ -15,9 +15,12 @@
         }
     ],
     "require": {
-        "php": "^8",
+        "php": "^8.0",
         "laravel/framework": "^8.0",
         "reedware/laravel-relation-joins": "^2.4"
+    },
+    "require-dev": {
+        "squizlabs/php_codesniffer": "3.*"
     },
     "config": {
         "process-timeout": 0,
@@ -36,5 +39,10 @@
         }
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "scripts": {
+        "psr-12-check": [
+            "phpcs --standard=PSR12 src"
+        ]
+    }
 }
