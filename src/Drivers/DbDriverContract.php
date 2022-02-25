@@ -4,7 +4,7 @@ namespace LaravelRepository\Drivers;
 
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
-use LaravelRepository\SearchContext;
+use LaravelRepository\SearchCriteria;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 
@@ -59,12 +59,12 @@ interface DbDriverContract
     public function limit(int $count): static;
 
     /**
-     * Applies the search context.
+     * Applies the search criteria.
      *
-     * @param  SearchContext $query
+     * @param  SearchCriteria $query
      * @return static
      */
-    public function search(SearchContext $query): static;
+    public function search(SearchCriteria $query): static;
 
     /**
      * Fetches query results.

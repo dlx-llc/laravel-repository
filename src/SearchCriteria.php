@@ -9,14 +9,14 @@ use LaravelRepository\Rules\RepositorySorting;
 use LaravelRepository\Rules\RepositoryFiltration;
 use LaravelRepository\Rules\RepositoryTextSearch;
 
-class SearchContext
+class SearchCriteria
 {
     use Traits\SupportsSorting;
     use Traits\SupportsTextSearch;
     use Traits\SupportsFiltration;
 
     /**
-     * Crates a search context using parameters passed by the request.
+     * Crates a search criteria using parameters passed by the request.
      *
      * @param  string $textSearchKey
      * @param  string $sortingKey
@@ -45,11 +45,11 @@ class SearchContext
             );
         }
 
-        return new SearchContext($textSearch, $sorting, $filters);
+        return new static($textSearch, $sorting, $filters);
     }
 
     /**
-     * Validates search context params.
+     * Validates search criteria params.
      *
      * @param  string|null $textSearch
      * @param  string|null $sorting

@@ -2,7 +2,7 @@
 
 namespace LaravelRepository\Rules;
 
-use LaravelRepository\SearchContext;
+use LaravelRepository\SearchCriteria;
 use Illuminate\Contracts\Validation\Rule;
 
 class RepositoryTextSearch implements Rule
@@ -23,7 +23,7 @@ class RepositoryTextSearch implements Rule
     {
         if (!is_string($value)) {
             $this->errors[] = __('lrepo::validation.string', ['attribute' => $attribute]);
-        } elseif ($params = SearchContext::parseTextSearchStr($value)) {
+        } elseif ($params = SearchCriteria::parseTextSearchStr($value)) {
             $this->validateText($params[0], $attribute);
             $this->validateAttrs($params[1], $attribute);
         } else {

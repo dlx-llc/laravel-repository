@@ -8,7 +8,7 @@ use LaravelRepository\Pagination;
 use LaravelRepository\TextSearch;
 use Illuminate\Support\Collection;
 use LaravelRepository\FilterGroup;
-use LaravelRepository\SearchContext;
+use LaravelRepository\SearchCriteria;
 use Illuminate\Support\LazyCollection;
 use LaravelRepository\Filters\IsLikeFilter;
 use LaravelRepository\Filters\IsNullFilter;
@@ -95,7 +95,7 @@ class EloquentDriver implements DbDriverContract
     }
 
     /** @inheritdoc */
-    public function search(SearchContext $query): static
+    public function search(SearchCriteria $query): static
     {
         if ($query->textSearch) {
             $this->applySearch($query->textSearch);

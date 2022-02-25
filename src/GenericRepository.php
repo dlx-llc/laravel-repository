@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
  * @method GenericRepository with(string|array $relations, \Closure $callback = null)  Sets the relationships that should be eager loaded.
  * @method GenericRepository withCount(array $relations)  Sets the relationship counts that should be loaded with data.
  * @method GenericRepository limit(int $count)  Sets a limit for the number of results.
- * @method GenericRepository search(SearchContext $query)  Sets the search context.
+ * @method GenericRepository search(SearchCriteria $query)  Sets the search criteria.
  * @method \Illuminate\Support\Collection get()  Fetches query results.
  * @method \Illuminate\Contracts\Pagination\Paginator paginate(Pagination $pagination)  Fetches paginated query results.
  * @method \Illuminate\Support\LazyCollection cursor()  Fetches query results via lazy collection.

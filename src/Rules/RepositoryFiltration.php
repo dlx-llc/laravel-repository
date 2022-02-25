@@ -3,7 +3,7 @@
 namespace LaravelRepository\Rules;
 
 use LaravelRepository\FilterFactory;
-use LaravelRepository\SearchContext;
+use LaravelRepository\SearchCriteria;
 use LaravelRepository\Enums\FilterMode;
 use Illuminate\Contracts\Validation\Rule;
 use LaravelRepository\Enums\FilterGroupMode;
@@ -38,7 +38,7 @@ class RepositoryFiltration implements Rule
             $this->errors[] = __('lrepo::validation.string', compact('attribute'));
         } elseif (empty($value)) {
             $this->errors[] = __('lrepo::validation.required', compact('attribute'));
-        } elseif ($value = SearchContext::parseFiltrationStr($value)) {
+        } elseif ($value = SearchCriteria::parseFiltrationStr($value)) {
             $this->validateFiltersArray($value, $attribute);
         } else {
             $this->errors[] = __('lrepo::validation.json', compact('attribute'));

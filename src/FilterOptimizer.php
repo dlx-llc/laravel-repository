@@ -8,7 +8,7 @@ use LaravelRepository\FilterGroup;
 use LaravelRepository\Enums\FilterGroupMode;
 
 /**
- * Can be used to optimize search context filters for further application in a DB query.
+ * Can be used to optimize search criteria filters for further application in a DB query.
  */
 class FilterOptimizer
 {

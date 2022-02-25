@@ -5,24 +5,24 @@ namespace LaravelRepository\Traits;
 use LaravelRepository\Filter;
 use LaravelRepository\DataAttrMap;
 use LaravelRepository\FilterGroup;
-use LaravelRepository\SearchContext;
+use LaravelRepository\SearchCriteria;
 
 /**
- * Contains methods that let you replace search context parameters' data
+ * Contains methods that let you replace search criteria parameters' data
  * attributes in correspondence with the provided data transfer object.
  */
-trait MapsSearchContextAttrs
+trait MapsSearchCriteriaAttrs
 {
 
     /**
-     * Replaces the search context public attributes with the corresponding
+     * Replaces the search criteria public attributes with the corresponding
      * internal attributes.
      *
-     * @param  SearchContext $searchContext
+     * @param  SearchCriteria $searchCriteria
      * @param  string $dto
      * @return void
      */
-    protected function mapSearchContextAttrs(SearchContext $searchContext, string $dto): void
+    protected function mapSearchCriteriaAttrs(SearchCriteria $searchCriteria, string $dto): void
     {
         $map = $dto::attrMap();
 
@@ -30,19 +30,19 @@ trait MapsSearchContextAttrs
             return;
         }
 
-        if ($searchContext->textSearch) {
-            foreach ($searchContext->textSearch->attrs as $i => $attr) {
-                $searchContext->textSearch->attrs[$i] = $map->match($attr);
+        if ($searchCriteria->textSearch) {
+            foreach ($searchCriteria->textSearch->attrs as $i => $attr) {
+                $searchCriteria->textSearch->attrs[$i] = $map->match($attr);
             }
         }
 
-        if ($searchContext->sorting) {
-            $attr = $map->match($searchContext->sorting->getAttr());
-            $searchContext->sorting->setAttr($attr);
+        if ($searchCriteria->sorting) {
+            $attr = $map->match($searchCriteria->sorting->getAttr());
+            $searchCriteria->sorting->setAttr($attr);
         }
 
-        if ($searchContext->filters) {
-            $this->mapFilterAttr($searchContext->filters, $map);
+        if ($searchCriteria->filters) {
+            $this->mapFilterAttr($searchCriteria->filters, $map);
         }
     }
 

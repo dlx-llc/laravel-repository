@@ -5,46 +5,46 @@ namespace LaravelRepository\Traits;
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
 use LaravelRepository\DtoContract;
-use LaravelRepository\SearchContext;
+use LaravelRepository\SearchCriteria;
 use LaravelRepository\GenericRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
- * applying search context, pagination, and relationships eager loading.
+ * applying search criteria, pagination, and relationships eager loading.
  */
 trait FetchesRepositoryData
 {
     use EagerLoadsDtoRelations;
-    use MapsSearchContextAttrs;
+    use MapsSearchCriteriaAttrs;
 
     /**
      * Fetches data collection from the given repository.
      *
      * @param  GenericRepository $repository
-     * @param  SearchContext|null $searchContext
+     * @param  SearchCriteria|null $searchCriteria
      * @param  Pagination|null $pagination
      * @param  string|null $dto
      * @return Paginator|Collection
      */
     public function getMany(
         GenericRepository $repository,
-        ?SearchContext $searchContext = null,
+        ?SearchCriteria $searchCriteria = null,
         ?Pagination $pagination = null,
         ?string $dto = null
     ): Paginator|Collection {
         if ($dto) {
             $this->validateDto($dto);
 
-            if ($searchContext) {
-                $this->mapSearchContextAttrs($searchContext, $dto);
+            if ($searchCriteria) {
+                $this->mapSearchCriteriaAttrs($searchCriteria, $dto);
             }
 
             $this->eagerLoadRelations($repository, $dto);
         }
 
-        if ($searchContext) {
-            $repository->search($searchContext);
+        if ($searchCriteria) {
+            $repository->search($searchCriteria);
         }
 
         return !is_null($pagination)
@@ -77,13 +77,13 @@ trait FetchesRepositoryData
      * Fetches a single data model from the given repository.
      *
      * @param  GenericRepository $repository
-     * @param  SearchContext|null $searchContext,
+     * @param  SearchCriteria|null $searchCriteria,
      * @param  string|null $dto
      * @return mixed
      */
     public function getFirst(
         GenericRepository $repository,
-        ?SearchContext $searchContext = null,
+        ?SearchCriteria $searchCriteria = null,
         ?string $dto = null
     ): mixed {
         if ($dto) {
@@ -91,8 +91,8 @@ trait FetchesRepositoryData
             $this->eagerLoadRelations($repository, $dto);
         }
 
-        if ($searchContext) {
-            $repository->search($searchContext);
+        if ($searchCriteria) {
+            $repository->search($searchCriteria);
         }
 
         return $repository->first();
