@@ -4,6 +4,15 @@ namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "attr": "first_name",
+ *   "mode": "=",
+ *   "value": "John"
+ * }
+ */
 class EqualsToFilter extends Filter
 {
     use Traits\SanitizesScalarValue;

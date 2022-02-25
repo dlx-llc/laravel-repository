@@ -4,6 +4,15 @@ namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "attr": "json_arr",
+ *   "mode": "contains",
+ *   "value": "anything"
+ * }
+ */
 class ContainsFilter extends Filter
 {
     use Traits\SanitizesArrayOfScalarValues;

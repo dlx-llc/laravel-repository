@@ -4,6 +4,14 @@ namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "attr": "deleted_at",
+ *   "mode": "!null"
+ * }
+ */
 class IsNotNullFilter extends Filter
 {
     use Traits\ValidatesNullValue;

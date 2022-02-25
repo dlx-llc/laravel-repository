@@ -2,6 +2,12 @@
 
 namespace LaravelRepository;
 
+/**
+ * Implement this interface in your data transfer objects, like resources in
+ * Laravel. That, alongside the FetchesRepositoryData trait, will let you
+ * easily transfer data from your API to clients and free you from a lot of
+ * repetitive work.
+ */
 interface DtoContract
 {
     /**

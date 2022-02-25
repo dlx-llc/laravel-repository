@@ -4,6 +4,15 @@ namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "attr": "date_of_birth",
+ *   "mode": "!range",
+ *   "value": ["1990-01-01", "1999-12-31"]
+ * }
+ */
 class NotInRangeFilter extends Filter
 {
     use Traits\SanitizesScalarValue;

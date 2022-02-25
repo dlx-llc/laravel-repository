@@ -7,6 +7,10 @@ use LaravelRepository\DataAttrMap;
 use LaravelRepository\FilterGroup;
 use LaravelRepository\SearchContext;
 
+/**
+ * Contains methods that let you replace search context parameters' data
+ * attributes in correspondence with the provided data transfer object.
+ */
 trait MapsSearchContextAttrs
 {
 

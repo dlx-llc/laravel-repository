@@ -4,6 +4,15 @@ namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "attr": "title",
+ *   "mode": "like",
+ *   "value": "deluxe"
+ * }
+ */
 class IsLikeFilter extends Filter
 {
     use Traits\SanitizesScalarValue;

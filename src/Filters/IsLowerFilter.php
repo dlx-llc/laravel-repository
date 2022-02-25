@@ -4,6 +4,15 @@ namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "attr": "age",
+ *   "mode": "<",
+ *   "value": "18"
+ * }
+ */
 class IsLowerFilter extends Filter
 {
     use Traits\SanitizesScalarValue;

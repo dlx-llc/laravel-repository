@@ -4,6 +4,15 @@ namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "attr": "first_name",
+ *   "mode": "included",
+ *   "value": ["John", "Jack", "Jenny"]
+ * }
+ */
 class IncludedInFilter extends Filter
 {
     use Traits\SanitizesArrayOfScalarValues;

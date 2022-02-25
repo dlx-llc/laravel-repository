@@ -9,6 +9,10 @@ use LaravelRepository\SearchContext;
 use LaravelRepository\GenericRepository;
 use Illuminate\Contracts\Pagination\Paginator;
 
+/**
+ * Contains methods that make it easy to retrieve data from repositories by
+ * applying search context, pagination, and relationships eager loading.
+ */
 trait FetchesRepositoryData
 {
     use EagerLoadsDtoRelations;
