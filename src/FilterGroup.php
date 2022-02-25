@@ -6,6 +6,26 @@ use Iterator;
 use Countable;
 use ArrayAccess;
 
+/**
+ * Example:
+ * {
+ *   "orCond": false,
+ *   "relation": "creator",
+ *   "mode": "has",
+ *   "items": [
+ *     {
+ *       "attr": "first_name",
+ *       "mode": "=",
+ *       "value": "John"
+ *     },
+ *     {
+ *       "attr": "role.name",
+ *       "mode": "like",
+ *       "value": "admin"
+ *     }
+ *   ]
+ * }
+ */
 class FilterGroup implements Iterator, Countable, ArrayAccess
 {
     /**
