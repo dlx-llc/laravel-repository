@@ -3,7 +3,7 @@
 namespace LaravelRepository;
 
 use LaravelRepository\Drivers\EloquentDriver;
-use LaravelRepository\Drivers\DbDriverContract;
+use LaravelRepository\Contracts\DbDriverContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 /**

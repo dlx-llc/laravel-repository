@@ -1,6 +1,8 @@
 <?php
 
-namespace LaravelRepository;
+namespace LaravelRepository\Contracts;
+
+use LaravelRepository\DataAttrMap;
 
 /**
  * Implement this interface in your data transfer objects, like resources in

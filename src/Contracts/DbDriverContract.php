@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Drivers;
+namespace LaravelRepository\Contracts;
 
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;

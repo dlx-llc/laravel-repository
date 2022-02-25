@@ -2,8 +2,8 @@
 
 namespace LaravelRepository\Traits;
 
-use LaravelRepository\DtoContract;
 use LaravelRepository\GenericRepository;
+use LaravelRepository\Contracts\DtoContract;
 
 /**
  * Contains methods that'll let you eager load relations and relation counts

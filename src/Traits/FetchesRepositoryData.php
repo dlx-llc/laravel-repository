@@ -4,9 +4,9 @@ namespace LaravelRepository\Traits;
 
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
-use LaravelRepository\DtoContract;
 use LaravelRepository\SearchCriteria;
 use LaravelRepository\GenericRepository;
+use LaravelRepository\Contracts\DtoContract;
 use Illuminate\Contracts\Pagination\Paginator;
 
 /**

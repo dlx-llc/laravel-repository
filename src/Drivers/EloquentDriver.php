@@ -23,6 +23,7 @@ use LaravelRepository\Filters\IsNotNullFilter;
 use LaravelRepository\Filters\IncludedInFilter;
 use LaravelRepository\Filters\NotInRangeFilter;
 use LaravelRepository\Filters\NotEqualsToFilter;
+use LaravelRepository\Contracts\DbDriverContract;
 use LaravelRepository\Filters\NotIncludedInFilter;
 use LaravelRepository\Filters\DoesNotContainFilter;
 use LaravelRepository\Filters\IsLowerOrEqualFilter;
