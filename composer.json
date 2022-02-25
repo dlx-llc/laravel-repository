@@ -34,7 +34,7 @@
         }
     },
     "autoload": {
-        "psr-4": {
+        "psr-12": {
             "LaravelRepository\\": "src/"
         }
     },
