@@ -2,6 +2,9 @@
 
 namespace LaravelRepository;
 
+/**
+ * Example: John,[first_name,middle_name,last_name]
+ */
 class TextSearch
 {
     /**

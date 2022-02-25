@@ -2,6 +2,9 @@
 
 namespace LaravelRepository;
 
+/**
+ * Example: creator.id,asc
+ */
 class Sorting
 {
     /**
