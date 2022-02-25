@@ -56,6 +56,14 @@ class EloquentDriver implements DbDriverContract
     }
 
     /** @inheritdoc */
+    public function distinct(): static
+    {
+        $this->query->distinct();
+
+        return $this;
+    }
+
+    /** @inheritdoc */
     public function select(string ...$attrs): static
     {
         $this->query->select($attrs);
@@ -80,9 +88,9 @@ class EloquentDriver implements DbDriverContract
     }
 
     /** @inheritdoc */
-    public function distinct(): static
+    public function offset(int $offset): static
     {
-        $this->query->distinct();
+        $this->query->skip($offset);
 
         return $this;
     }
@@ -173,7 +181,7 @@ class EloquentDriver implements DbDriverContract
     }
 
     /** @inheritdoc */
-    public function create(array $attributes): mixed
+    public function create(array $attributes): object
     {
         $model = $this->query->getModel();
 
@@ -181,13 +189,13 @@ class EloquentDriver implements DbDriverContract
     }
 
     /** @inheritdoc */
-    public function update(mixed $model, array $attributes): void
+    public function update(object $model, array $attributes): void
     {
         $model->update($attributes);
     }
 
     /** @inheritdoc */
-    public function delete(mixed $model): void
+    public function delete(object $model): void
     {
         $model->delete();
     }

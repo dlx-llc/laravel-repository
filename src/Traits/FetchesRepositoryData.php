@@ -5,9 +5,9 @@ namespace LaravelRepository\Traits;
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
 use LaravelRepository\SearchCriteria;
-use LaravelRepository\GenericRepository;
 use LaravelRepository\Contracts\DtoContract;
 use Illuminate\Contracts\Pagination\Paginator;
+use LaravelRepository\Contracts\RepositoryContract;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
@@ -21,14 +21,14 @@ trait FetchesRepositoryData
     /**
      * Fetches data collection from the given repository.
      *
-     * @param  GenericRepository $repository
+     * @param  RepositoryContract $repository
      * @param  SearchCriteria|null $searchCriteria
      * @param  Pagination|null $pagination
      * @param  string|null $dto
      * @return Paginator|Collection
      */
     public function getMany(
-        GenericRepository $repository,
+        RepositoryContract $repository,
         ?SearchCriteria $searchCriteria = null,
         ?Pagination $pagination = null,
         ?string $dto = null
@@ -55,13 +55,13 @@ trait FetchesRepositoryData
     /**
      * Fetches a single data model from the given repository by ID.
      *
-     * @param  GenericRepository $repository
+     * @param  RepositoryContract $repository
      * @param  int|string $id
      * @param  string|null $dto
      * @return mixed
      */
     public function getOneById(
-        GenericRepository $repository,
+        RepositoryContract $repository,
         int|string $id,
         ?string $dto = null
     ): mixed {
@@ -76,13 +76,13 @@ trait FetchesRepositoryData
     /**
      * Fetches a single data model from the given repository.
      *
-     * @param  GenericRepository $repository
+     * @param  RepositoryContract $repository
      * @param  SearchCriteria|null $searchCriteria,
      * @param  string|null $dto
      * @return mixed
      */
     public function getFirst(
-        GenericRepository $repository,
+        RepositoryContract $repository,
         ?SearchCriteria $searchCriteria = null,
         ?string $dto = null
     ): mixed {

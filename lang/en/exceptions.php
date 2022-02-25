@@ -5,7 +5,6 @@ return [
     'illegal_filters_collection_offset' => 'Illegal filters collection offset!',
     'illegal_filters_collection_item' => 'Illegal filters collection item!',
     'db_context_not_supported' => ':type DB context class isn\'t supported!',
-    'class_method_missing' => ':class\:\::method() method not exists.',
     'invalid_dto_class' => 'Invalid DTO class is given!',
     'invalid_pagination_string' => 'Invalid pagination string!',
     'invalid_filtration_string' => 'Invalid filtration string!',

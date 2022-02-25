@@ -2,8 +2,8 @@
 
 namespace LaravelRepository\Traits;
 
-use LaravelRepository\GenericRepository;
 use LaravelRepository\Contracts\DtoContract;
+use LaravelRepository\Contracts\RepositoryContract;
 
 /**
  * Contains methods that'll let you eager load relations and relation counts
@@ -14,11 +14,11 @@ trait EagerLoadsDtoRelations
     /**
      * Eager loads relations used by the data transfer object.
      *
-     * @param  GenericRepository $repository
+     * @param  RepositoryContract $repository
      * @param  string $dto
      * @return void
      */
-    protected function eagerLoadRelations(GenericRepository $repository, string $dto): void
+    protected function eagerLoadRelations(RepositoryContract $repository, string $dto): void
     {
         $eagerLoadArgs = $this->makeEagerLoadArgs($dto);
         $repository->with($eagerLoadArgs);

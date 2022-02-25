@@ -2,29 +2,15 @@
 
 namespace LaravelRepository;
 
+use Illuminate\Support\Collection;
+use Illuminate\Support\LazyCollection;
 use LaravelRepository\Drivers\EloquentDriver;
+use Illuminate\Contracts\Pagination\Paginator;
 use LaravelRepository\Contracts\DbDriverContract;
+use LaravelRepository\Contracts\RepositoryContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-/**
- * @method GenericRepository select(string ...$attrs)  Sets the data attributes that should be fetched.
- * @method GenericRepository distinct()  Specifies that duplicate results should be excluded.
- * @method GenericRepository with(string|array $relations, \Closure $callback = null)  Sets the relationships that should be eager loaded.
- * @method GenericRepository withCount(array $relations)  Sets the relationship counts that should be loaded with data.
- * @method GenericRepository limit(int $count)  Sets a limit for the number of results.
- * @method GenericRepository search(SearchCriteria $query)  Sets the search criteria.
- * @method \Illuminate\Support\Collection get()  Fetches query results.
- * @method \Illuminate\Contracts\Pagination\Paginator paginate(Pagination $pagination)  Fetches paginated query results.
- * @method \Illuminate\Support\LazyCollection cursor()  Fetches query results via lazy collection.
- * @method \Illuminate\Support\LazyCollection lazy(int $chunkSize = 1000)  Fetches query results in chunks via lazy collection.
- * @method int count()  Returns the number of query results.
- * @method mixed find(int|string $id)  Fetches a single result from the query by ID.
- * @method mixed first()  Fetches the first result from the query.
- * @method mixed create(array $attributes)  Creates a new data model and returns the instance.
- * @method void update(mixed $model, array $attributes)  Updates the given data model.
- * @method void delete(mixed $model)  Deletes the given data model.
- */
-class GenericRepository
+class GenericRepository implements RepositoryContract
 {
     /**
      * The database driver.
@@ -65,27 +51,111 @@ class GenericRepository
         };
     }
 
-    /**
-     * Fires when an attempt is made to access private or non-existent methods.
-     *
-     * @param  string $name
-     * @param  array $arguments
-     * @return mixed
-     * @throws \Exception
-     */
-    public function __call(string $name, array $arguments): mixed
+    /** @inheritdoc */
+    public function select(string ...$attrs): static
     {
-        if (method_exists($this->db, $name)) {
-            $result = $this->db->{$name}(...$arguments);
+        $this->db->select(...$attrs);
 
-            return is_a($result, DbDriverContract::class) ? $this : $result;
-        }
+        return $this;
+    }
 
-        throw new \Exception(
-            __(
-                'lrepo::exceptions.class_method_missing',
-                ['class' => static::class, 'method' => $name]
-            )
-        );
+    /** @inheritdoc */
+    public function with(string|array $relations, \Closure $callback = null): static
+    {
+        $this->db->with($relations, $callback);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function withCount(array $relations): static
+    {
+        $this->db->withCount($relations);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function offset(int $offset): static
+    {
+        $this->db->offset($offset);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function limit(int $count): static
+    {
+        $this->db->limit($count);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function search(SearchCriteria $query): static
+    {
+        $this->db->search($query);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function get(): Collection
+    {
+        return $this->db->get();
+    }
+
+    /** @inheritdoc */
+    public function paginate(Pagination $pagination): Paginator
+    {
+        return $this->db->paginate($pagination);
+    }
+
+    /** @inheritdoc */
+    public function cursor(): LazyCollection
+    {
+        return $this->db->cursor();
+    }
+
+    /** @inheritdoc */
+    public function lazy(int $chunkSize = 1000): LazyCollection
+    {
+        return $this->db->lazy();
+    }
+
+    /** @inheritdoc */
+    public function count(): int
+    {
+        return $this->db->count();
+    }
+
+    /** @inheritdoc */
+    public function find(int|string $id): mixed
+    {
+        return $this->db->find($id);
+    }
+
+    /** @inheritdoc */
+    public function first(): mixed
+    {
+        return $this->db->first();
+    }
+
+    /** @inheritdoc */
+    public function create(array $attributes): object
+    {
+        return $this->db->create($attributes);
+    }
+
+    /** @inheritdoc */
+    public function update(object $model, array $attributes): void
+    {
+        $this->db->update($model, $attributes);
+    }
+
+    /** @inheritdoc */
+    public function delete(object $model): void
+    {
+        $this->db->delete($model);
     }
 }
