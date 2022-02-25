@@ -15,7 +15,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 trait FetchesRepositoryData
 {
     /**
-     * Fetches data from the given repository.
+     * Fetches data collection from the given repository.
      *
      * @param  GenericRepository $repository
      * @param  SearchContext|null $searchContext
@@ -23,7 +23,7 @@ trait FetchesRepositoryData
      * @param  string|null $dto
      * @return Paginator|Collection
      */
-    public function fetchDataCollection(
+    public function getMany(
         GenericRepository $repository,
         ?SearchContext $searchContext = null,
         ?Pagination $pagination = null,
@@ -56,7 +56,7 @@ trait FetchesRepositoryData
      * @param  string|null $dto
      * @return mixed
      */
-    public function fetchDataById(
+    public function getOneById(
         GenericRepository $repository,
         int|string $id,
         ?string $dto = null
@@ -77,7 +77,7 @@ trait FetchesRepositoryData
      * @param  string|null $dto
      * @return mixed
      */
-    public function fetchFirstData(
+    public function getFirst(
         GenericRepository $repository,
         ?SearchContext $searchContext = null,
         ?string $dto = null

@@ -31,7 +31,7 @@ class Pagination
     public static function makeFromRequest(
         string $key = 'pagination',
         bool $validate = true,
-        bool $require = false
+        bool $require = true
     ): ?static {
         $pagination = Request::input($key);
 
@@ -91,7 +91,7 @@ class Pagination
     public static function validate(
         ?string $data,
         string $key = 'pagination',
-        bool $require = false
+        bool $require = true
     ): void {
         if (!$require && is_null($data)) {
             return;
