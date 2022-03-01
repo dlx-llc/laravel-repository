@@ -10,13 +10,7 @@ use LaravelRepository\Contracts\DataAttrContract;
  */
 class Sorting implements SortingContract
 {
-    /**
-     * Constructor.
-     *
-     * @param  DataAttrContract $attr  The sorting data attribute.
-     * @param  string $dir  The sorting direction.
-     * @return void
-     */
+    /** @inheritdoc */
     public function __construct(
         protected DataAttrContract $attr,
         protected string $dir

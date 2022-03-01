@@ -5,7 +5,7 @@ namespace LaravelRepository\Contracts;
 interface DataAttrContract
 {
     /**
-     * Creates an instance.
+     * Class constructor.
      *
      * @param  string $name
      * @return void

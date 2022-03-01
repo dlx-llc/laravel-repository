@@ -7,6 +7,15 @@ use LaravelRepository\Contracts\DataAttrContract;
 interface SortingContract
 {
     /**
+     * Class constructor.
+     *
+     * @param  DataAttrContract $attr  The sorting data attribute.
+     * @param  string $dir  The sorting direction.
+     * @return void
+     */
+    public function __construct(DataAttrContract $attr, string $dir);
+
+    /**
      * Returns the data attribute for sorting.
      *
      * @return DataAttrContract
