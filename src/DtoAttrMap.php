@@ -2,14 +2,16 @@
 
 namespace LaravelRepository;
 
-use LaravelRepository\Contracts\DataAttrMapContract;
+use LaravelRepository\Contracts\DtoAttrMapContract;
 
-class DataAttrMap implements DataAttrMapContract
+class DtoAttrMap implements DtoAttrMapContract
 {
     /**
-     * Represents a map of data public attributes to the internal attributes.
+     * Represents a map of public and internal DTO attributes.
+     * The array keys are public attribute names, and values are the
+     * corresponding internal attributes.
      *
-     * @var array
+     * @var array[string => string]
      */
     protected array $map = [];
 
@@ -28,7 +30,7 @@ class DataAttrMap implements DataAttrMapContract
     }
 
     /** @inheritdoc */
-    public function merge(?DataAttrMapContract $map, ?string $prefix = null): static
+    public function merge(?DtoAttrMapContract $map, ?string $prefix = null): static
     {
         if ($map) {
             $map = $map->get();

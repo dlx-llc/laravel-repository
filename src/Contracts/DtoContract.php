@@ -2,7 +2,7 @@
 
 namespace LaravelRepository\Contracts;
 
-use LaravelRepository\Contracts\DataAttrMapContract;
+use LaravelRepository\Contracts\DtoAttrMapContract;
 
 /**
  * Implement this interface in your data transfer objects, like resources in
@@ -15,9 +15,9 @@ interface DtoContract
     /**
      * Returns the data public attributes to the internal attributes map.
      *
-     * @return DataAttrMapContract|null
+     * @return DtoAttrMapContract|null
      */
-    public static function attrMap(): ?DataAttrMapContract;
+    public static function attrMap(): ?DtoAttrMapContract;
 
     /**
      * Returns the relations that are used in the data transfer object.

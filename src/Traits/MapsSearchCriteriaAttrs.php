@@ -5,7 +5,7 @@ namespace LaravelRepository\Traits;
 use LaravelRepository\Filter;
 use LaravelRepository\FilterGroup;
 use LaravelRepository\SearchCriteria;
-use LaravelRepository\Contracts\DataAttrMapContract;
+use LaravelRepository\Contracts\DtoAttrMapContract;
 
 /**
  * Contains methods that let you replace data attributes in the search
@@ -46,13 +46,13 @@ trait MapsSearchCriteriaAttrs
     }
 
     /**
-     * Maps filter and filter group data attributes recursively.
+     * Maps filter and filter group attribute names recursively.
      *
      * @param  FilterGroup|Filter $filter
-     * @param  DataAttrMapContract $map
+     * @param  DtoAttrMapContract $map
      * @return void
      */
-    protected function mapFilterAttr(FilterGroup|Filter $filter, DataAttrMapContract $map): void
+    protected function mapFilterAttr(FilterGroup|Filter $filter, DtoAttrMapContract $map): void
     {
         if (is_a($filter, FilterGroup::class)) {
             if ($filter->relation) {

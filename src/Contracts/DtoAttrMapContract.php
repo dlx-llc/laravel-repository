@@ -2,7 +2,7 @@
 
 namespace LaravelRepository\Contracts;
 
-interface DataAttrMapContract
+interface DtoAttrMapContract
 {
     /**
      * Returns the attributes map.
@@ -21,13 +21,13 @@ interface DataAttrMapContract
     public function set(string $publicAttr, string $internalAttr): static;
 
     /**
-     * Merges the given data attributes map with the current one.
+     * Merges the given attributes map with the current one.
      *
-     * @param  DataAttrMapContract|null $map
+     * @param  DtoAttrMapContract|null $map
      * @param  string|null $prefix
      * @return static
      */
-    public function merge(?DataAttrMapContract $map, ?string $prefix = null): static;
+    public function merge(?DtoAttrMapContract $map, ?string $prefix = null): static;
 
     /**
      * Returns the corresponding internal attribute of the given public attribute.
