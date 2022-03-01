@@ -2,6 +2,6 @@
 
 namespace LaravelRepository\Contracts;
 
-interface RepositoryContract extends DataReaderContract, DataManipulatorContract
+interface RepositoryContract extends ReadonlyRepositoryContract, DataManipulatorContract
 {
 }
