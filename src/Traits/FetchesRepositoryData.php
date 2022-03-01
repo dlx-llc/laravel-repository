@@ -108,7 +108,10 @@ trait FetchesRepositoryData
     protected function validateDto(string $class): void
     {
         if (!is_subclass_of($class, DtoContract::class)) {
-            throw new \Exception(__('lrepo::exceptions.invalid_dto_class'));
+            throw new \Exception(__('lrepo::exceptions.does_not_implement', [
+                'class' => $class,
+                'interface' => DtoContract::class,
+            ]));
         }
     }
 }

@@ -4,11 +4,9 @@ namespace LaravelRepository;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
-use LaravelRepository\Drivers\EloquentDriver;
 use Illuminate\Contracts\Pagination\Paginator;
 use LaravelRepository\Contracts\DbDriverContract;
 use LaravelRepository\Contracts\RepositoryContract;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class GenericRepository implements RepositoryContract
 {
@@ -25,7 +23,7 @@ class GenericRepository implements RepositoryContract
      * @param  mixed $dbContext
      * @return static
      */
-    public static function make(mixed $dbContext): static
+    public static function make(object $dbContext): static
     {
         return new static($dbContext);
     }
@@ -33,22 +31,12 @@ class GenericRepository implements RepositoryContract
     /**
      * Constructor.
      *
-     * @param  mixed $dbContext
+     * @param  object $dbContext
      * @return void
      */
-    public function __construct(mixed $dbContext)
+    public function __construct(object $dbContext)
     {
-        $dbContextType = get_class($dbContext);
-
-        $this->db = match ($dbContextType) {
-            EloquentBuilder::class => EloquentDriver::init($dbContext),
-            default => throw new \Exception(
-                __(
-                    'lrepo::exceptions.illegal_filters_collection_item',
-                    ['type' => $dbContextType]
-                )
-            ),
-        };
+        $this->db = DbDriverFactory::create($dbContext);
     }
 
     /** @inheritdoc */

@@ -7,10 +7,10 @@ interface DbDriverContract extends DataReaderContract, DataManipulatorContract
     /**
      * Initializes the DB driver.
      *
-     * @param  mixed $dbContext
+     * @param  object $dbContext
      * @return static
      */
-    public static function init(mixed $dbContext): static;
+    public static function init(object $dbContext): static;
 
     /**
      * Specifies that duplicate records should be excluded.
