@@ -2,76 +2,52 @@
 
 namespace LaravelRepository;
 
+use LaravelRepository\Contracts\SortingContract;
+use LaravelRepository\Contracts\DataAttrContract;
+
 /**
  * Example: creator.id,asc
  */
-class Sorting
+class Sorting implements SortingContract
 {
-    /**
-     * The data attribute relation using which sorting should be done.
-     *
-     * @var string|null
-     */
-    public ?string $relation = null;
-
-    /**
-     * The data attribute using which sorting should be done.
-     *
-     * @var string|null
-     */
-    public string $attr;
-
-    /**
-     * Creates a new instance of this class.
-     *
-     * @param  string $attr
-     * @param  string $dir
-     * @return static
-     */
-    public static function make(string $attr, string $dir): static
-    {
-        return new static($attr, $dir);
-    }
-
     /**
      * Constructor.
      *
-     * @param  string $attr
-     * @param  string $dir
+     * @param  DataAttrContract $attr  The sorting data attribute.
+     * @param  string $dir  The sorting direction.
      * @return void
      */
-    public function __construct(string $attr, public string $dir)
-    {
-        $this->setAttr($attr);
+    public function __construct(
+        protected DataAttrContract $attr,
+        protected string $dir
+    ) {
+        //
     }
 
-    /**
-     * Gets the data attribute name with the relation.
-     *
-     * @return string
-     */
-    public function getAttr(): string
+    /** @inheritdoc */
+    public function getAttr(): DataAttrContract
     {
-        return $this->relation
-            ? $this->relation . '.' . $this->attr
-            : $this->attr;
+        return $this->attr;
     }
 
-    /**
-     * Sets the sorting data attribute.
-     *
-     * @param  string $attr
-     * @return static
-     */
-    public function setAttr(string $attr): static
+    /** @inheritdoc */
+    public function setAttr(DataAttrContract $attr): static
     {
-        if (str_contains($attr, '.')) {
-            $lastDotPos = strrpos($attr, '.');
-            $this->relation = substr($attr, 0, $lastDotPos);
-            $this->attr = substr($attr, $lastDotPos + 1);
-        } else {
-            $this->attr = $attr;
-        }
+        $this->attr = $attr;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function getDir(): string
+    {
+        return $this->dir;
+    }
+
+    /** @inheritdoc */
+    public function setDir(string $dir): static
+    {
+        $this->dir = $dir;
 
         return $this;
     }

@@ -2,17 +2,19 @@
 
 namespace LaravelRepository\Traits;
 
-use LaravelRepository\Sorting;
+use Illuminate\Support\Facades\App;
 use LaravelRepository\Enums\SortingDirection;
+use LaravelRepository\Contracts\SortingContract;
+use LaravelRepository\Contracts\DataAttrContract;
 
 trait SupportsSorting
 {
     /**
      * The data sorting params.
      *
-     * @var Sorting|null
+     * @var SortingContract|null
      */
-    public ?Sorting $sorting = null;
+    public ?SortingContract $sorting = null;
 
     /**
      * Parses data sorting raw string params.
@@ -50,7 +52,11 @@ trait SupportsSorting
             throw new \Exception(__('lrepo::exceptions.invalid_sorting_string'));
         }
 
-        $this->sorting = Sorting::make($params[0], $params[1]);
+        $attr = App::makeWith(DataAttrContract::class, ['name' => $params[0]]);
+        $this->sorting = App::makeWith(SortingContract::class, [
+            'attr' => $attr,
+            'dir' => $params[1],
+        ]);
 
         return $this;
     }

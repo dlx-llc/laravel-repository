@@ -3,7 +3,6 @@
 namespace LaravelRepository\Drivers;
 
 use LaravelRepository\Filter;
-use LaravelRepository\Sorting;
 use LaravelRepository\Pagination;
 use LaravelRepository\TextSearch;
 use Illuminate\Support\Collection;
@@ -22,6 +21,7 @@ use LaravelRepository\Filters\IsNotLikeFilter;
 use LaravelRepository\Filters\IsNotNullFilter;
 use LaravelRepository\Filters\IncludedInFilter;
 use LaravelRepository\Filters\NotInRangeFilter;
+use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Filters\NotEqualsToFilter;
 use LaravelRepository\Contracts\DbDriverContract;
 use LaravelRepository\Filters\NotIncludedInFilter;
@@ -107,7 +107,7 @@ class EloquentDriver implements DbDriverContract
     public function search(SearchCriteria $query): static
     {
         if ($query->textSearch) {
-            $this->applySearch($query->textSearch);
+            $this->applyTextSearch($query->textSearch);
         }
 
         if ($query->sorting) {
@@ -206,7 +206,7 @@ class EloquentDriver implements DbDriverContract
      * @param  TextSearch $search
      * @return void
      */
-    protected function applySearch(TextSearch $search): void
+    protected function applyTextSearch(TextSearch $search): void
     {
         $attrsCount = count($search->attrs);
 
@@ -224,19 +224,21 @@ class EloquentDriver implements DbDriverContract
     /**
      * Applies the given sorting params on the query.
      *
-     * @param  Sorting $sorting
+     * @param  SortingContract $sorting
      * @return void
      */
-    protected function applySorting(Sorting $sorting): void
+    protected function applySorting(SortingContract $sorting): void
     {
-        if (isset($sorting->relation)) {
-            $this->query->leftJoinRelation($sorting->relation)->distinct();
+        $attr = $sorting->getAttr();
+
+        if ($relation = $attr->getRelation()) {
+            $this->query->leftJoinRelation($relation)->distinct();
             $lastJoin = last($this->query->getQuery()->joins);
             $lastJoinTable = QueryHelper::instance()->tableName($lastJoin);
-            $attr = $lastJoinTable . '.' . $sorting->attr;
-            $this->query->orderBy($attr, $sorting->dir);
+            $attr = $lastJoinTable . '.' . $attr->getName();
+            $this->query->orderBy($attr, $sorting->getDir());
         } else {
-            $this->query->orderBy($sorting->attr, $sorting->dir);
+            $this->query->orderBy($attr->getName(), $sorting->getDir());
         }
     }
 

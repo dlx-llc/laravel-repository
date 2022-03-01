@@ -2,7 +2,9 @@
 
 namespace LaravelRepository;
 
-class DataAttr
+use LaravelRepository\Contracts\DataAttrContract;
+
+class DataAttr implements DataAttrContract
 {
     /**
      * @var string
@@ -14,23 +16,19 @@ class DataAttr
      */
     protected ?string $relation = null;
 
-    /**
-     * Class constructor.
-     *
-     * @param  string $name
-     * @return void
-     */
+    /** @inheritdoc */
     public function __construct(string $name)
     {
         $this->setName($name);
     }
 
-    /**
-     * Sets the attribute name.
-     *
-     * @param  string $name
-     * @return void
-     */
+    /** @inheritdoc */
+    public function __toString(): string
+    {
+        return $this->getNameWithRelation();
+    }
+
+    /** @inheritdoc */
     public function setName(string $name): void
     {
         if (str_contains($name, '.')) {
@@ -42,43 +40,21 @@ class DataAttr
         }
     }
 
-    /**
-     * Returns the attribute's relation.
-     *
-     * @return string|null
-     */
+    /** @inheritdoc */
     public function getRelation(): ?string
     {
         return $this->relation;
     }
 
-    /**
-     * Returns the attribute name without the relation name.
-     *
-     * @return string
-     */
+    /** @inheritdoc */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /**
-     * Returns the attribute name including the relation name.
-     *
-     * @return string
-     */
+    /** @inheritdoc */
     public function getNameWithRelation(): string
     {
         return $this->relation ? "{$this->relation}.{$this->name}" : $this->name;
-    }
-
-    /**
-     * Converts the object to string.
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return $this->getNameWithRelation();
     }
 }

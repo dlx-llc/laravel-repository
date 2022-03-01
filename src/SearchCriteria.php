@@ -6,6 +6,7 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use LaravelRepository\Rules\RepositorySorting;
+use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Rules\RepositoryFiltration;
 use LaravelRepository\Rules\RepositoryTextSearch;
 
@@ -91,13 +92,13 @@ class SearchCriteria
      * Constructor.
      *
      * @param  TextSearch|string|null $textSearch
-     * @param  Sorting|string|null $sorting
+     * @param  SortingContract|string|null $sorting
      * @param  FilterGroup|string|null $filters
      * @return void
      */
     public function __construct(
         TextSearch|string|null $textSearch = null,
-        Sorting|string|null $sorting = null,
+        SortingContract|string|null $sorting = null,
         FilterGroup|string|null $filters = null
     ) {
         if (is_string($textSearch)) {
