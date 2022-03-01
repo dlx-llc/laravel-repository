@@ -2,7 +2,9 @@
 
 namespace LaravelRepository;
 
-class DataAttrMap
+use LaravelRepository\Contracts\DataAttrMapContract;
+
+class DataAttrMap implements DataAttrMapContract
 {
     /**
      * Represents a map of data public attributes to the internal attributes.
@@ -11,33 +13,13 @@ class DataAttrMap
      */
     protected array $map = [];
 
-    /**
-     * Creates an instance of this class.
-     *
-     * @return static
-     */
-    public static function make(): static
-    {
-        return new static();
-    }
-
-    /**
-     * Returns the attributes map.
-     *
-     * @return array
-     */
+    /** @inheritdoc */
     public function get(): array
     {
         return $this->map;
     }
 
-    /**
-     * Sets a link between public and internal attributes.
-     *
-     * @param  string $publicAttr
-     * @param  string $internalAttr
-     * @return static
-     */
+    /** @inheritdoc */
     public function set(string $publicAttr, string $internalAttr): static
     {
         $this->map[$publicAttr] = $internalAttr;
@@ -45,14 +27,8 @@ class DataAttrMap
         return $this;
     }
 
-    /**
-     * Merges the given data attributes map with the current one.
-     *
-     * @param  DataAttrMap|null $map
-     * @param  string|null $prefix
-     * @return static
-     */
-    public function merge(?DataAttrMap $map, ?string $prefix = null): static
+    /** @inheritdoc */
+    public function merge(?DataAttrMapContract $map, ?string $prefix = null): static
     {
         if ($map) {
             $map = $map->get();
@@ -74,13 +50,7 @@ class DataAttrMap
         return $this;
     }
 
-    /**
-     * Returns the corresponding internal attribute of the given public attribute.
-     * If there's no match, the given public attribute will be returned.
-     *
-     * @param  string $publicAttr
-     * @return string
-     */
+    /** @inheritdoc */
     public function match(string $publicAttr): string
     {
         return $this->findMatch($publicAttr) ?? $publicAttr;
