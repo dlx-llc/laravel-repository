@@ -37,7 +37,7 @@ trait ValidatesArrayOfScalarValues
             }
         }
 
-        return [];
+        return $errors;
     }
 
     /**
@@ -71,6 +71,6 @@ trait ValidatesArrayOfScalarValues
             }
         }
 
-        return [];
+        return $errors;
     }
 }
