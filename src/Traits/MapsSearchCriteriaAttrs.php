@@ -30,8 +30,12 @@ trait MapsSearchCriteriaAttrs
         }
 
         if ($searchCriteria->textSearch) {
-            foreach ($searchCriteria->textSearch->attrs as $i => $attr) {
-                $searchCriteria->textSearch->attrs[$i] = $map->match($attr);
+            $attrs = $searchCriteria->textSearch->getAttrs();
+
+            foreach ($attrs as $attr) {
+                $attrName = $attr->getNameWithRelation();
+                $attrName = $map->match($attrName);
+                $attr->setName($attrName);
             }
         }
 

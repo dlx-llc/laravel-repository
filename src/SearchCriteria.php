@@ -9,6 +9,7 @@ use LaravelRepository\Rules\RepositorySorting;
 use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Rules\RepositoryFiltration;
 use LaravelRepository\Rules\RepositoryTextSearch;
+use LaravelRepository\Contracts\TextSearchContract;
 
 class SearchCriteria
 {
@@ -91,13 +92,13 @@ class SearchCriteria
     /**
      * Constructor.
      *
-     * @param  TextSearch|string|null $textSearch
+     * @param  TextSearchContract|string|null $textSearch
      * @param  SortingContract|string|null $sorting
      * @param  FilterGroup|string|null $filters
      * @return void
      */
     public function __construct(
-        TextSearch|string|null $textSearch = null,
+        TextSearchContract|string|null $textSearch = null,
         SortingContract|string|null $sorting = null,
         FilterGroup|string|null $filters = null
     ) {

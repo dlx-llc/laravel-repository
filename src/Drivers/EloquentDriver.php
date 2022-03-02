@@ -4,7 +4,6 @@ namespace LaravelRepository\Drivers;
 
 use LaravelRepository\Filter;
 use LaravelRepository\Pagination;
-use LaravelRepository\TextSearch;
 use Illuminate\Support\Collection;
 use LaravelRepository\FilterGroup;
 use LaravelRepository\SearchCriteria;
@@ -23,8 +22,10 @@ use LaravelRepository\Filters\IncludedInFilter;
 use LaravelRepository\Filters\NotInRangeFilter;
 use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Filters\NotEqualsToFilter;
+use LaravelRepository\Contracts\DataAttrContract;
 use LaravelRepository\Contracts\DbDriverContract;
 use LaravelRepository\Filters\NotIncludedInFilter;
+use LaravelRepository\Contracts\TextSearchContract;
 use LaravelRepository\Filters\DoesNotContainFilter;
 use LaravelRepository\Filters\IsLowerOrEqualFilter;
 use LaravelRepository\Filters\IsGreaterOrEqualFilter;
@@ -203,19 +204,20 @@ class EloquentDriver implements DbDriverContract
     /**
      * Applies the given text search params on the query.
      *
-     * @param  TextSearch $search
+     * @param  TextSearchContract $search
      * @return void
      */
-    protected function applyTextSearch(TextSearch $search): void
+    protected function applyTextSearch(TextSearchContract $search): void
     {
-        $attrsCount = count($search->attrs);
+        $attrs = $search->getAttrs();
+        $attrsCount = count($attrs);
 
         if ($attrsCount === 1) {
-            $this->searchForText($this->query, $search->attrs[0], $search->text, false);
+            $this->searchForText($this->query, $attrs[0], $search->getText(), false);
         } elseif ($attrsCount > 1) {
-            $this->query->where(function ($query) use ($search) {
-                foreach ($search->attrs as $i => $attr) {
-                    $this->searchForText($query, $attr, $search->text, boolval($i));
+            $this->query->where(function ($query) use ($search, $attrs) {
+                foreach ($attrs as $i => $attr) {
+                    $this->searchForText($query, $attr, $search->getText(), boolval($i));
                 }
             });
         }
@@ -344,31 +346,27 @@ class EloquentDriver implements DbDriverContract
      * Searches for the given text in the given query's data attribute.
      *
      * @param  QueryBuilder|EloquentBuilder $query
-     * @param  string $attr
+     * @param  DataAttrContract $attr
      * @param  string $text
      * @param  bool $orCond
      * @return void
      */
     protected function searchForText(
         QueryBuilder|EloquentBuilder $query,
-        string $attr,
+        DataAttrContract $attr,
         string $text,
         bool $orCond
     ): void {
+        $field = $attr->getName();
+        $relation = $attr->getRelation();
         $method = $orCond ? 'orWhere' : 'where';
+        $args = [$field, 'like', '%' . $text . '%'];
 
-        if (str_contains($attr, '.')) {
-            $lastDotPos = strrpos($attr, '.');
-            $relation = substr($attr, 0, $lastDotPos);
-            $attr = substr($attr, $lastDotPos + 1);
+        if ($relation) {
             $method .= 'Has';
-
-            $query->{$method}(
-                $relation,
-                fn($q) => $q->where($attr, 'like', '%' . $text . '%')
-            );
+            $query->{$method}($relation, fn($q) => $q->where(...$args));
         } else {
-            $query->{$method}($attr, 'like', '%' . $text . '%');
+            $query->{$method}(...$args);
         }
     }
 }

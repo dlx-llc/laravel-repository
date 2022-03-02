@@ -4,6 +4,7 @@ namespace LaravelRepository;
 
 use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Contracts\DataAttrContract;
+use LaravelRepository\Contracts\TextSearchContract;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
 
 class ServiceProvider extends LaravelServiceProvider
@@ -17,6 +18,9 @@ class ServiceProvider extends LaravelServiceProvider
     {
         $this->app->bind(DataAttrContract::class, DataAttr::class);
         $this->app->bind(SortingContract::class, Sorting::class);
+        $this->app->bind(TextSearchContract::class, function ($app, $params) {
+            return new TextSearch(...$params);
+        });
     }
 
     /**

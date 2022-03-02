@@ -2,16 +2,18 @@
 
 namespace LaravelRepository\Traits;
 
-use LaravelRepository\TextSearch;
+use Illuminate\Support\Facades\App;
+use LaravelRepository\Contracts\DataAttrContract;
+use LaravelRepository\Contracts\TextSearchContract;
 
 trait SupportsTextSearch
 {
     /**
      * The text search params.
      *
-     * @var TextSearch|null
+     * @var TextSearchContract|null
      */
-    public ?TextSearch $textSearch = null;
+    public ?TextSearchContract $textSearch = null;
 
     /**
      * Parses text search raw string params.
@@ -48,7 +50,12 @@ trait SupportsTextSearch
             throw new \Exception(__('lrepo::exceptions.invalid_text_search_string'));
         }
 
-        $this->textSearch = TextSearch::make($params[0], ...$params[1]);
+        foreach ($params[1] as $i => $attr) {
+            $params[1][$i] = App::makeWith(DataAttrContract::class, ['name' => $attr]);
+        }
+
+        $params = [$params[0], ...$params[1]];
+        $this->textSearch = App::makeWith(TextSearchContract::class, $params);
 
         return $this;
     }
