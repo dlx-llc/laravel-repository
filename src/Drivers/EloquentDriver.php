@@ -34,13 +34,8 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class EloquentDriver implements DbDriverContract
 {
-    /**
-     * Initializes the DB driver.
-     *
-     * @param  object $dbContext
-     * @return static
-     */
-    public static function init(object $dbContext): static
+    /** @inheritdoc */
+    public static function make(object $dbContext): static
     {
         return new static($dbContext);
     }

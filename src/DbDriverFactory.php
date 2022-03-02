@@ -29,6 +29,7 @@ final class DbDriverFactory
      *
      * @param  object $dbContext
      * @return DbDriverContract
+     * @throws \Exception
      */
     public static function create(object $dbContext): DbDriverContract
     {
@@ -42,7 +43,7 @@ final class DbDriverFactory
             ]));
         }
 
-        return $dbDriverClass::init($dbContext);
+        return $dbDriverClass::make($dbContext);
     }
 
     /**
@@ -55,7 +56,7 @@ final class DbDriverFactory
     public static function register(string $dbContextClass, string $dbDriverClass): void
     {
         $factory = self::getInstance();
-        $factory->setDriver($dbContextClass, $dbDriverClass);
+        $factory->addToRegistry($dbContextClass, $dbDriverClass);
     }
 
     /**
@@ -99,8 +100,9 @@ final class DbDriverFactory
      * @param  string $dbContextClass
      * @param  string $dbDriverClass
      * @return void
+     * @throws \Exception
      */
-    public function setDriver(string $dbContextClass, string $dbDriverClass): void
+    public function addToRegistry(string $dbContextClass, string $dbDriverClass): void
     {
         if (!class_exists($dbContextClass)) {
             throw new \Exception(__('lrepo::exceptions.class_not_defined', [
