@@ -9,11 +9,11 @@ use Illuminate\Database\Eloquent\Builder as EloquentContext;
 final class DbDriverFactory
 {
     /**
-     * A map of DB context and corresponding DB driver class names.
+     * A registry of DB context and corresponding DB driver class names.
      *
      * @var array
      */
-    private array $map = [
+    private array $registry = [
         EloquentContext::class => EloquentDriver::class,
     ];
 
@@ -52,10 +52,10 @@ final class DbDriverFactory
      * @param  string $dbDriverClass
      * @return void
      */
-    public static function addDriver(string $dbContextClass, string $dbDriverClass): void
+    public static function register(string $dbContextClass, string $dbDriverClass): void
     {
         $factory = self::getInstance();
-        $factory->setMatch($dbContextClass, $dbDriverClass);
+        $factory->setDriver($dbContextClass, $dbDriverClass);
     }
 
     /**
@@ -90,7 +90,7 @@ final class DbDriverFactory
      */
     public function match(string $dbContextClass): ?string
     {
-        return $this->map[$dbContextClass] ?? null;
+        return $this->registry[$dbContextClass] ?? null;
     }
 
     /**
@@ -100,7 +100,7 @@ final class DbDriverFactory
      * @param  string $dbDriverClass
      * @return void
      */
-    public function setMatch(string $dbContextClass, string $dbDriverClass): void
+    public function setDriver(string $dbContextClass, string $dbDriverClass): void
     {
         if (!class_exists($dbContextClass)) {
             throw new \Exception(__('lrepo::exceptions.class_not_defined', [
@@ -113,6 +113,6 @@ final class DbDriverFactory
             ]));
         }
 
-        $this->map[$dbContextClass] = $dbDriverClass;
+        $this->registry[$dbContextClass] = $dbDriverClass;
     }
 }
