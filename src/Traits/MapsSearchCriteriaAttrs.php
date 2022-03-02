@@ -36,8 +36,10 @@ trait MapsSearchCriteriaAttrs
         }
 
         if ($searchCriteria->sorting) {
-            $attr = $map->match($searchCriteria->sorting->getAttr());
-            $searchCriteria->sorting->setAttr($attr);
+            $attr = $searchCriteria->sorting->getAttr();
+            $attrName = $attr->getNameWithRelation();
+            $attrName = $map->match($attrName);
+            $attr->setName($attrName);
         }
 
         if ($searchCriteria->filters) {
