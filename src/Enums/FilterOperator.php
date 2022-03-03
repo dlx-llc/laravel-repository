@@ -2,15 +2,15 @@
 
 namespace LaravelRepository\Enums;
 
-class FilterGroupMode
+class FilterOperator
 {
     /**
-     * Filter group modes.
+     * Valid cases.
      *
      * @var string
      */
-    public const HAS = 'has';
-    public const DOES_NOT_HAVE = '!has';
+    public const OR = 'or';
+    public const AND = 'and';
 
     /**
      * Get valid cases.
@@ -20,8 +20,8 @@ class FilterGroupMode
     public static function cases(): array
     {
         return [
-            self::HAS,
-            self::DOES_NOT_HAVE,
+            self::OR,
+            self::AND,
         ];
     }
 }

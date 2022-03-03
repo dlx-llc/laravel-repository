@@ -18,7 +18,7 @@ final class DbDriverFactory
     ];
 
     /**
-     * The only instance of this factory.
+     * The only instance of this class.
      *
      * @var DbDriverFactory|null
      */
@@ -60,7 +60,7 @@ final class DbDriverFactory
     }
 
     /**
-     * Returns the instance of this factory.
+     * Returns the instance of this class.
      *
      * @return self
      */

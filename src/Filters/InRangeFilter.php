@@ -3,6 +3,7 @@
 namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
+use LaravelRepository\Rules\Validators\Validator;
 
 /**
  * Example:
@@ -16,7 +17,6 @@ use LaravelRepository\Filter;
 class InRangeFilter extends Filter
 {
     use Traits\SanitizesScalarValue;
-    use Traits\ValidatesArrayOfScalarValues;
 
     /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
@@ -36,6 +36,9 @@ class InRangeFilter extends Filter
     /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
-        return static::validateArrayOfScalarValues($attribute, $value, 2);
+        $validator = new Validator();
+        $validator->validateArrayOfScalar($attribute, $value);
+
+        return $validator->getErrors();
     }
 }

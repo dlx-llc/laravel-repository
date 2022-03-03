@@ -11,9 +11,9 @@ trait SanitizesScalarValue
      * Sanitize a value that should be an array.
      *
      * @param  mixed $value
-     * @return mixed
+     * @return bool|int|float|string
      */
-    protected function sanitizeScalarValue(mixed $value): mixed
+    protected function sanitizeScalarValue(mixed $value): bool|int|float|string
     {
         if (is_string($value)) {
             $value = $this->parseDateString($value);

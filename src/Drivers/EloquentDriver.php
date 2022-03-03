@@ -2,15 +2,13 @@
 
 namespace LaravelRepository\Drivers;
 
-use LaravelRepository\Filter;
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
-use LaravelRepository\FilterGroup;
 use LaravelRepository\SearchCriteria;
 use Illuminate\Support\LazyCollection;
+use LaravelRepository\Enums\FilterOperator;
 use LaravelRepository\Filters\IsLikeFilter;
 use LaravelRepository\Filters\IsNullFilter;
-use LaravelRepository\Enums\FilterGroupMode;
 use LaravelRepository\Filters\InRangeFilter;
 use LaravelRepository\Filters\IsLowerFilter;
 use LaravelRepository\Filters\ContainsFilter;
@@ -18,6 +16,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 use LaravelRepository\Filters\IsGreaterFilter;
 use LaravelRepository\Filters\IsNotLikeFilter;
 use LaravelRepository\Filters\IsNotNullFilter;
+use LaravelRepository\Contracts\FilterContract;
 use LaravelRepository\Filters\IncludedInFilter;
 use LaravelRepository\Filters\NotInRangeFilter;
 use LaravelRepository\Contracts\SortingContract;
@@ -28,12 +27,25 @@ use LaravelRepository\Filters\NotIncludedInFilter;
 use LaravelRepository\Contracts\TextSearchContract;
 use LaravelRepository\Filters\DoesNotContainFilter;
 use LaravelRepository\Filters\IsLowerOrEqualFilter;
+use LaravelRepository\Filters\RelationExistsFilter;
 use LaravelRepository\Filters\IsGreaterOrEqualFilter;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use LaravelRepository\Filters\RelationDoesNotExistFilter;
+use LaravelRepository\Contracts\FiltersCollectionContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class EloquentDriver implements DbDriverContract
 {
+    /**
+     * Filter handlers.
+     *
+     * @var array
+     */
+    protected array $filterHandlers = [
+        RelationExistsFilter::class => 'applyRelationExistsFilter',
+        RelationDoesNotExistFilter::class => 'applyRelationDoesNotExistFilter',
+    ];
+
     /** @inheritdoc */
     public static function make(object $dbContext): static
     {
@@ -242,87 +254,128 @@ class EloquentDriver implements DbDriverContract
     /**
      * Applies the given filters on the query.
      *
-     * @param  FilterGroup $filters
+     * @param  FiltersCollectionContract $filters
      * @return void
      */
     protected function applyFilters(
         QueryBuilder|EloquentBuilder $query,
-        FilterGroup $filters
+        FiltersCollectionContract $filters
     ): void {
-        $args = [];
-        $method = $filters->orCond ? 'orWhere' : 'where';
-
-        if ($filters->relation) {
-            $args[] = $filters->relation;
-            $method .= match ($filters->mode) {
-                FilterGroupMode::HAS => 'Has',
-                FilterGroupMode::DOES_NOT_HAVE => 'DoesntHave',
-            };
-        }
-
-        $args[] = function ($query) use ($filters) {
-            foreach ($filters as $filter) {
-                $this->applyFilter($query, $filter);
-            }
+        $method = match ($filters->getOperator()) {
+            FilterOperator::AND => 'where',
+            FilterOperator::OR => 'orWhere',
         };
 
-        $query->{$method}(...$args);
+        $query->{$method}(function ($query) use ($filters) {
+            foreach ($filters as $filter) {
+                if (is_a($filter, FiltersCollectionContract::class)) {
+                    $this->applyFilters($query, $filter);
+                } else {
+                    $this->applyFilter($query, $filter);
+                }
+            }
+        });
     }
 
     /**
      * Applies the given filter on the given query.
      *
      * @param  QueryBuilder|EloquentBuilder $query
-     * @param  Filter $filter
+     * @param  FilterContract $filter
      * @return void
      */
     protected function applyFilter(
         QueryBuilder|EloquentBuilder $query,
-        Filter $filter
+        FilterContract $filter
     ): void {
+        if ($handler = $this->filterHandlers[get_class($filter)]) {
+            $this->{$handler}($query, $filter);
+
+            return;
+        }
+
         $args = $this->getFilterQueryArgs($filter);
         $method = $this->getFilterQueryMethod($filter);
 
-        if ($filter->orCond) {
+        if ($filter->getOperator() === FilterOperator::OR) {
             $method = 'or' . ucfirst($method);
         }
 
-        if ($filter->relation) {
-            $query->whereHas($filter->relation, fn($q) => $q->{$method}(...$args));
+        $attr = $filter->getAttr();
+        $relation = $attr->getRelation();
+
+        if ($relation) {
+            $query->whereHas($relation, fn($q) => $q->{$method}(...$args));
         } else {
             $query->{$method}(...$args);
         }
     }
 
     /**
+     * Applies relation exists filter.
+     *
+     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  FilterContract $filter
+     * @return void
+     */
+    protected function applyRelationExistsFilter(
+        QueryBuilder|EloquentBuilder $query,
+        FilterContract $filter
+    ): void {
+        $relation = $filter->getAttr()->getNameWithRelation();
+        $query->whereHas($relation, function ($query) use ($filter) {
+            $this->applyFilters($query, $filter->value);
+        });
+    }
+
+    /**
+     * Applies relation does not exist filter.
+     *
+     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  FilterContract $filter
+     * @return void
+     */
+    protected function applyRelationDoesNotExistFilter(
+        QueryBuilder|EloquentBuilder $query,
+        FilterContract $filter
+    ): void {
+        $relation = $filter->getAttr()->getNameWithRelation();
+        $query->whereDoesntHave($relation, function ($query) use ($filter) {
+            $this->applyFilters($query, $filter->value);
+        });
+    }
+
+    /**
      * Returns query arguments for the given filter.
      *
-     * @param  Filter $filter
+     * @param  FilterContract $filter
      * @return array
      */
-    protected function getFilterQueryArgs(Filter $filter): array
+    protected function getFilterQueryArgs(FilterContract $filter): array
     {
+        $attr = $filter->getAttr()->getName();
+
         return match (get_class($filter)) {
-            IsLikeFilter::class => [$filter->attr, 'like', '%' . $filter->value . '%'],
-            IsNotLikeFilter::class => [$filter->attr, 'not like', '%' . $filter->value . '%'],
-            IsGreaterFilter::class => [$filter->attr, '>', $filter->value],
-            IsGreaterOrEqualFilter::class => [$filter->attr, '>=', $filter->value],
-            IsLowerFilter::class => [$filter->attr, '<', $filter->value],
-            IsLowerOrEqualFilter::class => [$filter->attr, '<=', $filter->value],
-            NotEqualsToFilter::class => [$filter->attr, '!=', $filter->value],
-            IsNullFilter::class => [$filter->attr],
-            IsNotNullFilter::class => [$filter->attr],
-            default => [$filter->attr, $filter->value],
+            IsLikeFilter::class => [$attr, 'like', '%' . $filter->getValue() . '%'],
+            IsNotLikeFilter::class => [$attr, 'not like', '%' . $filter->getValue() . '%'],
+            IsGreaterFilter::class => [$attr, '>', $filter->getValue()],
+            IsGreaterOrEqualFilter::class => [$attr, '>=', $filter->getValue()],
+            IsLowerFilter::class => [$attr, '<', $filter->getValue()],
+            IsLowerOrEqualFilter::class => [$attr, '<=', $filter->getValue()],
+            NotEqualsToFilter::class => [$attr, '!=', $filter->getValue()],
+            IsNullFilter::class => [$attr],
+            IsNotNullFilter::class => [$attr],
+            default => [$attr, $filter->getValue()],
         };
     }
 
     /**
      * Returns the corresponding query method for the given filter.
      *
-     * @param  Filter $filter
+     * @param  FilterContract $filter
      * @return string
      */
-    protected function getFilterQueryMethod(Filter $filter): string
+    protected function getFilterQueryMethod(FilterContract $filter): string
     {
         return match (get_class($filter)) {
             IncludedInFilter::class => 'whereIn',

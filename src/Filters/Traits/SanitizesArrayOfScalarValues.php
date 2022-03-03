@@ -10,9 +10,9 @@ trait SanitizesArrayOfScalarValues
      * Sanitize a value that should be an array.
      *
      * @param  mixed $value
-     * @return mixed
+     * @return array
      */
-    protected function sanitizeArrayOfScalarValues(mixed $value): mixed
+    protected function sanitizeArrayOfScalarValues(mixed $value): array
     {
         if (is_array($value)) {
             $value = array_values($value);

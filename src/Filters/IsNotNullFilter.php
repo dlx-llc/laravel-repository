@@ -3,6 +3,7 @@
 namespace LaravelRepository\Filters;
 
 use LaravelRepository\Filter;
+use LaravelRepository\Rules\Validators\Validator;
 
 /**
  * Example:
@@ -14,8 +15,6 @@ use LaravelRepository\Filter;
  */
 class IsNotNullFilter extends Filter
 {
-    use Traits\ValidatesNullValue;
-
     /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
     {
@@ -25,6 +24,9 @@ class IsNotNullFilter extends Filter
     /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
-        return static::validateNullValue($attribute, $value);
+        $validator = new Validator();
+        $validator->validateNull($attribute, $value);
+
+        return $validator->getErrors();
     }
 }

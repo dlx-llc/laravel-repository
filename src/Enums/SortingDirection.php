@@ -5,7 +5,7 @@ namespace LaravelRepository\Enums;
 class SortingDirection
 {
     /**
-     * Sorting directions.
+     * Valid cases.
      *
      * @var string
      */

@@ -5,7 +5,7 @@ namespace LaravelRepository\Enums;
 class FilterMode
 {
     /**
-     * Filter modes.
+     * Valid cases.
      *
      * @var string
      */
@@ -25,6 +25,8 @@ class FilterMode
     public const IS_LOWER_OR_EQUAL = '<=';
     public const IS_NULL = 'null';
     public const IS_NOT_NULL = '!null';
+    public const EXISTS = 'exists';
+    public const DOES_NOT_EXIST = '!exists';
 
     /**
      * Get valid cases.
@@ -50,6 +52,8 @@ class FilterMode
             self::IS_LOWER_OR_EQUAL,
             self::IS_NULL,
             self::IS_NOT_NULL,
+            self::EXISTS,
+            self::DOES_NOT_EXIST,
         ];
     }
 }

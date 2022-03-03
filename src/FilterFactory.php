@@ -3,44 +3,17 @@
 namespace LaravelRepository;
 
 use LaravelRepository\Enums\FilterMode;
+use LaravelRepository\Enums\FilterOperator;
+use LaravelRepository\Contracts\FilterContract;
 
-class FilterFactory
+final class FilterFactory
 {
     /**
-     * The single instance of this class.
+     * A registry of filter modes and corresponding filter class names.
      *
-     * @var static|null
+     * @var array
      */
-    private static ?FilterFactory $instance = null;
-
-    /**
-     * Returns an instance of this class.
-     *
-     * @return static
-     */
-    public static function instance(): static
-    {
-        if (!static::$instance) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    /**
-     * Creates an instance of this class.
-     *
-     * @return void
-     */
-    private function __construct()
-    {
-        //
-    }
-
-    /**
-     * @var array<string>
-     */
-    protected array $registry = [
+    private array $registry = [
         FilterMode::IS_LIKE => Filters\IsLikeFilter::class,
         FilterMode::IS_NOT_LIKE => Filters\IsNotLikeFilter::class,
         FilterMode::IS_GREATER => Filters\IsGreaterFilter::class,
@@ -57,49 +30,134 @@ class FilterFactory
         FilterMode::DOES_NOT_CONTAIN => Filters\DoesNotContainFilter::class,
         FilterMode::IS_NULL => Filters\IsNullFilter::class,
         FilterMode::IS_NOT_NULL => Filters\IsNotNullFilter::class,
+        FilterMode::EXISTS => Filters\RelationExistsFilter::class,
+        FilterMode::DOES_NOT_EXIST => Filters\RelationDoesNotExistFilter::class,
     ];
 
     /**
-     * Creates the corresponding filter instance according to the given parameters.
+     * The only instance of this class.
      *
-     * @param  string $mode
-     * @param  string|null $attr
-     * @param  mixed $value
-     * @param  bool $orCond
-     * @return Filter
-     * @throws \Exception
+     * @var FilterFactory|null
      */
-    public function create(string $mode, ?string $attr, mixed $value, bool $orCond): Filter
-    {
-        $class = $this->getClass($mode);
-
-        return $class::make($attr, $value, $orCond);
-    }
+    private static ?FilterFactory $instance = null;
 
     /**
-     * Returns the corresponding filter's class name.
+     * Creates a filter object of the given mode.
      *
      * @param  string $mode
-     * @return string
+     * @param  string $attr
+     * @param  mixed $value
+     * @param  string $operator
+     * @return FilterContract
      * @throws \Exception
      */
-    public function getClass(string $mode): string
-    {
-        if (!$this->isRegisteredMode($mode)) {
+    public static function create(
+        string $mode,
+        string $attr,
+        mixed $value,
+        string $operator = FilterOperator::AND
+    ): FilterContract {
+        $factory = self::getInstance();
+        $filterClass = $factory->match($mode);
+
+        if (!$filterClass) {
             throw new \Exception(__('lrepo::exceptions.undefined_repo_filter_mode'));
         }
 
-        return $this->registry[$mode];
+        return new $filterClass($attr, $value, $operator);
     }
 
     /**
-     * Determines if the given filter mode is registered or not.
+     * Adds a filter mode to filter class pair.
+     *
+     * @param  string $mode
+     * @param  string $filterClass
+     * @return void
+     */
+    public static function register(string $mode, string $filterClass): void
+    {
+        $factory = self::getInstance();
+        $factory->addToRegistry($mode, $filterClass);
+    }
+
+    /**
+     * Checks if the given filter mode is registered.
      *
      * @param  string $mode
      * @return bool
      */
-    public function isRegisteredMode(string $mode): bool
+    public static function modeRegistered(string $mode): bool
     {
-        return isset($this->registry[$mode]);
+        $factory = self::getInstance();
+
+        return !is_null($factory->match($mode));
+    }
+
+    /**
+     * Returns the corresponding filter class for the given filter mode.
+     *
+     * @param  string $mode
+     * @return string|null
+     */
+    public static function getClass(string $mode): ?string
+    {
+        $factory = self::getInstance();
+
+        return $factory->match($mode);
+    }
+
+    /**
+     * Returns the instance of this class.
+     *
+     * @return self
+     */
+    private static function getInstance(): self
+    {
+        if (!self::$instance) {
+            self::$instance = new self();
+        }
+
+        return self::$instance;
+    }
+
+    /**
+     * Class constructor.
+     *
+     * @return void
+     */
+    private function __construct()
+    {
+        // Prevents instantiation outside the class.
+    }
+
+    /**
+     * Returns the matching filter class.
+     *
+     * @param  string $mode
+     * @return string|null
+     */
+    public function match(string $mode): ?string
+    {
+        return $this->registry[$mode] ?? null;
+    }
+
+    /**
+     * Adds/updates a filter mode to filter class pair in registry.
+     *
+     * @param  string $mode
+     * @param  string $filterClass
+     * @return void
+     * @throws \Exception
+     */
+    public function addToRegistry(string $mode, string $filterClass): void
+    {
+        if (!is_subclass_of($filterClass, FilterContract::class)) {
+            throw new \Exception(__('lrepo::exceptions.does_not_implement', [
+                'class' => $filterClass,
+                'interface' => FilterContract::class,
+            ]));
+        }
+
+        $this->registry[$mode] = $filterClass;
     }
 }

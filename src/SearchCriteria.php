@@ -10,6 +10,7 @@ use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Rules\RepositoryFiltration;
 use LaravelRepository\Rules\RepositoryTextSearch;
 use LaravelRepository\Contracts\TextSearchContract;
+use LaravelRepository\Contracts\FiltersCollectionContract;
 
 class SearchCriteria
 {
@@ -94,13 +95,13 @@ class SearchCriteria
      *
      * @param  TextSearchContract|string|null $textSearch
      * @param  SortingContract|string|null $sorting
-     * @param  FilterGroup|string|null $filters
+     * @param  FiltersCollectionContract|string|null $filters
      * @return void
      */
     public function __construct(
         TextSearchContract|string|null $textSearch = null,
         SortingContract|string|null $sorting = null,
-        FilterGroup|string|null $filters = null
+        FiltersCollectionContract|string|null $filters = null
     ) {
         if (is_string($textSearch)) {
             $this->setSearchRaw($textSearch);
