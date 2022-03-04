@@ -2,8 +2,9 @@
 
 namespace LaravelRepository\Rules;
 
-use LaravelRepository\SearchCriteria;
+use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
+use LaravelRepository\Contracts\SortingFormatterContract;
 
 class RepositoryTextSearch implements Rule
 {
@@ -23,7 +24,7 @@ class RepositoryTextSearch implements Rule
     {
         if (!is_string($value)) {
             $this->errors[] = __('lrepo::validation.string', ['attribute' => $attribute]);
-        } elseif ($params = SearchCriteria::parseTextSearchStr($value)) {
+        } elseif ($params = App::make(SortingFormatterContract::class)->parse($value)) {
             $this->validateText($params[0], $attribute);
             $this->validateAttrs($params[1], $attribute);
         } else {

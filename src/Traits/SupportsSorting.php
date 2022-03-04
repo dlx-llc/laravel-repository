@@ -3,9 +3,9 @@
 namespace LaravelRepository\Traits;
 
 use Illuminate\Support\Facades\App;
-use LaravelRepository\Enums\SortingDirection;
 use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Contracts\DataAttrContract;
+use LaravelRepository\Contracts\SortingFormatterContract;
 
 trait SupportsSorting
 {
@@ -14,39 +14,18 @@ trait SupportsSorting
      *
      * @var SortingContract|null
      */
-    public ?SortingContract $sorting = null;
+    protected ?SortingContract $sorting = null;
 
-    /**
-     * Parses data sorting raw string params.
-     *
-     * @param  string $rawStr
-     * @return array|null
-     */
-    public static function parseSortingStr(string $rawStr): ?array
+    /** @inheritdoc */
+    public function getSorting(): ?SortingContract
     {
-        $dirs = join('|', SortingDirection::cases());
-        $regex = "/^((?:[a-zA-Z_]\w*\.)*[a-zA-Z_]\w*)\,({$dirs})$/";
-
-        if (!preg_match($regex, $rawStr, $matches)) {
-            return null;
-        }
-
-        $attr = $matches[1];
-        $dir = $matches[2];
-
-        return [$attr, $dir];
+        return $this->sorting;
     }
 
-    /**
-     * Sets data sorting params from the given raw sorting string.
-     *
-     * @param  string $rawStr
-     * @return static
-     * @throws \Exception
-     */
+    /** @inheritdoc */
     public function setSortingRaw(string $rawStr): static
     {
-        $params = static::parseSortingStr($rawStr);
+        $params = App::make(SortingFormatterContract::class)->parse($rawStr);
 
         if (!$params) {
             throw new \Exception(__('lrepo::exceptions.invalid_sorting_string'));
@@ -57,6 +36,14 @@ trait SupportsSorting
             'attr' => $attr,
             'dir' => $params[1],
         ]);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function setSorting(?SortingContract $sorting): static
+    {
+        $this->sorting = $sorting;
 
         return $this;
     }

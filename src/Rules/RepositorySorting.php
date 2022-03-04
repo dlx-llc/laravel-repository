@@ -2,8 +2,9 @@
 
 namespace LaravelRepository\Rules;
 
-use LaravelRepository\SearchCriteria;
+use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
+use LaravelRepository\Contracts\SortingFormatterContract;
 
 class RepositorySorting implements Rule
 {
@@ -23,7 +24,7 @@ class RepositorySorting implements Rule
     {
         if (!is_string($value)) {
             $this->errors[] = __('lrepo::validation.string', compact('attribute'));
-        } elseif ($params = SearchCriteria::parseSortingStr($value)) {
+        } elseif ($params = App::make(SortingFormatterContract::class)->parse($value)) {
             if (strlen($params[0]) > 255) {
                 $this->errors[] = __('lrepo::validation.max.string', [
                     'attribute' => "{$attribute}.attr",

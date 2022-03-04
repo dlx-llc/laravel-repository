@@ -4,10 +4,10 @@ namespace LaravelRepository\Traits;
 
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
-use LaravelRepository\SearchCriteria;
 use LaravelRepository\Contracts\DtoContract;
 use Illuminate\Contracts\Pagination\Paginator;
 use LaravelRepository\Contracts\RepositoryContract;
+use LaravelRepository\Contracts\SearchCriteriaContract;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
@@ -22,14 +22,14 @@ trait FetchesRepositoryData
      * Fetches data collection from the given repository.
      *
      * @param  RepositoryContract $repository
-     * @param  SearchCriteria|null $searchCriteria
+     * @param  SearchCriteriaContract|null $searchCriteria
      * @param  Pagination|null $pagination
      * @param  string|null $dto
      * @return Paginator|Collection
      */
     public function getMany(
         RepositoryContract $repository,
-        ?SearchCriteria $searchCriteria = null,
+        ?SearchCriteriaContract $searchCriteria = null,
         ?Pagination $pagination = null,
         ?string $dto = null
     ): Paginator|Collection {
@@ -77,13 +77,13 @@ trait FetchesRepositoryData
      * Fetches a single data model from the given repository.
      *
      * @param  RepositoryContract $repository
-     * @param  SearchCriteria|null $searchCriteria,
+     * @param  SearchCriteriaContract|null $searchCriteria,
      * @param  string|null $dto
      * @return mixed
      */
     public function getFirst(
         RepositoryContract $repository,
-        ?SearchCriteria $searchCriteria = null,
+        ?SearchCriteriaContract $searchCriteria = null,
         ?string $dto = null
     ): mixed {
         if ($dto) {

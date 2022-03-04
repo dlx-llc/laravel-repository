@@ -10,23 +10,16 @@ use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Rules\RepositoryFiltration;
 use LaravelRepository\Rules\RepositoryTextSearch;
 use LaravelRepository\Contracts\TextSearchContract;
+use LaravelRepository\Contracts\SearchCriteriaContract;
 use LaravelRepository\Contracts\FiltersCollectionContract;
 
-class SearchCriteria
+class SearchCriteria implements SearchCriteriaContract
 {
     use Traits\SupportsSorting;
     use Traits\SupportsTextSearch;
     use Traits\SupportsFiltration;
 
-    /**
-     * Crates a search criteria using parameters passed by the request.
-     *
-     * @param  string $textSearchKey
-     * @param  string $sortingKey
-     * @param  string $filtersKey
-     * @param  bool $validate
-     * @return static
-     */
+    /** @inheritdoc */
     public static function makeFromRequest(
         string $textSearchKey = 'search',
         string $sortingKey = 'sort',
@@ -60,7 +53,7 @@ class SearchCriteria
      * @return void
      * @throws ValidationException
      */
-    public static function validate(
+    protected static function validate(
         ?string $textSearch = null,
         ?string $sorting = null,
         ?string $filters = null,
@@ -90,35 +83,28 @@ class SearchCriteria
         }
     }
 
-    /**
-     * Constructor.
-     *
-     * @param  TextSearchContract|string|null $textSearch
-     * @param  SortingContract|string|null $sorting
-     * @param  FiltersCollectionContract|string|null $filters
-     * @return void
-     */
+    /** @inheritdoc */
     public function __construct(
         TextSearchContract|string|null $textSearch = null,
         SortingContract|string|null $sorting = null,
         FiltersCollectionContract|string|null $filters = null
     ) {
         if (is_string($textSearch)) {
-            $this->setSearchRaw($textSearch);
+            $this->setTextSearchRaw($textSearch);
         } elseif ($textSearch) {
-            $this->textSearch = $textSearch;
+            $this->setTextSearch($textSearch);
         }
 
         if (is_string($sorting)) {
             $this->setSortingRaw($sorting);
         } elseif ($sorting) {
-            $this->sorting = $sorting;
+            $this->setSorting($sorting);
         }
 
         if (is_string($filters)) {
             $this->setFiltersRaw($filters);
         } elseif ($filters) {
-            $this->filters = $filters;
+            $this->setFilters($filters);
         }
     }
 }

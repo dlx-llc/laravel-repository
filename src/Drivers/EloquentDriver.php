@@ -4,7 +4,6 @@ namespace LaravelRepository\Drivers;
 
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
-use LaravelRepository\SearchCriteria;
 use Illuminate\Support\LazyCollection;
 use LaravelRepository\Enums\FilterOperator;
 use LaravelRepository\Filters\IsLikeFilter;
@@ -30,6 +29,7 @@ use LaravelRepository\Filters\IsLowerOrEqualFilter;
 use LaravelRepository\Filters\RelationExistsFilter;
 use LaravelRepository\Filters\IsGreaterOrEqualFilter;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use LaravelRepository\Contracts\SearchCriteriaContract;
 use LaravelRepository\Filters\RelationDoesNotExistFilter;
 use LaravelRepository\Contracts\FiltersCollectionContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -112,18 +112,18 @@ class EloquentDriver implements DbDriverContract
     }
 
     /** @inheritdoc */
-    public function search(SearchCriteria $query): static
+    public function search(SearchCriteriaContract $query): static
     {
-        if ($query->textSearch) {
-            $this->applyTextSearch($query->textSearch);
+        if ($textSearch = $query->getTextSearch()) {
+            $this->applyTextSearch($textSearch);
         }
 
-        if ($query->sorting) {
-            $this->applySorting($query->sorting);
+        if ($sorting = $query->getSorting()) {
+            $this->applySorting($sorting);
         }
 
-        if ($query->filters) {
-            $this->applyFilters($this->query, $query->filters);
+        if ($filters = $query->getFilters()) {
+            $this->applyFilters($this->query, $filters);
         }
 
         return $this;

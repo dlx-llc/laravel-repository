@@ -2,10 +2,10 @@
 
 namespace LaravelRepository\Traits;
 
-use LaravelRepository\SearchCriteria;
 use LaravelRepository\Contracts\FilterContract;
 use LaravelRepository\Contracts\DataAttrContract;
 use LaravelRepository\Contracts\DtoAttrMapContract;
+use LaravelRepository\Contracts\SearchCriteriaContract;
 use LaravelRepository\Contracts\FiltersCollectionContract;
 
 /**
@@ -18,12 +18,12 @@ trait MapsSearchCriteriaAttrs
      * Replaces the search criteria public attributes with the corresponding
      * internal attributes.
      *
-     * @param  SearchCriteria $searchCriteria
+     * @param  SearchCriteriaContract $searchCriteria
      * @param  string $dto
      * @return void
      */
     protected function mapSearchCriteriaAttrs(
-        SearchCriteria $searchCriteria,
+        SearchCriteriaContract $searchCriteria,
         string $dto
     ): void {
         $map = $dto::attrMap();

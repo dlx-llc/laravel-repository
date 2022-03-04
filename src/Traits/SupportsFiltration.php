@@ -17,15 +17,15 @@ trait SupportsFiltration
      *
      * @var FiltersCollectionContract|null
      */
-    public ?FiltersCollectionContract $filters = null;
+    protected ?FiltersCollectionContract $filters = null;
 
-    /**
-     * Sets data filtration params from the given raw filters string.
-     *
-     * @param  string $rawStr
-     * @return static
-     * @throws \Exception
-     */
+    /** @inheritdoc */
+    public function getFilters(): ?FiltersCollectionContract
+    {
+        return $this->filters;
+    }
+
+    /** @inheritdoc */
     public function setFiltersRaw(string $rawStr): static
     {
         $filters = App::make(FiltersCollectionFormatterContract::class)->parse($rawStr);
@@ -42,6 +42,14 @@ trait SupportsFiltration
         }
 
         App::make(FilterOptimizerContract::class)->optimize($this->filters);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function setFilters(?FiltersCollectionContract $filters): static
+    {
+        $this->filters = $filters;
 
         return $this;
     }

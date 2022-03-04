@@ -4,7 +4,6 @@ namespace LaravelRepository\Contracts;
 
 use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
-use LaravelRepository\SearchCriteria;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 
@@ -54,10 +53,10 @@ interface DataReaderContract
     /**
      * Applies the search criteria.
      *
-     * @param  SearchCriteria $query
+     * @param  SearchCriteriaContract $query
      * @return static
      */
-    public function search(SearchCriteria $query): static;
+    public function search(SearchCriteriaContract $query): static;
 
     /**
      * Fetches query results.

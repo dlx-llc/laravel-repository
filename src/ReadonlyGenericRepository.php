@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 use LaravelRepository\Contracts\DbDriverContract;
+use LaravelRepository\Contracts\SearchCriteriaContract;
 use LaravelRepository\Contracts\ReadonlyRepositoryContract;
 
 class ReadonlyGenericRepository implements ReadonlyRepositoryContract
@@ -80,7 +81,7 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     }
 
     /** @inheritdoc */
-    public function search(SearchCriteria $query): static
+    public function search(SearchCriteriaContract $query): static
     {
         $this->db->search($query);
 
