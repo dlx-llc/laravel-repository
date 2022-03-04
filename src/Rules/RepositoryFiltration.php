@@ -5,7 +5,7 @@ namespace LaravelRepository\Rules;
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
 use LaravelRepository\Rules\Validators\Validator;
-use LaravelRepository\Contracts\FiltersCollectionParserContract;
+use LaravelRepository\Contracts\FiltersCollectionFormatterContract;
 
 class RepositoryFiltration implements Rule
 {
@@ -27,7 +27,7 @@ class RepositoryFiltration implements Rule
             $this->errors[] = __('lrepo::validation.string', compact('attribute'));
         } elseif (empty($value)) {
             $this->errors[] = __('lrepo::validation.required', compact('attribute'));
-        } elseif ($value = App::make(FiltersCollectionParserContract::class)->parse($value)) {
+        } elseif ($value = App::make(FiltersCollectionFormatterContract::class)->parse($value)) {
             $validator = new Validator();
             $validator->validateFiltersCollection($attribute, $value);
             $this->errors[] = [...$this->errors, $validator->getErrors()];

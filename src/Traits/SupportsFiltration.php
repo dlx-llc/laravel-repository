@@ -8,6 +8,7 @@ use LaravelRepository\Enums\FilterOperator;
 use LaravelRepository\Contracts\FilterContract;
 use LaravelRepository\Contracts\FilterOptimizerContract;
 use LaravelRepository\Contracts\FiltersCollectionContract;
+use LaravelRepository\Contracts\FiltersCollectionFormatterContract;
 
 trait SupportsFiltration
 {
@@ -27,7 +28,7 @@ trait SupportsFiltration
      */
     public function setFiltersRaw(string $rawStr): static
     {
-        $filters = App::make(FiltersCollectionParserContract::class)->parse($rawStr);
+        $filters = App::make(FiltersCollectionFormatterContract::class)->parse($rawStr);
 
         if (!$filters) {
             throw new \Exception(__('lrepo::exceptions.invalid_filtration_string'));

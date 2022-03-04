@@ -58,7 +58,7 @@ final class FilterFactory
         string $operator = FilterOperator::AND
     ): FilterContract {
         $factory = self::getInstance();
-        $filterClass = $factory->match($mode);
+        $filterClass = $factory->matchClass($mode);
 
         if (!$filterClass) {
             throw new \Exception(__('lrepo::exceptions.undefined_repo_filter_mode'));
@@ -90,7 +90,7 @@ final class FilterFactory
     {
         $factory = self::getInstance();
 
-        return !is_null($factory->match($mode));
+        return !is_null($factory->matchClass($mode));
     }
 
     /**
@@ -103,7 +103,20 @@ final class FilterFactory
     {
         $factory = self::getInstance();
 
-        return $factory->match($mode);
+        return $factory->matchClass($mode);
+    }
+
+    /**
+     * Returns the corresponding filter mode for the given filter class.
+     *
+     * @param  string $class
+     * @return string|null
+     */
+    public static function getMode(string $class): ?string
+    {
+        $factory = self::getInstance();
+
+        return $factory->matchMode($class);
     }
 
     /**
@@ -136,9 +149,20 @@ final class FilterFactory
      * @param  string $mode
      * @return string|null
      */
-    public function match(string $mode): ?string
+    public function matchClass(string $mode): ?string
     {
         return $this->registry[$mode] ?? null;
+    }
+
+    /**
+     * Returns the matching filter mode.
+     *
+     * @param  string $class
+     * @return string|null
+     */
+    public function matchMode(string $class): ?string
+    {
+        return array_search($class, $this->registry, true) ?: null;
     }
 
     /**
