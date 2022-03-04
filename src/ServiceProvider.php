@@ -6,6 +6,7 @@ use LaravelRepository\Contracts\SortingContract;
 use LaravelRepository\Contracts\DataAttrContract;
 use LaravelRepository\Contracts\PaginationContract;
 use LaravelRepository\Contracts\TextSearchContract;
+use LaravelRepository\Contracts\SearchCriteriaContract;
 use LaravelRepository\Rules\Formatters\SortingFormatter;
 use LaravelRepository\Contracts\SortingFormatterContract;
 use LaravelRepository\Contracts\FiltersCollectionContract;
@@ -35,6 +36,7 @@ class ServiceProvider extends LaravelServiceProvider
         $this->app->bind(DataAttrContract::class, DataAttr::class);
         $this->app->bind(SortingContract::class, Sorting::class);
         $this->app->bind(PaginationContract::class, Pagination::class);
+        $this->app->bind(SearchCriteriaContract::class, SearchCriteria::class);
 
         $this->app->bind(TextSearchContract::class, function ($app, $params) {
             return new TextSearch(...$params);

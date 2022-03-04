@@ -24,7 +24,7 @@ class Pagination implements PaginationContract
     }
 
     /**
-     * Crates a pagination using parameters passed by the request.
+     * Crates a pagination using parameters passed via request.
      *
      * @param  string $key
      * @param  bool $validate
