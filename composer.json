@@ -20,6 +20,8 @@
         "reedware/laravel-relation-joins": "^2.4"
     },
     "require-dev": {
+        "orchestra/testbench": "^6",
+        "phpunit/phpunit": "^9",
         "squizlabs/php_codesniffer": "3.*"
     },
     "config": {
@@ -38,9 +40,17 @@
             "LaravelRepository\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "LaravelRepository\\Tests\\": "tests/"
+        }
+    },
     "minimum-stability": "dev",
     "prefer-stable": true,
     "scripts": {
+        "post-autoload-dump": [
+            "@php ./vendor/bin/testbench package:discover --ansi"
+        ],
         "psr-12-check": [
             "phpcs --standard=PSR12 src"
         ]
