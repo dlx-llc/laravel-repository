@@ -8,7 +8,7 @@ use LaravelRepository\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "orCond": false,
+ *   "operator": "and",
  *   "attr": "age",
  *   "mode": "<",
  *   "value": "18"

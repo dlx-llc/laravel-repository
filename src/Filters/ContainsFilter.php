@@ -8,10 +8,10 @@ use LaravelRepository\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "orCond": false,
+ *   "operator": "and",
  *   "attr": "json_arr",
  *   "mode": "contains",
- *   "value": "anything"
+ *   "value": "example"
  * }
  */
 class ContainsFilter extends Filter

@@ -8,10 +8,10 @@ use LaravelRepository\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "orCond": false,
+ *   "operator": "and",
  *   "attr": "title",
  *   "mode": "like",
- *   "value": "deluxe"
+ *   "value": "example"
  * }
  */
 class IsLikeFilter extends Filter
