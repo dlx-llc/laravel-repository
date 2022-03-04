@@ -5,28 +5,6 @@ namespace LaravelRepository\Contracts;
 interface PaginationContract
 {
     /**
-     * Crates a pagination using parameters passed by the request.
-     *
-     * @param  string $key
-     * @param  bool $validate
-     * @param  bool $require
-     * @return static|null
-     */
-    public static function makeFromRequest(
-        string $key = 'pagination',
-        bool $validate = true,
-        bool $require = true
-    ): ?static;
-
-    /**
-     * Creates a new instance of this class from a raw pagination string.
-     *
-     * @param  string $rawStr
-     * @return static
-     */
-    public static function makeRaw(string $rawStr): static;
-
-    /**
      * Class constructor.
      *
      * @param  int $perPage
