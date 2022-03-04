@@ -2,9 +2,11 @@
 
 namespace LaravelRepository;
 
+use Illuminate\Support\Facades\App;
 use LaravelRepository\Enums\FilterMode;
 use LaravelRepository\Enums\FilterOperator;
 use LaravelRepository\Contracts\FilterContract;
+use LaravelRepository\Contracts\DataAttrContract;
 
 final class FilterFactory
 {
@@ -63,6 +65,8 @@ final class FilterFactory
         if (!$filterClass) {
             throw new \Exception(__('lrepo::exceptions.undefined_repo_filter_mode'));
         }
+
+        $attr = App::makeWith(DataAttrContract::class, ['name' => $attr]);
 
         return new $filterClass($attr, $value, $operator);
     }
