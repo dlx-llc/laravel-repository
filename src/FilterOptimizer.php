@@ -3,327 +3,235 @@
 namespace LaravelRepository;
 
 use Illuminate\Support\Arr;
-use LaravelRepository\Filter;
-use LaravelRepository\FilterGroup;
-use LaravelRepository\Enums\FilterGroupMode;
+use Illuminate\Support\Facades\App;
+use LaravelRepository\Enums\FilterOperator;
+use LaravelRepository\Contracts\FilterContract;
+use LaravelRepository\Contracts\DataAttrContract;
+use LaravelRepository\Filters\RelationExistsFilter;
+use LaravelRepository\Contracts\FilterOptimizerContract;
+use LaravelRepository\Filters\RelationDoesNotExistFilter;
+use LaravelRepository\Contracts\FiltersCollectionContract;
 
-/**
- * @todo refactor and fix
- */
-class FilterOptimizer
+class FilterOptimizer implements FilterOptimizerContract
 {
     /**
-     * The single instance of this class.
+     * Removes meaningless collections and groups same relation filters if possible.
      *
-     * @var static|null
-     */
-    private static ?FilterOptimizer $instance = null;
-
-    /**
-     * Returns an instance of this class.
-     *
-     * @return static
-     */
-    public static function instance(): static
-    {
-        if (!static::$instance) {
-            static::$instance = new static();
-        }
-
-        return static::$instance;
-    }
-
-    /**
-     * Creates an instance of this class.
-     *
+     * @param  FiltersCollectionContract $collection
      * @return void
      */
-    private function __construct()
+    public function optimize(FiltersCollectionContract $collection): void
     {
-        //
-    }
+        $this->combineSameRelationFilters($collection);
 
-    /**
-     * Optimizes the given array of filters and filter groups.
-     *
-     * @param  array<Filter|FilterGroup> $items
-     * @return array<Filter|FilterGroup>
-     */
-    public function optimize(array $items): array
-    {
-        foreach ($items as $i => $item) {
-            if (is_a($item, FilterGroup::class)) {
-                $item = $this->breakDownMultilayerRelations($item);
-                $item = $this->spreadOutGroupIfUnnecessary($item, false);
-
-                if (is_a($item, FilterGroup::class)) {
-                    $items[$i] = $this->setGroupRelation($item);
-                }
-            } else {
-                $items[$i] = $this->breakDownMultilayerRelations($item);
-            }
-        }
-
-        $items = Arr::flatten($items);
-        $items = $this->joinSameRelationFilters($items);
+        $items = $collection->getItems();
 
         foreach ($items as $i => $item) {
-            if (is_a($item, FilterGroup::class)) {
-                $items[$i] = $this->spreadOutGroupIfUnnecessary($item, true);
+            if (is_a($item, FiltersCollection::class)) {
+                $items[$i] = $this->decomposeIdleCollection($item);
             }
         }
 
-        return Arr::flatten($items);
+        $collection->setItems(...Arr::flatten($items));
     }
 
     /**
-     * Checks whether the group contains only items of the same relation.
-     * If so, sets that relation on the group.
+     * Decomposes the given filters collection if it has no effect.
      *
-     * @param  FilterGroup $group
-     * @return FilterGroup
+     * @param  FiltersCollectionContract $collection
+     * @return array<FiltersCollectionContract|FilterContract>
      */
-    protected function setGroupRelation(FilterGroup $group): FilterGroup
+    protected function decomposeIdleCollection(FiltersCollectionContract $collection): array
     {
-        if (empty($group)) {
-            return $group;
-        }
-
-        foreach ($group as $i => $item) {
-            if (is_a($item, FilterGroup::class)) {
-                $group[$i] = $this->setGroupRelation($item);
-            }
-        }
-
-        if ($group->relation) {
-            return $group;
-        }
-
-        $relation = $group[0]->relation;
-
-        foreach ($group as $item) {
-            if (!$item->relation || $item->relation !== $relation) {
-                return $group;
-            }
-        }
-
-        $group->relation = $relation;
-
-        foreach ($group as $item) {
-            $item->relation = null;
-        }
-
-        return $group;
-    }
-
-    /**
-     * Turns the filter group into sequential filters if all the included items
-     * are connected by the "and" condition and there is no relation on the group.
-     * In case if the group contains only one item, that only item will be returned.
-     *
-     * @param  array<Filter|FilterGroup>|FilterGroup $group
-     * @param  bool $joinMultilayerRelations
-     * @return array<Filter|FilterGroup>|Filter|FilterGroup
-     */
-    protected function spreadOutGroupIfUnnecessary(
-        FilterGroup $group,
-        bool $joinMultilayerRelations
-    ): array|Filter|FilterGroup {
-        if (empty($group)) {
+        if ($collection->isEmpty()) {
             return [];
         }
 
-        foreach ($group as $i => $item) {
-            if (is_a($item, FilterGroup::class)) {
-                $group[$i] = $this->spreadOutGroupIfUnnecessary($item, $joinMultilayerRelations);
+        $items = [];
+
+        foreach ($collection as $i => $item) {
+            if (is_a($item, FiltersCollection::class)) {
+                // Decompose meaningless nested collections recursively.
+                $items = [...$items, ...$this->decomposeIdleCollection($item)];
+            } else {
+                $items[] = $item;
             }
         }
 
-        if ($group->count() === 1) {
-            if (
-                !$group->relation ||
-                $group->mode === FilterGroupMode::HAS && $joinMultilayerRelations
-            ) {
-                $item = $group[0];
-                $item->orCond = $group->orCond;
-                $item->relation = trim("{$group->relation}.{$item->relation}", '.') ?: null;
+        $collection->setItems(...$items);
 
-                return $item;
-            } else {
-                return $group;
-            }
-        } elseif ($group->relation) {
-            return $group;
+        if ($collection->count() === 1) {
+            // If there is only one item, then return that item instead of the collection.
+            $item = $collection[0];
+            $item->setOperator($collection->getOperator());
+
+            return [$item];
         } else {
-            foreach ($group as $i => $item) {
-                if ($i && $item->orCond) {
-                    return $group;
+            // If there is at least one logical OR operator then we shouldn't
+            // decompose the collection.
+            foreach ($collection as $i => $item) {
+                if ($i && $item->getOperator() === FilterOperator::OR) {
+                    return [$collection];
                 }
             }
 
-            $group[0]->orCond = $group->orCond;
+            // Otherwise, it should be decomposed as it has no effect.
+            $collection[0]->setOperator($collection->getOperator());
 
-            return $group->all();
+            return $collection->getItems();
         }
     }
 
     /**
-     * Breaks down the filter or the filters group if it has a multilayer relation.
-     * The item will be transformed to inbuilt filter groups with single layer relations.
+     * Combines filters having the same relation in the given collection.
      *
-     * @param  Filter|FilterGroup $item
-     * @return Filter|FilterGroup
+     * @param  FiltersCollectionContract $collection
+     * @return void
      */
-    protected function breakDownMultilayerRelations(Filter|FilterGroup $item): Filter|FilterGroup
+    protected function combineSameRelationFilters(FiltersCollectionContract $collection): void
     {
-        $isFilterGroup = is_a($item, FilterGroup::class);
+        if ($collection->count() < 2) {
+            return;
+        }
 
-        if ($isFilterGroup) {
-            foreach ($item as $i => $groupItem) {
-                $item[$i] = $this->breakDownMultilayerRelations($groupItem);
+        $items = $collection->getItems();
+
+        if ($this->areSameRelationFiltersArr($items)) {
+            $collection->setItems(
+                $this->combineSameRelationFiltersArr(
+                    $items,
+                    $collection->getOperator()
+                )
+            );
+
+            return;
+        }
+
+        $chunkStart = 0;
+        $chunk = [$items[0]];
+        $itemsCount = count($items);
+
+        for ($i = 1; $i < $itemsCount; $i++) {
+            $item = $items[$i];
+
+            if ($item->getOperator() === FilterOperator::AND) {
+                $chunk[] = $item;
+            } else {
+                $this->combineReplaceFilters($items, $chunk, $chunkStart);
+                $countDiff = $itemsCount - count($items);
+                $itemsCount -= $countDiff;
+                $i -= $countDiff;
+
+                $chunkStart = $i;
+                $chunk = [$item];
             }
         }
 
-        if (!is_null($item->relation) && str_contains($item->relation, '.')) {
-            $relations = explode('.', $item->relation);
-            $item->relation = array_pop($relations);
+        $this->combineReplaceFilters($items, $chunk, $chunkStart);
+        $collection->setItems(...$items);
+    }
 
-            if ($isFilterGroup) {
-                $mode = $item->mode;
-                $item->mode = FilterGroupMode::HAS;
-            } else {
-                $mode = FilterGroupMode::HAS;
+    /**
+     * Checks whether the given items have the same relation.
+     *
+     * @param  array $items
+     * @return bool
+     */
+    protected function areSameRelationFiltersArr(array $items): bool
+    {
+        $relation = null;
+
+        foreach ($items as $item) {
+            if (is_a($item, FiltersCollectionContract::class)) {
+                if (!$this->areSameRelationFiltersArr($item->getItems())) {
+                    return false;
+                }
+
+                do {
+                    $item = $item[0];
+                } while (is_a($item, FiltersCollectionContract::class));
             }
 
-            for ($j = count($relations) - 1; $j >= 0; $j--) {
-                $item = FilterGroup::make(
-                    $relations[$j],
-                    FilterGroupMode::HAS,
-                    $item->orCond,
-                    $item
+            if (is_a($item, RelationDoesNotExistFilter::class)) {
+                return false;
+            }
+
+            $itemRel = $item->getAttr()->getRelation();
+
+            if (!$itemRel && is_a($item, RelationExistsFilter::class)) {
+                $itemRel = $item->getAttr()->getName();
+            }
+
+            if (is_null($itemRel)) {
+                return false;
+            } elseif (is_null($relation)) {
+                $relation = $itemRel;
+            } elseif ($relation !== $itemRel) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Combines validated same relation filters.
+     *
+     * @param  array $items
+     * @param  string $operator
+     * @return FilterContract
+     */
+    protected function combineSameRelationFiltersArr(array $items, string $operator): FilterContract
+    {
+        foreach ($items as $i => $item) {
+            if (is_a($item, FiltersCollectionContract::class)) {
+                $items[$i] = $item = $this->combineSameRelationFiltersArr(
+                    $item->getItems(),
+                    $item->getOperator()
                 );
             }
 
-            $item->mode = $mode;
-        }
+            $attr = $item->getAttr();
+            $relation = $attr->getRelation();
 
-        return $item;
-    }
-
-    /**
-     * Joins filters and filter groups with the same relation where it's possible.
-     *
-     * @param  array<Filter|FilterGroup> $items
-     * @return array<Filter|FilterGroup>
-     */
-    protected function joinSameRelationFilters(array $items): array
-    {
-        if (count($items) < 2) {
-            return $items;
-        }
-
-        $joinable = [];
-        $relation = null;
-        $relationGroup = [];
-        $skipUntilOrCond = false;
-
-        foreach ($items as $i => $item) {
-            if ($item->orCond) {
-                if ($relationGroup && $relation) {
-                    $joinable[$relation] ??= [];
-                    $joinable[$relation] = [...$joinable[$relation], ...$relationGroup];
-                }
-
-                if ($relation = $item->relation) {
-                    $relationGroup = [$i];
-                    $skipUntilOrCond = false;
-                } else {
-                    $relationGroup = [];
-                    $skipUntilOrCond = true;
-                }
+            if (is_a($item, RelationExistsFilter::class)) {
+                $relation ??= $attr->getName();
+                $items[$i] = $item = App::makeWith(FiltersCollectionContract::class, [
+                    $item->getOperator(),
+                    ...$item->getValue(),
+                ]);
             } else {
-                if ($skipUntilOrCond) {
-                    continue;
-                } elseif (!$relation && $item->relation) {
-                    $relation = $item->relation;
-                    $relationGroup = [$i];
-                    $skipUntilOrCond = false;
-                } elseif (!$item->relation || $item->relation !== $relation) {
-                    $relation = null;
-                    $relationGroup = [];
-                    $skipUntilOrCond = true;
-                } else {
-                    $relationGroup[] = $i;
-                    $skipUntilOrCond = false;
-                }
+                $attr->setName($attr->getName());
             }
         }
 
-        if ($relationGroup && $relation) {
-            $joinable[$relation] ??= [];
-            $joinable[$relation] = [...$joinable[$relation], ...$relationGroup];
-        }
+        $attr = App::makeWith(DataAttrContract::class, ['name' => $relation]);
 
-        foreach ($joinable as $relation => $indexes) {
-            $relationItems = [];
-
-            foreach ($indexes as $i) {
-                $relationItems[] = $items[$i];
-            }
-
-            $firstPos = array_shift($indexes);
-            $newGroup = $this->groupItems($relation, ...$relationItems);
-            $items[$firstPos] = $newGroup;
-
-            foreach ($indexes as $i) {
-                unset($items[$i]);
-            }
-        }
-
-        foreach ($items as $item) {
-            if (is_a($item, FilterGroup::class)) {
-                $groupItems = $this->joinSameRelationFilters($item->all());
-                $item->set(...$groupItems);
-            }
-        }
-
-        return array_values($items);
+        return new RelationExistsFilter($attr, $items, $operator);
     }
 
     /**
-     * Groups the given filters and filter groups in one filter group with the given relation.
+     * Combines and replaces the given chunk of filters in the filters source.
      *
-     * @param  string|null $relation
-     * @param  Filter|FilterGroup ...$filters
-     * @return Filter|FilterGroup|null
+     * @param  array &$source
+     * @param  array $chunk
+     * @param  int $offset
+     * @return void
      */
-    protected function groupItems(?string $relation, Filter|FilterGroup ...$filters): Filter|FilterGroup|null
-    {
-        $count = count($filters);
+    protected function combineReplaceFilters(
+        array &$source,
+        array $chunk,
+        int $offset
+    ): void {
+        $chunkCount = count($chunk);
 
-        if ($count === 1) {
-            return $filters[0];
-        } elseif ($count > 1) {
-            if ($relation) {
-                foreach ($filters as $i => $filter) {
-                    $filter->relation = null;
-
-                    if (is_a($filter, FilterGroup::class)) {
-                        $filters[$i] = $this->spreadOutGroupIfUnnecessary($filter, false);
-                    }
-                }
-
-                $filters = Arr::flatten($filters);
-            }
-
-            return FilterGroup::make(
-                $relation,
-                FilterGroupMode::HAS,
-                $filters[0]->orCond,
-                ...$filters
+        if ($chunkCount > 1 && $this->areSameRelationFiltersArr($chunk)) {
+            $combined = $this->combineSameRelationFiltersArr(
+                $chunk,
+                $chunk[0]->getOperator()
             );
-        } else {
-            return null;
+
+            array_splice($source, $offset, $chunkCount, $combined);
         }
     }
 }
