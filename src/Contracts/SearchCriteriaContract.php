@@ -5,22 +5,6 @@ namespace LaravelRepository\Contracts;
 interface SearchCriteriaContract
 {
     /**
-     * Crates a search criteria using parameters passed via request.
-     *
-     * @param  string $textSearchKey
-     * @param  string $sortingKey
-     * @param  string $filtersKey
-     * @param  bool $validate
-     * @return static
-     */
-    public static function makeFromRequest(
-        string $textSearchKey = 'search',
-        string $sortingKey = 'sort',
-        string $filtersKey = 'filters',
-        bool $validate = true
-    ): static;
-
-    /**
      * Class constructor.
      *
      * @param  TextSearchContract|string|null $textSearch

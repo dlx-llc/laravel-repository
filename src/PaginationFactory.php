@@ -44,10 +44,10 @@ final class PaginationFactory
         if (!$require && !$pagination) {
             return null;
         } elseif ($validate) {
-            static::validate($pagination, $key, $require);
+            self::validate($pagination, $key, $require);
         }
 
-        return static::createRaw($pagination);
+        return self::createRaw($pagination);
     }
 
     /**
@@ -65,7 +65,7 @@ final class PaginationFactory
             throw new \Exception(__('lrepo::exceptions.invalid_pagination_string'));
         }
 
-        return static::create($params[1], $params[0]);
+        return self::create($params[1], $params[0]);
     }
 
     /**
