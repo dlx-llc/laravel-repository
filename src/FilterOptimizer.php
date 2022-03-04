@@ -12,6 +12,9 @@ use LaravelRepository\Contracts\FilterOptimizerContract;
 use LaravelRepository\Filters\RelationDoesNotExistFilter;
 use LaravelRepository\Contracts\FiltersCollectionContract;
 
+/**
+ * @todo test and fix if needed
+ */
 class FilterOptimizer implements FilterOptimizerContract
 {
     /**
