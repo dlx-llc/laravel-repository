@@ -2,7 +2,6 @@
 
 namespace LaravelRepository\Contracts;
 
-use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
@@ -68,10 +67,10 @@ interface DataReaderContract
     /**
      * Fetches paginated query results.
      *
-     * @param  Pagination $pagination
+     * @param  PaginationContract $pagination
      * @return Paginator
      */
-    public function paginate(Pagination $pagination): Paginator;
+    public function paginate(PaginationContract $pagination): Paginator;
 
     /**
      * Fetches query results via lazy collection.

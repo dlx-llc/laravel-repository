@@ -6,6 +6,7 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 use LaravelRepository\Contracts\DbDriverContract;
+use LaravelRepository\Contracts\PaginationContract;
 use LaravelRepository\Contracts\SearchCriteriaContract;
 use LaravelRepository\Contracts\ReadonlyRepositoryContract;
 
@@ -95,7 +96,7 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     }
 
     /** @inheritdoc */
-    public function paginate(Pagination $pagination): Paginator
+    public function paginate(PaginationContract $pagination): Paginator
     {
         return $this->db->paginate($pagination);
     }

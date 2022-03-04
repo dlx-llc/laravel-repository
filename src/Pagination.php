@@ -2,11 +2,14 @@
 
 namespace LaravelRepository;
 
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use LaravelRepository\Rules\RepositoryPagination;
+use LaravelRepository\Contracts\PaginationContract;
+use LaravelRepository\Contracts\PaginationFormatterContract;
 
-class Pagination
+class Pagination implements PaginationContract
 {
     /**
      * Creates a new instance of this class.
@@ -53,31 +56,13 @@ class Pagination
      */
     public static function makeRaw(string $rawStr): static
     {
-        $params = static::parseStr($rawStr);
+        $params = App::make(PaginationFormatterContract::class)->parse($rawStr);
 
         if (!$params) {
             throw new \Exception(__('lrepo::exceptions.invalid_pagination_string'));
         }
 
         return static::make($params[1], $params[0]);
-    }
-
-    /**
-     * Parses pagination raw string params.
-     *
-     * @param  string $rawStr
-     * @return array|null
-     */
-    public static function parseStr(string $rawStr): ?array
-    {
-        if (!preg_match('/^([1-9]\d*)\,([1-9]\d*)$/', $rawStr, $matches)) {
-            return null;
-        }
-
-        $page = intval($matches[1]);
-        $perPage = intval($matches[2]);
-
-        return [$page, $perPage];
     }
 
     /**
@@ -88,7 +73,7 @@ class Pagination
      * @return void
      * @throws ValidationException
      */
-    public static function validate(
+    protected static function validate(
         ?string $data,
         string $key = 'pagination',
         bool $require = true
@@ -114,5 +99,33 @@ class Pagination
         public int $page
     ) {
         //
+    }
+
+    /** @inheritdoc */
+    public function getPage(): int
+    {
+        return $this->page;
+    }
+
+    /** @inheritdoc */
+    public function setPage(int $page): static
+    {
+        $this->page = $page;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function getPerPage(): int
+    {
+        return $this->getPerPage();
+    }
+
+    /** @inheritdoc */
+    public function setPerPage(int $perPage): static
+    {
+        $this->perPage = $perPage;
+
+        return $this;
     }
 }

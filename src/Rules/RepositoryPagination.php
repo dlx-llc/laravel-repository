@@ -2,8 +2,9 @@
 
 namespace LaravelRepository\Rules;
 
-use LaravelRepository\Pagination;
+use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
+use LaravelRepository\Contracts\PaginationFormatterContract;
 
 class RepositoryPagination implements Rule
 {
@@ -37,7 +38,7 @@ class RepositoryPagination implements Rule
     {
         if (!is_string($value)) {
             $this->errors[] = __('lrepo::validation.string', compact('attribute'));
-        } elseif ($params = Pagination::parseStr($value)) {
+        } elseif ($params = App::make(PaginationFormatterContract::class)->parse($value)) {
             $this->validatePage($params[0], $attribute);
             $this->validatePerPage($params[1], $attribute);
         } else {

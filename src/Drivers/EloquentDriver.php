@@ -2,7 +2,6 @@
 
 namespace LaravelRepository\Drivers;
 
-use LaravelRepository\Pagination;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use LaravelRepository\Enums\FilterOperator;
@@ -23,6 +22,7 @@ use LaravelRepository\Filters\NotEqualsToFilter;
 use LaravelRepository\Contracts\DataAttrContract;
 use LaravelRepository\Contracts\DbDriverContract;
 use LaravelRepository\Filters\NotIncludedInFilter;
+use LaravelRepository\Contracts\PaginationContract;
 use LaravelRepository\Contracts\TextSearchContract;
 use LaravelRepository\Filters\DoesNotContainFilter;
 use LaravelRepository\Filters\IsLowerOrEqualFilter;
@@ -138,13 +138,13 @@ class EloquentDriver implements DbDriverContract
     }
 
     /** @inheritdoc */
-    public function paginate(Pagination $pagination): Paginator
+    public function paginate(PaginationContract $pagination): Paginator
     {
         QueryHelper::instance()->preventAmbiguousQuery($this->query);
 
         return $this->query->paginate(
-            perPage: $pagination->perPage,
-            page: $pagination->page
+            perPage: $pagination->getPerPage(),
+            page: $pagination->getPage()
         );
     }
 
