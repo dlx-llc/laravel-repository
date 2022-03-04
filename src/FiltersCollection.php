@@ -51,6 +51,18 @@ class FiltersCollection implements FiltersCollectionContract
     }
 
     /** {@inheritdoc} */
+    public function isEmpty(): bool
+    {
+        return empty($this->items);
+    }
+
+    /** {@inheritdoc} */
+    public function isNotEmpty(): bool
+    {
+        return !empty($this->items);
+    }
+
+    /** {@inheritdoc} */
     public function setItems(FiltersCollectionContract|FilterContract ...$items): static
     {
         $this->items = $items;

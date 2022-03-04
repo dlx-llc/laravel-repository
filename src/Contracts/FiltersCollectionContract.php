@@ -44,6 +44,20 @@ interface FiltersCollectionContract extends Iterator, Countable, ArrayAccess
     public function getItems(): array;
 
     /**
+     * Checks if the collection is empty.
+     *
+     * @return bool
+     */
+    public function isEmpty(): bool;
+
+    /**
+     * Checks if the collection is not empty.
+     *
+     * @return bool
+     */
+    public function isNotEmpty(): bool;
+
+    /**
      * Set the collection items.
      *
      * @param  FiltersCollection|FilterContract ...$items
