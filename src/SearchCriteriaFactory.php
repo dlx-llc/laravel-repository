@@ -65,7 +65,10 @@ final class SearchCriteriaFactory
             );
         }
 
-        return self::create($textSearch, $sorting, $filters);
+        return self::create()
+            ->setFiltersRaw($filters)
+            ->setSortingRaw($sorting)
+            ->setTextSearchRaw($textSearch);
     }
 
     /**
