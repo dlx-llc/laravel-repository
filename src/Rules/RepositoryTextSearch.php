@@ -4,7 +4,7 @@ namespace Deluxetech\LaRepo\Rules;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
-use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
+use Deluxetech\LaRepo\Contracts\TextSearchFormatterContract;
 
 class RepositoryTextSearch implements Rule
 {
@@ -24,7 +24,7 @@ class RepositoryTextSearch implements Rule
     {
         if (!is_string($value)) {
             $this->errors[] = __('lrepo::validation.string', ['attribute' => $attribute]);
-        } elseif ($params = App::make(SortingFormatterContract::class)->parse($value)) {
+        } elseif ($params = App::make(TextSearchFormatterContract::class)->parse($value)) {
             $this->validateText($params[0], $attribute);
             $this->validateAttrs($params[1], $attribute);
         } else {
