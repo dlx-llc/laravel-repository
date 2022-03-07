@@ -99,7 +99,7 @@ class FilterOptimizer implements FilterOptimizerContract
 
         $items = $collection->getItems();
 
-        if ($this->areSameRelationFiltersArr($items)) {
+        if ($this->isSameRelationFiltersArr($items)) {
             $collection->setItems(
                 $this->combineSameRelationFiltersArr(
                     $items,
@@ -140,13 +140,13 @@ class FilterOptimizer implements FilterOptimizerContract
      * @param  array $items
      * @return bool
      */
-    protected function areSameRelationFiltersArr(array $items): bool
+    protected function isSameRelationFiltersArr(array $items): bool
     {
         $relation = null;
 
         foreach ($items as $item) {
             if (is_a($item, FiltersCollectionContract::class)) {
-                if (!$this->areSameRelationFiltersArr($item->getItems())) {
+                if (!$this->isSameRelationFiltersArr($item->getItems())) {
                     return false;
                 }
 
@@ -228,7 +228,7 @@ class FilterOptimizer implements FilterOptimizerContract
     ): void {
         $chunkCount = count($chunk);
 
-        if ($chunkCount > 1 && $this->areSameRelationFiltersArr($chunk)) {
+        if ($chunkCount > 1 && $this->isSameRelationFiltersArr($chunk)) {
             $combined = $this->combineSameRelationFiltersArr(
                 $chunk,
                 $chunk[0]->getOperator()
