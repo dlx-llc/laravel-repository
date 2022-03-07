@@ -33,7 +33,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Deluxetech\\LaRepo\\ServiceProvider"
+                "Deluxetech\\LaRepo\\LaRepoServiceProvider"
             ]
         }
     },

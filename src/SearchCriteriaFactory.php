@@ -18,15 +18,15 @@ final class SearchCriteriaFactory
     /**
      * Creates a new search criteria object.
      *
-     * @param  TextSearchContract|null $textSearch
-     * @param  SortingContract|null $sorting
-     * @param  FiltersCollectionContract|null $filters
+     * @param  TextSearchContract|string|null $textSearch
+     * @param  SortingContract|string|null $sorting
+     * @param  FiltersCollectionContract|string|null $filters
      * @return SearchCriteriaContract
      */
     public static function create(
-        TextSearchContract|null $textSearch = null,
-        SortingContract|null $sorting = null,
-        FiltersCollectionContract|null $filters = null
+        TextSearchContract|string|null $textSearch = null,
+        SortingContract|string|null $sorting = null,
+        FiltersCollectionContract|string|null $filters = null
     ): SearchCriteriaContract {
         return App::makeWith(SearchCriteriaContract::class, [
             'textSearch' => $textSearch,
@@ -65,10 +65,7 @@ final class SearchCriteriaFactory
             );
         }
 
-        return self::create()
-            ->setFiltersRaw($filters)
-            ->setSortingRaw($sorting)
-            ->setTextSearchRaw($textSearch);
+        return self::create($textSearch, $sorting, $filters);
     }
 
     /**
