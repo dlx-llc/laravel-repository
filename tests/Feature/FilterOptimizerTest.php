@@ -1,14 +1,13 @@
 <?php
 
-namespace LaravelRepository\Tests\Feature;
+namespace Deluxetech\LaRepo\Tests\Feature;
 
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\FilterFactory;
-use LaravelRepository\Tests\TestCase;
-use LaravelRepository\FilterOptimizer;
-use LaravelRepository\Enums\FilterMode;
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\Tests\TestCase;
+use Deluxetech\LaRepo\FilterOptimizer;
+use Deluxetech\LaRepo\Enums\FilterMode;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
  * @group feature

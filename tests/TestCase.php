@@ -1,7 +1,8 @@
 <?php
-namespace LaravelRepository\Tests;
 
-use LaravelRepository\ServiceProvider;
+namespace Deluxetech\LaRepo\Tests;
+
+use Deluxetech\LaRepo\ServiceProvider;
 use Orchestra\Testbench\TestCase as BaseTestCase;
 
 abstract class TestCase extends BaseTestCase

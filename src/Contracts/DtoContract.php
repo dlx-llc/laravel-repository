@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelRepository\Contracts;
+namespace Deluxetech\LaRepo\Contracts;
 
-use LaravelRepository\Contracts\DtoAttrMapContract;
+use Deluxetech\LaRepo\Contracts\DtoAttrMapContract;
 
 /**
  * Implement this interface in your data transfer objects, like resources in

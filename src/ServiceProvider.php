@@ -1,22 +1,22 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\SortingContract;
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\Contracts\PaginationContract;
-use LaravelRepository\Contracts\TextSearchContract;
-use LaravelRepository\Contracts\SearchCriteriaContract;
-use LaravelRepository\Rules\Formatters\SortingFormatter;
-use LaravelRepository\Contracts\SortingFormatterContract;
-use LaravelRepository\Contracts\FiltersCollectionContract;
-use LaravelRepository\Rules\Formatters\PaginationFormatter;
-use LaravelRepository\Rules\Formatters\TextSearchFormatter;
-use LaravelRepository\Contracts\PaginationFormatterContract;
-use LaravelRepository\Contracts\TextSearchFormatterContract;
+use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Rules\Formatters\SortingFormatter;
+use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Rules\Formatters\PaginationFormatter;
+use Deluxetech\LaRepo\Rules\Formatters\TextSearchFormatter;
+use Deluxetech\LaRepo\Contracts\PaginationFormatterContract;
+use Deluxetech\LaRepo\Contracts\TextSearchFormatterContract;
 use Illuminate\Support\ServiceProvider as LaravelServiceProvider;
-use LaravelRepository\Rules\Formatters\FiltersCollectionFormatter;
-use LaravelRepository\Contracts\FiltersCollectionFormatterContract;
+use Deluxetech\LaRepo\Rules\Formatters\FiltersCollectionFormatter;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 
 class ServiceProvider extends LaravelServiceProvider
 {

@@ -1,16 +1,16 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\Filters\RelationExistsFilter;
-use LaravelRepository\Contracts\FilterOptimizerContract;
-use LaravelRepository\Filters\RelationDoesNotExistFilter;
-use LaravelRepository\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Filters\RelationExistsFilter;
+use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
+use Deluxetech\LaRepo\Filters\RelationDoesNotExistFilter;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
  * @todo test and fix if needed

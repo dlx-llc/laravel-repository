@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Filters\Traits;
+namespace Deluxetech\LaRepo\Filters\Traits;
 
 trait SanitizesArrayOfScalarValues
 {

@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelRepository\Traits;
+namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Facades\App;
-use LaravelRepository\Contracts\SortingContract;
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\Contracts\SortingFormatterContract;
+use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
 
 trait SupportsSorting
 {

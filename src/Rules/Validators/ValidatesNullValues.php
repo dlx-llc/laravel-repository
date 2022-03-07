@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Rules\Validators;
+namespace Deluxetech\LaRepo\Rules\Validators;
 
 trait ValidatesNullValues
 {

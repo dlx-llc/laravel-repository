@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository\Traits;
+namespace Deluxetech\LaRepo\Traits;
 
-use LaravelRepository\Contracts\DtoContract;
-use LaravelRepository\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\DtoContract;
+use Deluxetech\LaRepo\Contracts\RepositoryContract;
 
 /**
  * Contains methods that'll let you eager load relations and relation counts

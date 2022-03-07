@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository\Contracts;
+namespace Deluxetech\LaRepo\Contracts;
 
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
 interface FilterContract
 {

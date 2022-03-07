@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelRepository\Traits;
+namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Facades\App;
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\Contracts\TextSearchContract;
-use LaravelRepository\Contracts\TextSearchFormatterContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Contracts\TextSearchFormatterContract;
 
 trait SupportsTextSearch
 {

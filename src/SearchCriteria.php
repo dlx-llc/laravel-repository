@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\SortingContract;
-use LaravelRepository\Contracts\TextSearchContract;
-use LaravelRepository\Contracts\SearchCriteriaContract;
-use LaravelRepository\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 class SearchCriteria implements SearchCriteriaContract
 {

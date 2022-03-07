@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelRepository\Contracts;
+namespace Deluxetech\LaRepo\Contracts;
 
-use LaravelRepository\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
 interface TextSearchContract
 {

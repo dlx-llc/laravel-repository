@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelRepository\Rules\Formatters;
+namespace Deluxetech\LaRepo\Rules\Formatters;
 
-use LaravelRepository\Enums\SortingDirection;
-use LaravelRepository\Contracts\SortingContract;
-use LaravelRepository\Contracts\SortingFormatterContract;
+use Deluxetech\LaRepo\Enums\SortingDirection;
+use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
 
 class SortingFormatter implements SortingFormatterContract
 {

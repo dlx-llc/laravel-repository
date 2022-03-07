@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelRepository\Tests\Unit\FilterOptimizer;
+namespace Deluxetech\LaRepo\Tests\Unit\FilterOptimizer;
 
-use LaravelRepository\Tests\TestCase;
-use LaravelRepository\FilterOptimizer;
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Contracts\FiltersCollectionContract;
-use LaravelRepository\Tests\Unit\Traits\CallsPrivateMethods;
+use Deluxetech\LaRepo\Tests\TestCase;
+use Deluxetech\LaRepo\FilterOptimizer;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Tests\Unit\Traits\CallsPrivateMethods;
 
 /**
  * @group unit

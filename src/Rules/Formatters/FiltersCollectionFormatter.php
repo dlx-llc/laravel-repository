@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelRepository\Rules\Formatters;
+namespace Deluxetech\LaRepo\Rules\Formatters;
 
-use LaravelRepository\FilterFactory;
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Contracts\FiltersCollectionContract;
-use LaravelRepository\Contracts\FiltersCollectionFormatterContract;
+use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 
 class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
 {

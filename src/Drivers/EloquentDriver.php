@@ -1,37 +1,37 @@
 <?php
 
-namespace LaravelRepository\Drivers;
+namespace Deluxetech\LaRepo\Drivers;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Filters\IsLikeFilter;
-use LaravelRepository\Filters\IsNullFilter;
-use LaravelRepository\Filters\InRangeFilter;
-use LaravelRepository\Filters\IsLowerFilter;
-use LaravelRepository\Filters\ContainsFilter;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Filters\IsLikeFilter;
+use Deluxetech\LaRepo\Filters\IsNullFilter;
+use Deluxetech\LaRepo\Filters\InRangeFilter;
+use Deluxetech\LaRepo\Filters\IsLowerFilter;
+use Deluxetech\LaRepo\Filters\ContainsFilter;
+use Deluxetech\LaRepo\Filters\IsGreaterFilter;
+use Deluxetech\LaRepo\Filters\IsNotLikeFilter;
+use Deluxetech\LaRepo\Filters\IsNotNullFilter;
 use Illuminate\Contracts\Pagination\Paginator;
-use LaravelRepository\Filters\IsGreaterFilter;
-use LaravelRepository\Filters\IsNotLikeFilter;
-use LaravelRepository\Filters\IsNotNullFilter;
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Filters\IncludedInFilter;
-use LaravelRepository\Filters\NotInRangeFilter;
-use LaravelRepository\Contracts\SortingContract;
-use LaravelRepository\Filters\NotEqualsToFilter;
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\Contracts\DbDriverContract;
-use LaravelRepository\Filters\NotIncludedInFilter;
-use LaravelRepository\Contracts\PaginationContract;
-use LaravelRepository\Contracts\TextSearchContract;
-use LaravelRepository\Filters\DoesNotContainFilter;
-use LaravelRepository\Filters\IsLowerOrEqualFilter;
-use LaravelRepository\Filters\RelationExistsFilter;
-use LaravelRepository\Filters\IsGreaterOrEqualFilter;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Filters\IncludedInFilter;
+use Deluxetech\LaRepo\Filters\NotInRangeFilter;
+use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Filters\NotEqualsToFilter;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\DbDriverContract;
+use Deluxetech\LaRepo\Filters\NotIncludedInFilter;
+use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Filters\DoesNotContainFilter;
+use Deluxetech\LaRepo\Filters\IsLowerOrEqualFilter;
+use Deluxetech\LaRepo\Filters\RelationExistsFilter;
+use Deluxetech\LaRepo\Filters\IsGreaterOrEqualFilter;
 use Illuminate\Database\Query\Builder as QueryBuilder;
-use LaravelRepository\Contracts\SearchCriteriaContract;
-use LaravelRepository\Filters\RelationDoesNotExistFilter;
-use LaravelRepository\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Filters\RelationDoesNotExistFilter;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 class EloquentDriver implements DbDriverContract

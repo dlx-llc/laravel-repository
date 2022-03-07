@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelRepository\Traits;
+namespace Deluxetech\LaRepo\Traits;
 
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\Contracts\DtoAttrMapContract;
-use LaravelRepository\Contracts\SearchCriteriaContract;
-use LaravelRepository\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\DtoAttrMapContract;
+use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
  * Contains methods that let you replace data attributes in the search

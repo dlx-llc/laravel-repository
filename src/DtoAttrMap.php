@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\DtoAttrMapContract;
+use Deluxetech\LaRepo\Contracts\DtoAttrMapContract;
 
 class DtoAttrMap implements DtoAttrMapContract
 {

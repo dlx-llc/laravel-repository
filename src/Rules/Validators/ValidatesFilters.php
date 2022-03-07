@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository\Rules\Validators;
+namespace Deluxetech\LaRepo\Rules\Validators;
 
-use LaravelRepository\FilterFactory;
-use LaravelRepository\Enums\FilterOperator;
+use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\Enums\FilterOperator;
 
 trait ValidatesFilters
 {

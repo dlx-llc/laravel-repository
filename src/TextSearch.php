@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\DataAttrContract;
-use LaravelRepository\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
 
 /**
  * Example: John,[first_name,middle_name,last_name]

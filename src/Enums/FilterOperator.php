@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Enums;
+namespace Deluxetech\LaRepo\Enums;
 
 class FilterOperator
 {

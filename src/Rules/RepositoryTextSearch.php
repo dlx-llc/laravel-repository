@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelRepository\Rules;
+namespace Deluxetech\LaRepo\Rules;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
-use LaravelRepository\Contracts\SortingFormatterContract;
+use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
 
 class RepositoryTextSearch implements Rule
 {

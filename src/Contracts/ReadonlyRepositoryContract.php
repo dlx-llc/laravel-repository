@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Contracts;
+namespace Deluxetech\LaRepo\Contracts;
 
 interface ReadonlyRepositoryContract extends DataReaderContract
 {

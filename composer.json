@@ -11,7 +11,8 @@
     "authors": [
         {
             "name": "Tigran Koshetsyan",
-            "email": "koshetsyan.tigran@gmail.com"
+            "email": "koshetsyan.tigran@gmail.com",
+            "homepage": "https://github.com/koshetsyan"
         }
     ],
     "require": {
@@ -31,18 +32,18 @@
     "extra": {
         "laravel": {
             "providers": [
-                "LaravelRepository\\ServiceProvider"
+                "Deluxetech\\LaRepo\\ServiceProvider"
             ]
         }
     },
     "autoload": {
         "psr-4": {
-            "LaravelRepository\\": "src/"
+            "Deluxetech\\LaRepo\\": "src/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "LaravelRepository\\Tests\\": "tests/"
+            "Deluxetech\\LaRepo\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "dev",

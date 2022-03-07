@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
 abstract class Filter implements FilterContract
 {

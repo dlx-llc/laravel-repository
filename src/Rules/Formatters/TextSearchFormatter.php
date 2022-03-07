@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository\Rules\Formatters;
+namespace Deluxetech\LaRepo\Rules\Formatters;
 
-use LaravelRepository\Contracts\TextSearchContract;
-use LaravelRepository\Contracts\TextSearchFormatterContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Contracts\TextSearchFormatterContract;
 
 class TextSearchFormatter implements TextSearchFormatterContract
 {

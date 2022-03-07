@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelRepository\Traits;
+namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Facades\App;
-use LaravelRepository\FilterFactory;
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Contracts\FilterOptimizerContract;
-use LaravelRepository\Contracts\FiltersCollectionContract;
-use LaravelRepository\Contracts\FiltersCollectionFormatterContract;
+use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 
 trait SupportsFiltration
 {

@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\RepositoryContract;
 
 class GenericRepository extends ReadonlyGenericRepository implements RepositoryContract
 {

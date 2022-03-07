@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\PaginationContract;
 
 class Pagination implements PaginationContract
 {

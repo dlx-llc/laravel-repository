@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Contracts;
+namespace Deluxetech\LaRepo\Contracts;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;

@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\SortingContract;
-use LaravelRepository\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
 /**
  * Example: creator.id,asc

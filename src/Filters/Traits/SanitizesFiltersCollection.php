@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository\Filters\Traits;
+namespace Deluxetech\LaRepo\Filters\Traits;
 
 use Illuminate\Support\Facades\App;
-use LaravelRepository\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 trait SanitizesFiltersCollection
 {

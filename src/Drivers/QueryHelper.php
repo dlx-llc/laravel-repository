@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Drivers;
+namespace Deluxetech\LaRepo\Drivers;
 
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Database\Query\Builder as QueryBuilder;

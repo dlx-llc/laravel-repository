@@ -1,6 +1,6 @@
 <?php
 
-namespace LaravelRepository\Tests\Unit\Traits;
+namespace Deluxetech\LaRepo\Tests\Unit\Traits;
 
 trait CallsPrivateMethods
 {

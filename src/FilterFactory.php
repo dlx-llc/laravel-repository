@@ -1,12 +1,12 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Facades\App;
-use LaravelRepository\Enums\FilterMode;
-use LaravelRepository\Enums\FilterOperator;
-use LaravelRepository\Contracts\FilterContract;
-use LaravelRepository\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Enums\FilterMode;
+use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
 final class FilterFactory
 {

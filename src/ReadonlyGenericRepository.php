@@ -1,14 +1,14 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
-use LaravelRepository\Contracts\DbDriverContract;
-use LaravelRepository\Contracts\PaginationContract;
-use LaravelRepository\Contracts\SearchCriteriaContract;
-use LaravelRepository\Contracts\ReadonlyRepositoryContract;
+use Deluxetech\LaRepo\Contracts\DbDriverContract;
+use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Contracts\ReadonlyRepositoryContract;
 
 class ReadonlyGenericRepository implements ReadonlyRepositoryContract
 {

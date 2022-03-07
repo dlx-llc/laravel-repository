@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository\Filters;
+namespace Deluxetech\LaRepo\Filters;
 
-use LaravelRepository\Filter;
-use LaravelRepository\Rules\Validators\Validator;
+use Deluxetech\LaRepo\Filter;
+use Deluxetech\LaRepo\Rules\Validators\Validator;
 
 /**
  * Example:

@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelRepository\Contracts;
+namespace Deluxetech\LaRepo\Contracts;
 
 use Iterator;
 use Countable;
 use ArrayAccess;
-use LaravelRepository\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\FilterOperator;
 
 interface FiltersCollectionContract extends Iterator, Countable, ArrayAccess
 {

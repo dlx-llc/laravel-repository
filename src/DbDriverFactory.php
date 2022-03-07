@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Drivers\EloquentDriver;
-use LaravelRepository\Contracts\DbDriverContract;
+use Deluxetech\LaRepo\Drivers\EloquentDriver;
+use Deluxetech\LaRepo\Contracts\DbDriverContract;
 use Illuminate\Database\Eloquent\Builder as EloquentContext;
 
 final class DbDriverFactory

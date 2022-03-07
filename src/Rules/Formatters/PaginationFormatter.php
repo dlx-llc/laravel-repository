@@ -1,9 +1,9 @@
 <?php
 
-namespace LaravelRepository\Rules\Formatters;
+namespace Deluxetech\LaRepo\Rules\Formatters;
 
-use LaravelRepository\Contracts\PaginationContract;
-use LaravelRepository\Contracts\PaginationFormatterContract;
+use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\PaginationFormatterContract;
 
 class PaginationFormatter implements PaginationFormatterContract
 {

@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelRepository\Traits;
+namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Collection;
-use LaravelRepository\Contracts\DtoContract;
+use Deluxetech\LaRepo\Contracts\DtoContract;
 use Illuminate\Contracts\Pagination\Paginator;
-use LaravelRepository\Contracts\PaginationContract;
-use LaravelRepository\Contracts\RepositoryContract;
-use LaravelRepository\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by

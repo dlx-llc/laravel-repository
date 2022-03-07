@@ -1,13 +1,13 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
-use LaravelRepository\Rules\RepositoryPagination;
-use LaravelRepository\Contracts\PaginationContract;
-use LaravelRepository\Contracts\PaginationFormatterContract;
+use Deluxetech\LaRepo\Rules\RepositoryPagination;
+use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\PaginationFormatterContract;
 
 final class PaginationFactory
 {

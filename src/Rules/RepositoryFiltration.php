@@ -1,11 +1,11 @@
 <?php
 
-namespace LaravelRepository\Rules;
+namespace Deluxetech\LaRepo\Rules;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
-use LaravelRepository\Rules\Validators\Validator;
-use LaravelRepository\Contracts\FiltersCollectionFormatterContract;
+use Deluxetech\LaRepo\Rules\Validators\Validator;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 
 class RepositoryFiltration implements Rule
 {

@@ -1,10 +1,10 @@
 <?php
 
-namespace LaravelRepository\Rules;
+namespace Deluxetech\LaRepo\Rules;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Validation\Rule;
-use LaravelRepository\Contracts\PaginationFormatterContract;
+use Deluxetech\LaRepo\Contracts\PaginationFormatterContract;
 
 class RepositoryPagination implements Rule
 {

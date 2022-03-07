@@ -1,8 +1,8 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
-use LaravelRepository\Contracts\DataAttrContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
 class DataAttr implements DataAttrContract
 {

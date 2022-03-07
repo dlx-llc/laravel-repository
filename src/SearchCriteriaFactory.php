@@ -1,17 +1,17 @@
 <?php
 
-namespace LaravelRepository;
+namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
-use LaravelRepository\Rules\RepositorySorting;
-use LaravelRepository\Contracts\SortingContract;
-use LaravelRepository\Rules\RepositoryFiltration;
-use LaravelRepository\Rules\RepositoryTextSearch;
-use LaravelRepository\Contracts\TextSearchContract;
-use LaravelRepository\Contracts\SearchCriteriaContract;
-use LaravelRepository\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Rules\RepositorySorting;
+use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Rules\RepositoryFiltration;
+use Deluxetech\LaRepo\Rules\RepositoryTextSearch;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 final class SearchCriteriaFactory
 {
