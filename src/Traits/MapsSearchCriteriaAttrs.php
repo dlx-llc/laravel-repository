@@ -32,21 +32,21 @@ trait MapsSearchCriteriaAttrs
             return;
         }
 
-        if ($searchCriteria->textSearch) {
-            $attrs = $searchCriteria->textSearch->getAttrs();
+        if ($textSearch = $searchCriteria->getTextSearch()) {
+            $attrs = $textSearch->getAttrs();
 
             foreach ($attrs as $attr) {
                 $this->replaceAttrName($attr, $map);
             }
         }
 
-        if ($searchCriteria->sorting) {
-            $attr = $searchCriteria->sorting->getAttr();
+        if ($sorting = $searchCriteria->getSorting()) {
+            $attr = $sorting->getAttr();
             $this->replaceAttrName($attr, $map);
         }
 
-        if ($searchCriteria->filters) {
-            $this->mapFilterAttr($searchCriteria->filters, $map);
+        if ($filters = $searchCriteria->getFilters()) {
+            $this->mapFilterAttr($filters, $map);
         }
     }
 
