@@ -36,7 +36,7 @@ final class SearchCriteriaFactory
     }
 
     /**
-     * Crates a search criteria using parameters passed via request.
+     * Creates a new search criteria object using parameters passed via request.
      *
      * @param  string $textSearchKey
      * @param  string $sortingKey
@@ -44,7 +44,7 @@ final class SearchCriteriaFactory
      * @param  bool $validate
      * @return SearchCriteriaContract
      */
-    public static function makeFromRequest(
+    public static function createFromRequest(
         string $textSearchKey = 'search',
         string $sortingKey = 'sort',
         string $filtersKey = 'filters',
