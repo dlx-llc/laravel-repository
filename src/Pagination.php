@@ -37,7 +37,7 @@ class Pagination implements PaginationContract
     /** @inheritdoc */
     public function getPerPage(): int
     {
-        return $this->getPerPage();
+        return $this->perPage;
     }
 
     /** @inheritdoc */
