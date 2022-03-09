@@ -8,8 +8,8 @@ use Deluxetech\LaRepo\Contracts\DtoContract;
 use Deluxetech\LaRepo\SearchCriteriaFactory;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
-use Deluxetech\LaRepo\Contracts\RepositoryContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Contracts\ReadonlyRepositoryContract;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
@@ -23,14 +23,14 @@ trait FetchesRepositoryData
     /**
      * Fetches data collection from the given repository.
      *
-     * @param  RepositoryContract $repository
+     * @param  ReadonlyRepositoryContract $repository
      * @param  SearchCriteriaContract|null $searchCriteria
      * @param  PaginationContract|null $pagination
      * @param  string|null $dto
      * @return Paginator|Collection
      */
     public function getMany(
-        RepositoryContract $repository,
+        ReadonlyRepositoryContract $repository,
         ?SearchCriteriaContract $searchCriteria = null,
         ?PaginationContract $pagination = null,
         ?string $dto = null
@@ -57,12 +57,12 @@ trait FetchesRepositoryData
     /**
      * Fetches data collection from the given repository using request params.
      *
-     * @param  RepositoryContract $repository
+     * @param  ReadonlyRepositoryContract $repository
      * @param  string|null $dto
      * @return Paginator|Collection
      */
     public function getManyWithRequest(
-        RepositoryContract $repository,
+        ReadonlyRepositoryContract $repository,
         ?string $dto = null
     ): Paginator|Collection {
         return $this->getMany(
@@ -76,13 +76,13 @@ trait FetchesRepositoryData
     /**
      * Fetches a single data model from the given repository by ID.
      *
-     * @param  RepositoryContract $repository
+     * @param  ReadonlyRepositoryContract $repository
      * @param  int|string $id
      * @param  string|null $dto
      * @return mixed
      */
     public function getOneById(
-        RepositoryContract $repository,
+        ReadonlyRepositoryContract $repository,
         int|string $id,
         ?string $dto = null
     ): mixed {
@@ -97,13 +97,13 @@ trait FetchesRepositoryData
     /**
      * Fetches a single data model from the given repository.
      *
-     * @param  RepositoryContract $repository
+     * @param  ReadonlyRepositoryContract $repository
      * @param  SearchCriteriaContract|null $searchCriteria,
      * @param  string|null $dto
      * @return mixed
      */
     public function getFirst(
-        RepositoryContract $repository,
+        ReadonlyRepositoryContract $repository,
         ?SearchCriteriaContract $searchCriteria = null,
         ?string $dto = null
     ): mixed {
