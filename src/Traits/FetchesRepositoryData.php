@@ -3,7 +3,9 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Collection;
+use Deluxetech\LaRepo\PaginationFactory;
 use Deluxetech\LaRepo\Contracts\DtoContract;
+use Deluxetech\LaRepo\SearchCriteriaFactory;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
@@ -50,6 +52,25 @@ trait FetchesRepositoryData
         return !is_null($pagination)
             ? $repository->paginate($pagination)
             : $repository->get();
+    }
+
+    /**
+     * Fetches data collection from the given repository using request params.
+     *
+     * @param  RepositoryContract $repository
+     * @param  string|null $dto
+     * @return Paginator|Collection
+     */
+    public function getManyWithRequest(
+        RepositoryContract $repository,
+        ?string $dto = null
+    ): Paginator|Collection {
+        return $this->getMany(
+            repository: $repository,
+            searchCriteria: SearchCriteriaFactory::createFromRequest(),
+            pagination: PaginationFactory::createFromRequest(require: true),
+            dto: $dto
+        );
     }
 
     /**
