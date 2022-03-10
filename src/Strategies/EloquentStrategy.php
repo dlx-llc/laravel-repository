@@ -1,9 +1,11 @@
 <?php
 
-namespace Deluxetech\LaRepo\Drivers;
+namespace Deluxetech\LaRepo\Strategies;
 
 use Illuminate\Support\Collection;
+use Deluxetech\LaRepo\RepositoryUtils;
 use Illuminate\Support\LazyCollection;
+use Illuminate\Database\Eloquent\Model;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Filters\IsLikeFilter;
 use Deluxetech\LaRepo\Filters\IsNullFilter;
@@ -20,7 +22,6 @@ use Deluxetech\LaRepo\Filters\NotInRangeFilter;
 use Deluxetech\LaRepo\Contracts\SortingContract;
 use Deluxetech\LaRepo\Filters\NotEqualsToFilter;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
-use Deluxetech\LaRepo\Contracts\DbDriverContract;
 use Deluxetech\LaRepo\Filters\NotIncludedInFilter;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\TextSearchContract;
@@ -32,10 +33,18 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Filters\RelationDoesNotExistFilter;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
+use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-class EloquentDriver implements DbDriverContract
+class EloquentStrategy implements RepositoryStrategyContract
 {
+    /**
+     * The current query object.
+     *
+     * @var EloquentBuilder
+     */
+    protected EloquentBuilder $query;
+
     /**
      * Filter handlers.
      *
@@ -47,26 +56,26 @@ class EloquentDriver implements DbDriverContract
     ];
 
     /** @inheritdoc */
-    public static function make(object $dbContext): static
+    public function __construct(mixed $source)
     {
-        return new static($dbContext);
-    }
+        RepositoryUtils::checkClassExists($source);
+        RepositoryUtils::checkClassImplements($source, Model::class);
 
-    /**
-     * Creates an instance of this class.
-     *
-     * @param  EloquentBuilder $query
-     * @return void
-     */
-    public function __construct(protected EloquentBuilder $query)
-    {
-        //
+        $this->query = $source::query();
     }
 
     /** @inheritdoc */
     public function distinct(): static
     {
         $this->query->distinct();
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function reset(): static
+    {
+        $this->query = $this->query->getModel()->newQuery();
 
         return $this;
     }

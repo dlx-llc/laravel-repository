@@ -3,13 +3,14 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Collection;
+use Deluxetech\LaRepo\RepositoryUtils;
 use Deluxetech\LaRepo\PaginationFactory;
 use Deluxetech\LaRepo\Contracts\DtoContract;
 use Deluxetech\LaRepo\SearchCriteriaFactory;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
-use Deluxetech\LaRepo\Contracts\ReadonlyRepositoryContract;
+use Deluxetech\LaRepo\Contracts\ImmutableRepositoryContract;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
@@ -23,14 +24,14 @@ trait FetchesRepositoryData
     /**
      * Fetches data collection from the given repository.
      *
-     * @param  ReadonlyRepositoryContract $repository
+     * @param  ImmutableRepositoryContract $repository
      * @param  SearchCriteriaContract|null $searchCriteria
      * @param  PaginationContract|null $pagination
      * @param  string|null $dto
      * @return Paginator|Collection
      */
     public function getMany(
-        ReadonlyRepositoryContract $repository,
+        ImmutableRepositoryContract $repository,
         ?SearchCriteriaContract $searchCriteria = null,
         ?PaginationContract $pagination = null,
         ?string $dto = null
@@ -57,12 +58,12 @@ trait FetchesRepositoryData
     /**
      * Fetches data collection from the given repository using request params.
      *
-     * @param  ReadonlyRepositoryContract $repository
+     * @param  ImmutableRepositoryContract $repository
      * @param  string|null $dto
      * @return Paginator|Collection
      */
     public function getManyWithRequest(
-        ReadonlyRepositoryContract $repository,
+        ImmutableRepositoryContract $repository,
         ?string $dto = null
     ): Paginator|Collection {
         return $this->getMany(
@@ -76,13 +77,13 @@ trait FetchesRepositoryData
     /**
      * Fetches a single data model from the given repository by ID.
      *
-     * @param  ReadonlyRepositoryContract $repository
+     * @param  ImmutableRepositoryContract $repository
      * @param  int|string $id
      * @param  string|null $dto
      * @return mixed
      */
     public function getOneById(
-        ReadonlyRepositoryContract $repository,
+        ImmutableRepositoryContract $repository,
         int|string $id,
         ?string $dto = null
     ): mixed {
@@ -97,13 +98,13 @@ trait FetchesRepositoryData
     /**
      * Fetches a single data model from the given repository.
      *
-     * @param  ReadonlyRepositoryContract $repository
+     * @param  ImmutableRepositoryContract $repository
      * @param  SearchCriteriaContract|null $searchCriteria,
      * @param  string|null $dto
      * @return mixed
      */
     public function getFirst(
-        ReadonlyRepositoryContract $repository,
+        ImmutableRepositoryContract $repository,
         ?SearchCriteriaContract $searchCriteria = null,
         ?string $dto = null
     ): mixed {
@@ -128,11 +129,7 @@ trait FetchesRepositoryData
      */
     protected function validateDto(string $class): void
     {
-        if (!is_subclass_of($class, DtoContract::class)) {
-            throw new \Exception(__('lrepo::exceptions.does_not_implement', [
-                'class' => $class,
-                'interface' => DtoContract::class,
-            ]));
-        }
+        RepositoryUtils::checkClassExists($class);
+        RepositoryUtils::checkClassImplements($class, DtoContract::class);
     }
 }

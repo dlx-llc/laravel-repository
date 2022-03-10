@@ -4,7 +4,7 @@ namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
 
-class GenericRepository extends ReadonlyGenericRepository implements RepositoryContract
+abstract class Repository extends ImmutableRepository implements RepositoryContract
 {
     /** @inheritdoc */
     public function create(array $attributes): object

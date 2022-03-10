@@ -58,6 +58,13 @@ interface DataReaderContract
     public function search(SearchCriteriaContract $query): static;
 
     /**
+     * Resets the query object to its initial state.
+     *
+     * @return static
+     */
+    public function reset(): static;
+
+    /**
      * Fetches query results.
      *
      * @return Collection

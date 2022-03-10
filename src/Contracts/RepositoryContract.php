@@ -2,6 +2,6 @@
 
 namespace Deluxetech\LaRepo\Contracts;
 
-interface RepositoryContract extends ReadonlyRepositoryContract, DataManipulatorContract
+interface RepositoryContract extends ImmutableRepositoryContract, DataManipulatorContract
 {
 }

@@ -15,7 +15,7 @@ final class FilterFactory
      *
      * @var array
      */
-    private array $registry = [
+    public array $registry = [
         FilterMode::IS_LIKE => Filters\IsLikeFilter::class,
         FilterMode::IS_NOT_LIKE => Filters\IsNotLikeFilter::class,
         FilterMode::IS_GREATER => Filters\IsGreaterFilter::class,
@@ -59,8 +59,7 @@ final class FilterFactory
         mixed $value,
         string $operator = FilterOperator::AND
     ): FilterContract {
-        $factory = self::getInstance();
-        $filterClass = $factory->matchClass($mode);
+        $filterClass = self::getClass($mode);
 
         if (!$filterClass) {
             throw new \Exception(__('lrepo::exceptions.undefined_repo_filter_mode'));
@@ -80,8 +79,11 @@ final class FilterFactory
      */
     public static function register(string $mode, string $filterClass): void
     {
+        RepositoryUtils::checkClassExists($filterClass);
+        RepositoryUtils::checkClassImplements($filterClass, FilterContract::class);
+
         $factory = self::getInstance();
-        $factory->addToRegistry($mode, $filterClass);
+        $factory->registry[$mode] = $filterClass;
     }
 
     /**
@@ -92,9 +94,7 @@ final class FilterFactory
      */
     public static function modeRegistered(string $mode): bool
     {
-        $factory = self::getInstance();
-
-        return !is_null($factory->matchClass($mode));
+        return !is_null(self::getClass($mode));
     }
 
     /**
@@ -105,9 +105,7 @@ final class FilterFactory
      */
     public static function getClass(string $mode): ?string
     {
-        $factory = self::getInstance();
-
-        return $factory->matchClass($mode);
+        return self::getInstance()->registry[$mode] ?? null;
     }
 
     /**
@@ -119,8 +117,9 @@ final class FilterFactory
     public static function getMode(string $class): ?string
     {
         $factory = self::getInstance();
+        $mode = array_search($class, $factory->registry, true) ?: null;
 
-        return $factory->matchMode($class);
+        return $mode;
     }
 
     /**
@@ -145,47 +144,5 @@ final class FilterFactory
     private function __construct()
     {
         // Prevents instantiation outside the class.
-    }
-
-    /**
-     * Returns the matching filter class.
-     *
-     * @param  string $mode
-     * @return string|null
-     */
-    public function matchClass(string $mode): ?string
-    {
-        return $this->registry[$mode] ?? null;
-    }
-
-    /**
-     * Returns the matching filter mode.
-     *
-     * @param  string $class
-     * @return string|null
-     */
-    public function matchMode(string $class): ?string
-    {
-        return array_search($class, $this->registry, true) ?: null;
-    }
-
-    /**
-     * Adds/updates a filter mode to filter class pair in registry.
-     *
-     * @param  string $mode
-     * @param  string $filterClass
-     * @return void
-     * @throws \Exception
-     */
-    public function addToRegistry(string $mode, string $filterClass): void
-    {
-        if (!is_subclass_of($filterClass, FilterContract::class)) {
-            throw new \Exception(__('lrepo::exceptions.does_not_implement', [
-                'class' => $filterClass,
-                'interface' => FilterContract::class,
-            ]));
-        }
-
-        $this->registry[$mode] = $filterClass;
     }
 }

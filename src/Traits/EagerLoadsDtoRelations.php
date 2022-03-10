@@ -3,7 +3,7 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Deluxetech\LaRepo\Contracts\DtoContract;
-use Deluxetech\LaRepo\Contracts\ReadonlyRepositoryContract;
+use Deluxetech\LaRepo\Contracts\ImmutableRepositoryContract;
 
 /**
  * Contains methods that'll let you eager load relations and relation counts
@@ -14,11 +14,11 @@ trait EagerLoadsDtoRelations
     /**
      * Eager loads relations used by the data transfer object.
      *
-     * @param  ReadonlyRepositoryContract $repository
+     * @param  ImmutableRepositoryContract $repository
      * @param  string $dto
      * @return void
      */
-    protected function eagerLoadRelations(ReadonlyRepositoryContract $repository, string $dto): void
+    protected function eagerLoadRelations(ImmutableRepositoryContract $repository, string $dto): void
     {
         $eagerLoadArgs = $this->makeEagerLoadArgs($dto);
         $repository->with($eagerLoadArgs);

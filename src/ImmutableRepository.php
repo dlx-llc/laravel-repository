@@ -5,46 +5,51 @@ namespace Deluxetech\LaRepo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
-use Deluxetech\LaRepo\Contracts\DbDriverContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
-use Deluxetech\LaRepo\Contracts\ReadonlyRepositoryContract;
+use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
+use Deluxetech\LaRepo\Contracts\ImmutableRepositoryContract;
 
-class ReadonlyGenericRepository implements ReadonlyRepositoryContract
+abstract class ImmutableRepository implements ImmutableRepositoryContract
 {
     /**
-     * The database driver.
+     * The repository strategy.
      *
-     * @var DbDriverContract
+     * @var RepositoryStrategyContract
      */
-    protected DbDriverContract $db;
+    protected RepositoryStrategyContract $strategy;
 
     /**
-     * Creates a new instance of this class.
+     * Creates a strategy for the repository.
      *
-     * @param  mixed $dbContext
-     * @return static
+     * @return RepositoryStrategyContract
      */
-    public static function make(object $dbContext): static
-    {
-        return new static($dbContext);
-    }
+    abstract protected function createStrategy(): RepositoryStrategyContract;
 
     /**
-     * Constructor.
+     * Class constructor.
      *
-     * @param  object $dbContext
+     * @param  DomainMapper $domainMapper
      * @return void
      */
-    public function __construct(object $dbContext)
+    public function __construct(protected DomainMapper $domainMapper)
     {
-        $this->db = DbDriverFactory::create($dbContext);
+        $strategy = $this->createStrategy();
+        $this->setStrategy($strategy);
+    }
+
+    /** @inheritdoc */
+    public function setStrategy(RepositoryStrategyContract $strategy): static
+    {
+        $this->strategy = $strategy;
+
+        return $this;
     }
 
     /** @inheritdoc */
     public function select(string ...$attrs): static
     {
-        $this->db->select(...$attrs);
+        $this->strategy->select(...$attrs);
 
         return $this;
     }
@@ -52,7 +57,7 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     /** @inheritdoc */
     public function with(string|array $relations, \Closure $callback = null): static
     {
-        $this->db->with($relations, $callback);
+        $this->strategy->with($relations, $callback);
 
         return $this;
     }
@@ -60,7 +65,7 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     /** @inheritdoc */
     public function withCount(array $relations): static
     {
-        $this->db->withCount($relations);
+        $this->strategy->withCount($relations);
 
         return $this;
     }
@@ -68,7 +73,7 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     /** @inheritdoc */
     public function offset(int $offset): static
     {
-        $this->db->offset($offset);
+        $this->strategy->offset($offset);
 
         return $this;
     }
@@ -76,7 +81,7 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     /** @inheritdoc */
     public function limit(int $count): static
     {
-        $this->db->limit($count);
+        $this->strategy->limit($count);
 
         return $this;
     }
@@ -84,7 +89,15 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     /** @inheritdoc */
     public function search(SearchCriteriaContract $query): static
     {
-        $this->db->search($query);
+        $this->strategy->search($query);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function reset(): static
+    {
+        $this->strategy->reset();
 
         return $this;
     }
@@ -92,42 +105,42 @@ class ReadonlyGenericRepository implements ReadonlyRepositoryContract
     /** @inheritdoc */
     public function get(): Collection
     {
-        return $this->db->get();
+        return $this->strategy->get();
     }
 
     /** @inheritdoc */
     public function paginate(PaginationContract $pagination): Paginator
     {
-        return $this->db->paginate($pagination);
+        return $this->strategy->paginate($pagination);
     }
 
     /** @inheritdoc */
     public function cursor(): LazyCollection
     {
-        return $this->db->cursor();
+        return $this->strategy->cursor();
     }
 
     /** @inheritdoc */
     public function lazy(int $chunkSize = 1000): LazyCollection
     {
-        return $this->db->lazy();
+        return $this->strategy->lazy();
     }
 
     /** @inheritdoc */
     public function count(): int
     {
-        return $this->db->count();
+        return $this->strategy->count();
     }
 
     /** @inheritdoc */
     public function find(int|string $id): mixed
     {
-        return $this->db->find($id);
+        return $this->strategy->find($id);
     }
 
     /** @inheritdoc */
     public function first(): mixed
     {
-        return $this->db->first();
+        return $this->strategy->first();
     }
 }
