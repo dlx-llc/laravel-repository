@@ -121,17 +121,17 @@ class EloquentStrategy implements RepositoryStrategyContract
     }
 
     /** @inheritdoc */
-    public function search(SearchCriteriaContract $query): static
+    public function search(SearchCriteriaContract $criteria): static
     {
-        if ($textSearch = $query->getTextSearch()) {
+        if ($textSearch = $criteria->getTextSearch()) {
             $this->applyTextSearch($textSearch);
         }
 
-        if ($sorting = $query->getSorting()) {
+        if ($sorting = $criteria->getSorting()) {
             $this->applySorting($sorting);
         }
 
-        if ($filters = $query->getFilters()) {
+        if ($filters = $criteria->getFilters()) {
             $this->applyFilters($this->query, $filters);
         }
 

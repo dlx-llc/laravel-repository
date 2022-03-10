@@ -36,7 +36,7 @@ trait SupportsTextSearch
         }
 
         $params = [$params[0], ...$params[1]];
-        $this->textSearch = App::makeWith(TextSearchContract::class, $params);
+        $this->setTextSearch(App::makeWith(TextSearchContract::class, $params));
 
         return $this;
     }

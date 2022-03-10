@@ -19,7 +19,6 @@ use Deluxetech\LaRepo\Contracts\ImmutableRepositoryContract;
 trait FetchesRepositoryData
 {
     use EagerLoadsDtoRelations;
-    use MapsSearchCriteriaAttrs;
 
     /**
      * Fetches data collection from the given repository.
@@ -38,11 +37,7 @@ trait FetchesRepositoryData
     ): Paginator|Collection {
         if ($dto) {
             $this->validateDto($dto);
-
-            if ($searchCriteria) {
-                $this->mapSearchCriteriaAttrs($searchCriteria, $dto);
-            }
-
+            $repository->setDataMapper($dto::getDataMapper());
             $this->eagerLoadRelations($repository, $dto);
         }
 

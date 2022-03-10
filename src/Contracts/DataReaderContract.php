@@ -52,10 +52,10 @@ interface DataReaderContract
     /**
      * Applies the search criteria.
      *
-     * @param  SearchCriteriaContract $query
+     * @param  SearchCriteriaContract $criteria
      * @return static
      */
-    public function search(SearchCriteriaContract $query): static;
+    public function search(SearchCriteriaContract $criteria): static;
 
     /**
      * Resets the query object to its initial state.

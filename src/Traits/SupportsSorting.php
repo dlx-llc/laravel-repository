@@ -32,10 +32,12 @@ trait SupportsSorting
         }
 
         $attr = App::makeWith(DataAttrContract::class, ['name' => $params[0]]);
-        $this->sorting = App::makeWith(SortingContract::class, [
-            'attr' => $attr,
-            'dir' => $params[1],
-        ]);
+        $this->setSorting(
+            App::makeWith(SortingContract::class, [
+                'attr' => $attr,
+                'dir' => $params[1],
+            ])
+        );
 
         return $this;
     }

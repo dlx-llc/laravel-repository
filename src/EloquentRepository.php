@@ -10,8 +10,8 @@ class EloquentRepository extends Repository
     /** @inheritdoc */
     protected function createStrategy(): RepositoryStrategyContract
     {
-        $dataSource = $this->domainMapper->getDataSource();
+        $strategy = new EloquentStrategy($this->dataSource);
 
-        return new EloquentStrategy($dataSource);
+        return $strategy;
     }
 }

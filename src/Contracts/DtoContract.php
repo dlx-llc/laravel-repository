@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo\Contracts;
 
-use Deluxetech\LaRepo\Contracts\DtoAttrMapContract;
+use Deluxetech\LaRepo\Contracts\DataMapperContract;
 
 /**
  * Implement this interface in your data transfer objects, like resources in
@@ -13,11 +13,11 @@ use Deluxetech\LaRepo\Contracts\DtoAttrMapContract;
 interface DtoContract
 {
     /**
-     * Returns the data public attributes to the internal attributes map.
+     * Returns the data mapper.
      *
-     * @return DtoAttrMapContract|null
+     * @return DataMapperContract|null
      */
-    public static function attrMap(): ?DtoAttrMapContract;
+    public static function getDataMapper(): ?DataMapperContract;
 
     /**
      * Returns the relations that are used in the data transfer object.

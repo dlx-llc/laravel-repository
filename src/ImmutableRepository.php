@@ -5,6 +5,7 @@ namespace Deluxetech\LaRepo;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
+use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
@@ -20,6 +21,13 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     protected RepositoryStrategyContract $strategy;
 
     /**
+     * The data attributes mapper.
+     *
+     * @var DataMapperContract|null
+     */
+    protected ?DataMapperContract $dataMapper = null;
+
+    /**
      * Creates a strategy for the repository.
      *
      * @return RepositoryStrategyContract
@@ -29,10 +37,10 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     /**
      * Class constructor.
      *
-     * @param  DomainMapper $domainMapper
+     * @param  mixed $dataSource
      * @return void
      */
-    public function __construct(protected DomainMapper $domainMapper)
+    public function __construct(protected mixed $dataSource)
     {
         $strategy = $this->createStrategy();
         $this->setStrategy($strategy);
@@ -42,6 +50,14 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     public function setStrategy(RepositoryStrategyContract $strategy): static
     {
         $this->strategy = $strategy;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function setDataMapper(?DataMapperContract $dataMapper): static
+    {
+        $this->dataMapper = $dataMapper;
 
         return $this;
     }
@@ -87,9 +103,13 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     }
 
     /** @inheritdoc */
-    public function search(SearchCriteriaContract $query): static
+    public function search(SearchCriteriaContract $criteria): static
     {
-        $this->strategy->search($query);
+        if ($this->dataMapper) {
+            $this->dataMapper->applyOnSearchCriteria($criteria);
+        }
+
+        $this->strategy->search($criteria);
 
         return $this;
     }

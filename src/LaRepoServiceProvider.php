@@ -5,7 +5,7 @@ namespace Deluxetech\LaRepo;
 use Illuminate\Support\ServiceProvider;
 use Deluxetech\LaRepo\Contracts\SortingContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
-use Deluxetech\LaRepo\Contracts\DtoAttrMapContract;
+use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\TextSearchContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
@@ -35,7 +35,7 @@ class LaRepoServiceProvider extends ServiceProvider
         $this->app->singleton(FiltersCollectionFormatterContract::class, FiltersCollectionFormatter::class);
 
         $this->app->bind(DataAttrContract::class, DataAttr::class);
-        $this->app->bind(DtoAttrMapContract::class, DtoAttrMap::class);
+        $this->app->bind(DataMapperContract::class, DataMapper::class);
         $this->app->bind(SortingContract::class, Sorting::class);
         $this->app->bind(PaginationContract::class, Pagination::class);
         $this->app->bind(SearchCriteriaContract::class, SearchCriteria::class);

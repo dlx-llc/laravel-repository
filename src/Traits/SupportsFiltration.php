@@ -28,20 +28,21 @@ trait SupportsFiltration
     /** @inheritdoc */
     public function setFiltersRaw(string $rawStr): static
     {
-        $filters = App::make(FiltersCollectionFormatterContract::class)->parse($rawStr);
+        $dataArr = App::make(FiltersCollectionFormatterContract::class)->parse($rawStr);
 
-        if (!$filters) {
+        if (!$dataArr) {
             throw new \Exception(__('lrepo::exceptions.invalid_filtration_string'));
         }
 
-        $this->filters = App::makeWith(FiltersCollectionContract::class);
+        $filters = App::makeWith(FiltersCollectionContract::class);
 
-        foreach ($filters as $filter) {
-            $filter = $this->createFilter($filter);
-            $this->filters->add($filter);
+        foreach ($dataArr as $filterData) {
+            $filter = $this->createFilter($filterData);
+            $filters->add($filter);
         }
 
-        App::make(FilterOptimizerContract::class)->optimize($this->filters);
+        App::make(FilterOptimizerContract::class)->optimize($filters);
+        $this->setFilters($filters);
 
         return $this;
     }
