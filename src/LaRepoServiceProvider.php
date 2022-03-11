@@ -26,6 +26,8 @@ class LaRepoServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        $this->mergeConfigFrom(__DIR__ . '/../config/larepo.php', 'larepo');
+
         $this->app->singleton(FilterOptimizerContract::class, FilterOptimizer::class);
         $this->app->singleton(SortingFormatterContract::class, SortingFormatter::class);
         $this->app->singleton(TextSearchFormatterContract::class, TextSearchFormatter::class);
@@ -53,6 +55,10 @@ class LaRepoServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'lrepo');
+        $this->loadTranslationsFrom(__DIR__ . '/../lang', 'larepo');
+
+        $this->publishes([
+            __DIR__ . '/../config/larepo.php' => config_path('larepo.php')
+        ], 'larepo-config');
     }
 }

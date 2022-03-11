@@ -23,16 +23,16 @@ class RepositorySorting implements Rule
     public function passes($attribute, $value)
     {
         if (!is_string($value)) {
-            $this->errors[] = __('lrepo::validation.string', compact('attribute'));
+            $this->errors[] = __('larepo::validation.string', compact('attribute'));
         } elseif ($params = App::make(SortingFormatterContract::class)->parse($value)) {
             if (strlen($params[0]) > 255) {
-                $this->errors[] = __('lrepo::validation.max.string', [
+                $this->errors[] = __('larepo::validation.max.string', [
                     'attribute' => "{$attribute}.attr",
                     'max' => 255,
                 ]);
             }
         } else {
-            $this->errors[] = __('lrepo::validation.repository_sort', compact('attribute'));
+            $this->errors[] = __('larepo::validation.repository_sort', compact('attribute'));
         }
 
         return empty($this->errors);

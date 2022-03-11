@@ -14,7 +14,7 @@ class RepositoryUtils
     public static function checkClassExists(string $class): void
     {
         if (!class_exists($class, false)) {
-            $msg = __('lrepo::exceptions.class_not_defined', compact('class'));
+            $msg = __('larepo::exceptions.class_not_defined', compact('class'));
 
             throw new \Exception($msg);
         }
@@ -31,7 +31,7 @@ class RepositoryUtils
     public static function checkClassImplements(string $class, string $interface): void
     {
         if (!is_subclass_of($class, $interface)) {
-            $msg = __('lrepo::exceptions.does_not_implement', compact('class', 'interface'));
+            $msg = __('larepo::exceptions.does_not_implement', compact('class', 'interface'));
 
             throw new \Exception($msg);
         }

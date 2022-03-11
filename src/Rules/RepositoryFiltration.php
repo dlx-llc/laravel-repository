@@ -24,15 +24,15 @@ class RepositoryFiltration implements Rule
     public function passes($attribute, $value)
     {
         if (!is_string($value)) {
-            $this->errors[] = __('lrepo::validation.string', compact('attribute'));
+            $this->errors[] = __('larepo::validation.string', compact('attribute'));
         } elseif (empty($value)) {
-            $this->errors[] = __('lrepo::validation.required', compact('attribute'));
+            $this->errors[] = __('larepo::validation.required', compact('attribute'));
         } elseif ($value = App::make(FiltersCollectionFormatterContract::class)->parse($value)) {
             $validator = new Validator();
             $validator->validateFiltersCollection($attribute, $value);
             $this->errors[] = [...$this->errors, $validator->getErrors()];
         } else {
-            $this->errors[] = __('lrepo::validation.json', compact('attribute'));
+            $this->errors[] = __('larepo::validation.json', compact('attribute'));
         }
 
         return empty($this->errors);

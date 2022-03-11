@@ -48,7 +48,7 @@ class Validator
             $params = ['attribute' => $params];
         }
 
-        $transKey = 'lrepo::validation.' . $transKey;
+        $transKey = 'larepo::validation.' . $transKey;
         $this->errors[] = __($transKey, $params);
     }
 

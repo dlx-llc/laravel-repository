@@ -3,6 +3,7 @@
 namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Deluxetech\LaRepo\Rules\RepositorySorting;
@@ -38,23 +39,27 @@ final class SearchCriteriaFactory
     /**
      * Creates a new search criteria object using parameters passed via request.
      *
-     * @param  string $textSearchKey
-     * @param  string $sortingKey
-     * @param  string $filtersKey
      * @param  bool $validate
+     * @param  string|null $textSearchKey
+     * @param  string|null $sortingKey
+     * @param  string|null $filtersKey
      * @return SearchCriteriaContract
      */
     public static function createFromRequest(
-        string $textSearchKey = 'search',
-        string $sortingKey = 'sort',
-        string $filtersKey = 'filters',
-        bool $validate = true
+        bool $validate = true,
+        ?string $textSearchKey = null,
+        ?string $sortingKey = null,
+        ?string $filtersKey = null
     ): SearchCriteriaContract {
         $textSearch = Request::input($textSearchKey);
         $sorting = Request::input($sortingKey);
         $filters = Request::input($filtersKey);
 
         if ($validate) {
+            $textSearchKey ??= Config::get('larepo.request_text_search_key');
+            $sortingKey ??= Config::get('larepo.request_sorting_key');
+            $filtersKey ??= Config::get('larepo.request_filters_key');
+
             self::validate(
                 $textSearch,
                 $sorting,
@@ -71,6 +76,9 @@ final class SearchCriteriaFactory
     /**
      * Validates search criteria params.
      *
+     * @param  string $textSearchKey
+     * @param  string $sortingKey
+     * @param  string $filtersKey
      * @param  string|null $textSearch
      * @param  string|null $sorting
      * @param  string|null $filters
@@ -78,12 +86,12 @@ final class SearchCriteriaFactory
      * @throws ValidationException
      */
     protected static function validate(
+        string $textSearchKey,
+        string $sortingKey,
+        string $filtersKey,
         ?string $textSearch = null,
         ?string $sorting = null,
-        ?string $filters = null,
-        string $textSearchKey = 'search',
-        string $sortingKey = 'sort',
-        string $filtersKey = 'filters'
+        ?string $filters = null
     ): void {
         $data = $rules = [];
 

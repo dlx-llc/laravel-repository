@@ -7,7 +7,7 @@ return [
     'db_context_not_supported' => ':type DB context class isn\'t supported!',
     'class_not_defined' => ':class class is not defined!',
     'does_not_implement' => ':class does not implement the :interface interface!',
-    'invalid_filtration_string' => 'Invalid filtration string!',
+    'invalid_filters_string' => 'Invalid filters string!',
     'invalid_sorting_string' => 'Invalid sorting string!',
     'invalid_text_search_string' => 'Invalid text search string!',
 ];

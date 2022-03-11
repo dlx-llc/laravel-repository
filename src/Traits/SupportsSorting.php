@@ -28,7 +28,7 @@ trait SupportsSorting
         $params = App::make(SortingFormatterContract::class)->parse($rawStr);
 
         if (!$params) {
-            throw new \Exception(__('lrepo::exceptions.invalid_sorting_string'));
+            throw new \Exception(__('larepo::exceptions.invalid_sorting_string'));
         }
 
         $attr = App::makeWith(DataAttrContract::class, ['name' => $params[0]]);

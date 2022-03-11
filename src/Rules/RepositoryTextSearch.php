@@ -23,12 +23,12 @@ class RepositoryTextSearch implements Rule
     public function passes($attribute, $value)
     {
         if (!is_string($value)) {
-            $this->errors[] = __('lrepo::validation.string', ['attribute' => $attribute]);
+            $this->errors[] = __('larepo::validation.string', ['attribute' => $attribute]);
         } elseif ($params = App::make(TextSearchFormatterContract::class)->parse($value)) {
             $this->validateText($params[0], $attribute);
             $this->validateAttrs($params[1], $attribute);
         } else {
-            $this->errors[] = __('lrepo::validation.repository_search', compact('attribute'));
+            $this->errors[] = __('larepo::validation.repository_search', compact('attribute'));
         }
 
         return empty($this->errors);
@@ -58,7 +58,7 @@ class RepositoryTextSearch implements Rule
     protected function validateText(string $text, string $attribute): void
     {
         if (strlen($text) > 255) {
-            $this->errors[] = __('lrepo::validation.max.string', [
+            $this->errors[] = __('larepo::validation.max.string', [
                 'attribute' => "{$attribute}.text",
                 'max' => 255,
             ]);
@@ -76,7 +76,7 @@ class RepositoryTextSearch implements Rule
     {
         foreach ($attrs as $i => $attr) {
             if (strlen($attr) > 255) {
-                $this->errors[] = __('lrepo::validation.max.string', [
+                $this->errors[] = __('larepo::validation.max.string', [
                     'attribute' => "{$attribute}.attrs.{$i}",
                     'max' => 255,
                 ]);

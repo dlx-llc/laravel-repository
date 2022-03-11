@@ -31,7 +31,7 @@ trait SupportsFiltration
         $dataArr = App::make(FiltersCollectionFormatterContract::class)->parse($rawStr);
 
         if (!$dataArr) {
-            throw new \Exception(__('lrepo::exceptions.invalid_filtration_string'));
+            throw new \Exception(__('larepo::exceptions.invalid_filters_string'));
         }
 
         $filters = App::makeWith(FiltersCollectionContract::class);

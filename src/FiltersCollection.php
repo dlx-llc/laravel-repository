@@ -138,9 +138,9 @@ class FiltersCollection implements FiltersCollectionContract
         if (is_null($offset)) {
             $this->items[] = $value;
         } elseif (!is_int($offset)) {
-            throw new \Exception(__('lrepo::exceptions.illegal_filters_collection_offset'));
+            throw new \Exception(__('larepo::exceptions.illegal_filters_collection_offset'));
         } elseif (!is_object($value) || !is_a($value, FilterContract::class) && !is_a($value, static::class)) {
-            throw new \Exception(__('lrepo::exceptions.illegal_filters_collection_item'));
+            throw new \Exception(__('larepo::exceptions.illegal_filters_collection_item'));
         } else {
             $this->items[$offset] = $value;
         }

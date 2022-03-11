@@ -28,7 +28,7 @@ trait SupportsTextSearch
         $params = App::make(TextSearchFormatterContract::class)->parse($rawStr);
 
         if (!$params) {
-            throw new \Exception(__('lrepo::exceptions.invalid_text_search_string'));
+            throw new \Exception(__('larepo::exceptions.invalid_text_search_string'));
         }
 
         foreach ($params[1] as $i => $attr) {
