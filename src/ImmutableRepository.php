@@ -38,10 +38,9 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     /**
      * Class constructor.
      *
-     * @param  mixed $dataSource
      * @return void
      */
-    public function __construct(protected mixed $dataSource)
+    public function __construct()
     {
         $strategy = $this->createStrategy();
         $this->setStrategy($strategy);
