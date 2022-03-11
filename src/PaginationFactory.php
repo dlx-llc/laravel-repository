@@ -5,20 +5,19 @@ namespace Deluxetech\LaRepo;
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
-use Deluxetech\LaRepo\Rules\RepositoryPagination;
+use Illuminate\Validation\ValidationException;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
-use Deluxetech\LaRepo\Contracts\PaginationFormatterContract;
 
 final class PaginationFactory
 {
     /**
      * Creates a new pagination object.
      *
-     * @param  int $perPage
      * @param  int $page
+     * @param  int $perPage
      * @return PaginationContract
      */
-    public static function create(int $perPage, int $page): PaginationContract
+    public static function create(int $page, int $perPage): PaginationContract
     {
         return App::makeWith(PaginationContract::class, [
             'perPage' => $perPage,
@@ -29,64 +28,64 @@ final class PaginationFactory
     /**
      * Crates a new pagination object using parameters passed via request.
      *
-     * @param  string $key
+     * @param  string $pageKey
+     * @param  string $perPageKey
      * @param  bool $validate
      * @param  bool $require
      * @return PaginationContract|null
      */
     public static function createFromRequest(
-        string $key = 'pagination',
+        string $pageKey = 'page',
+        string $perPageKey = 'perPage',
         bool $validate = true,
         bool $require = true
     ): ?PaginationContract {
-        $pagination = Request::input($key);
+        $page = Request::input('page');
+        $perPage = Request::input('perPage', 15);
 
-        if (!$require && !$pagination) {
+        if (!$require && !$page) {
             return null;
         } elseif ($validate) {
-            self::validate($pagination, $key, $require);
+            self::validate($pageKey, $perPageKey, $page, $perPage, $require);
         }
 
-        return self::createRaw($pagination);
-    }
-
-    /**
-     * Creates a new instance of this class from a raw pagination string.
-     *
-     * @param  string $rawStr
-     * @return PaginationContract
-     * @throws \Exception
-     */
-    public static function createRaw(string $rawStr): PaginationContract
-    {
-        $params = App::make(PaginationFormatterContract::class)->parse($rawStr);
-
-        if (!$params) {
-            throw new \Exception(__('lrepo::exceptions.invalid_pagination_string'));
-        }
-
-        return self::create($params[1], $params[0]);
+        return self::create($perPage, $page);
     }
 
     /**
      * Validates pagination params.
      *
-     * @param  ?string $data
-     * @param  string $key
+     * @param  string $pageKey
+     * @param  string $perPageKey
+     * @param  ?int $page
+     * @param  int $perPage
      * @return void
      * @throws ValidationException
      */
     protected static function validate(
-        ?string $data,
-        string $key = 'pagination',
+        string $pageKey,
+        string $perPageKey,
+        ?int $page,
+        int $perPage,
         bool $require = true
     ): void {
-        if (!$require && is_null($data)) {
+        if (!$require && is_null($page)) {
             return;
         }
 
-        $rules = $require ? ['required'] : [];
-        $rules[] = new RepositoryPagination();
-        Validator::make([$key => $data], [$key => $rules])->validate();
+        $pageRules = ['integer', 'min:1'];
+        $perPageRules = ['integer', 'min:1', 'max:1000'];
+
+        if ($require) {
+            $pageRules[] = ['required'];
+        }
+
+        Validator::make([
+            $pageKey => $page,
+            $perPageKey => $perPage,
+        ], [
+            $pageKey => $pageRules,
+            $perPageKey => $perPageRules,
+        ])->validate();
     }
 }

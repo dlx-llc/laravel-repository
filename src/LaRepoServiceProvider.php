@@ -12,9 +12,7 @@ use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Rules\Formatters\SortingFormatter;
 use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
-use Deluxetech\LaRepo\Rules\Formatters\PaginationFormatter;
 use Deluxetech\LaRepo\Rules\Formatters\TextSearchFormatter;
-use Deluxetech\LaRepo\Contracts\PaginationFormatterContract;
 use Deluxetech\LaRepo\Contracts\TextSearchFormatterContract;
 use Deluxetech\LaRepo\Rules\Formatters\FiltersCollectionFormatter;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
@@ -30,7 +28,6 @@ class LaRepoServiceProvider extends ServiceProvider
     {
         $this->app->singleton(FilterOptimizerContract::class, FilterOptimizer::class);
         $this->app->singleton(SortingFormatterContract::class, SortingFormatter::class);
-        $this->app->singleton(PaginationFormatterContract::class, PaginationFormatter::class);
         $this->app->singleton(TextSearchFormatterContract::class, TextSearchFormatter::class);
         $this->app->singleton(FiltersCollectionFormatterContract::class, FiltersCollectionFormatter::class);
 
