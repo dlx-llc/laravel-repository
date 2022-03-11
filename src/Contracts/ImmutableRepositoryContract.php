@@ -19,4 +19,13 @@ interface ImmutableRepositoryContract extends DataReaderContract
      * @return static
      */
     public function setDataMapper(?DataMapperContract $dataMapper): static;
+
+    /**
+     * Applies the load context. Specifies the source data attributes,
+     * relations and relation counts that should be loaded.
+     *
+     * @param  LoadContextContract $context
+     * @return static
+     */
+    public function setLoadContext(LoadContextContract $context): static;
 }

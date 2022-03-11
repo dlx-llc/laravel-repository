@@ -3,42 +3,44 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Collection;
-use Deluxetech\LaRepo\RepositoryUtils;
 use Deluxetech\LaRepo\PaginationFactory;
-use Deluxetech\LaRepo\Contracts\DtoContract;
 use Deluxetech\LaRepo\SearchCriteriaFactory;
 use Illuminate\Contracts\Pagination\Paginator;
+use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\LoadContextContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Contracts\ImmutableRepositoryContract;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
- * applying search criteria, pagination, and relationships eager loading.
+ * applying search criteria, pagination, data mapping and load context.
  */
 trait FetchesRepositoryData
 {
-    use EagerLoadsDtoRelations;
-
     /**
      * Fetches data collection from the given repository.
      *
      * @param  ImmutableRepositoryContract $repository
      * @param  SearchCriteriaContract|null $searchCriteria
      * @param  PaginationContract|null $pagination
-     * @param  string|null $dto
+     * @param  DataMapperContract|null $dataMapper
+     * @param  LoadContextContract|null $loadContext
      * @return Paginator|Collection
      */
     public function getMany(
         ImmutableRepositoryContract $repository,
         ?SearchCriteriaContract $searchCriteria = null,
         ?PaginationContract $pagination = null,
-        ?string $dto = null
+        ?DataMapperContract $dataMapper = null,
+        ?LoadContextContract $loadContext = null
     ): Paginator|Collection {
-        if ($dto) {
-            $this->validateDto($dto);
-            $repository->setDataMapper($dto::getDataMapper());
-            $this->eagerLoadRelations($repository, $dto);
+        if ($dataMapper) {
+            $repository->setDataMapper($dataMapper);
+        }
+
+        if ($loadContext) {
+            $repository->setLoadContext($loadContext);
         }
 
         if ($searchCriteria) {
@@ -54,18 +56,21 @@ trait FetchesRepositoryData
      * Fetches data collection from the given repository using request params.
      *
      * @param  ImmutableRepositoryContract $repository
-     * @param  string|null $dto
+     * @param  DataMapperContract|null $dataMapper
+     * @param  LoadContextContract|null $loadContext
      * @return Paginator|Collection
      */
     public function getManyWithRequest(
         ImmutableRepositoryContract $repository,
-        ?string $dto = null
+        ?DataMapperContract $dataMapper = null,
+        ?LoadContextContract $loadContext = null
     ): Paginator|Collection {
         return $this->getMany(
             repository: $repository,
             searchCriteria: SearchCriteriaFactory::createFromRequest(),
             pagination: PaginationFactory::createFromRequest(require: true),
-            dto: $dto
+            dataMapper: $dataMapper,
+            loadContext: $loadContext
         );
     }
 
@@ -74,17 +79,22 @@ trait FetchesRepositoryData
      *
      * @param  ImmutableRepositoryContract $repository
      * @param  int|string $id
-     * @param  string|null $dto
+     * @param  DataMapperContract|null $dataMapper
+     * @param  LoadContextContract|null $loadContext
      * @return mixed
      */
     public function getOneById(
         ImmutableRepositoryContract $repository,
         int|string $id,
-        ?string $dto = null
+        ?DataMapperContract $dataMapper = null,
+        ?LoadContextContract $loadContext = null
     ): mixed {
-        if ($dto) {
-            $this->validateDto($dto);
-            $this->eagerLoadRelations($repository, $dto);
+        if ($dataMapper) {
+            $repository->setDataMapper($dataMapper);
+        }
+
+        if ($loadContext) {
+            $repository->setLoadContext($loadContext);
         }
 
         return $repository->find($id);
@@ -95,17 +105,22 @@ trait FetchesRepositoryData
      *
      * @param  ImmutableRepositoryContract $repository
      * @param  SearchCriteriaContract|null $searchCriteria,
-     * @param  string|null $dto
+     * @param  DataMapperContract|null $dataMapper
+     * @param  LoadContextContract|null $loadContext
      * @return mixed
      */
     public function getFirst(
         ImmutableRepositoryContract $repository,
         ?SearchCriteriaContract $searchCriteria = null,
-        ?string $dto = null
+        ?DataMapperContract $dataMapper = null,
+        ?LoadContextContract $loadContext = null
     ): mixed {
-        if ($dto) {
-            $this->validateDto($dto);
-            $this->eagerLoadRelations($repository, $dto);
+        if ($dataMapper) {
+            $repository->setDataMapper($dataMapper);
+        }
+
+        if ($loadContext) {
+            $repository->setLoadContext($loadContext);
         }
 
         if ($searchCriteria) {
@@ -113,18 +128,5 @@ trait FetchesRepositoryData
         }
 
         return $repository->first();
-    }
-
-    /**
-     * Checks if the given class implements DTO interface.
-     *
-     * @param  string $class
-     * @return void
-     * @throws \Exception
-     */
-    protected function validateDto(string $class): void
-    {
-        RepositoryUtils::checkClassExists($class);
-        RepositoryUtils::checkClassImplements($class, DtoContract::class);
     }
 }

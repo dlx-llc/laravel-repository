@@ -7,6 +7,7 @@ use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\LoadContextContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
 use Deluxetech\LaRepo\Contracts\ImmutableRepositoryContract;
@@ -58,6 +59,14 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     public function setDataMapper(?DataMapperContract $dataMapper): static
     {
         $this->dataMapper = $dataMapper;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function setLoadContext(LoadContextContract $context): static
+    {
+        $this->applyLoadContext($this->strategy, $context);
 
         return $this;
     }
@@ -162,5 +171,35 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     public function first(): mixed
     {
         return $this->strategy->first();
+    }
+
+    /**
+     * Recursively loads the required relations.
+     *
+     * @param  mixed $query
+     * @param  LoadContextContract $context
+     * @return void
+     */
+    protected function applyLoadContext(mixed $query, LoadContextContract $context): void
+    {
+        if ($attrs = $context->getAttributes()) {
+            $query->select(...$attrs);
+        }
+
+        foreach ($context->getRelations() as $key => $value) {
+            if (is_int($key)) {
+                $query->with($value);
+            } elseif (is_string($key)) {
+                if (is_subclass_of($value, LoadContextContract::class)) {
+                    $query->with($key, function ($query) use ($value) {
+                        $this->applyLoadContext($query, $value);
+                    });
+                }
+            }
+        }
+
+        if ($counts = $context->getRelationCounts()) {
+            $query->withCount($counts);
+        }
     }
 }
