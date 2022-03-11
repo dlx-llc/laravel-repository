@@ -1,5 +1,8 @@
 # Laravel Repository
 
+[![Laravel Version](https://img.shields.io/badge/Laravel-7.x%2F8.x%2F9.x-blue)](https://laravel.com/)
+[![Latest Stable Version](http://poser.pugx.org/deluxetech/laravel-repository/v)](https://packagist.org/packages/deluxetech/laravel-repository) [![Total Downloads](http://poser.pugx.org/deluxetech/laravel-repository/downloads)](https://packagist.org/packages/deluxetech/laravel-repository) [![Latest Unstable Version](http://poser.pugx.org/deluxetech/laravel-repository/v/unstable)](https://packagist.org/packages/deluxetech/laravel-repository) [![License](http://poser.pugx.org/deluxetech/laravel-repository/license)](https://packagist.org/packages/deluxetech/laravel-repository) [![PHP Version Require](http://poser.pugx.org/deluxetech/laravel-repository/require/php)](https://packagist.org/packages/deluxetech/laravel-repository)
+
 Repository design pattern implementation for Laravel framework.
 
 ## Installation
@@ -16,31 +19,62 @@ This package uses auto-discovery for its service provider. However, if you have 
 Deluxetech\LaRepo\LaRepoServiceProvider::class
 ```
 
-### Versioning
+This package has its own exception and validation error message translations. You can override them by following the steps described in the <a href="https://laravel.com/docs/9.x/localization#overriding-package-language-files" target="_blank">Laravel documentation</a>.
+
+There are also configurations that you might need to replace with your own. In that case, you can publish configurations using the following command:
+
+```
+php artisan vendor:publish --tag=larepo-config
+```
+
+## Versioning
 
 This package was built to use with the latest version of Laravel, but it should work fine with versions >= 7.x.
 
 ## Usage
 
-1) First of all, you should implement Deluxetech\LaRepo\Contracts\DtoContract interface in your data transfer objects (DTO) (e.g. Laravel resources). By carefully defining all relations and relation counts used by DTOs, you can be sure that all the necessary relationships will be eagerly loaded with data later.
+You can extend \Deluxetech\LaRepo\ImmutableRepository for data read only or \Deluxetech\LaRepo\Repository for data full access. You'll only need to define the abstract createStrategy() method.
 
 ```php
-class JsonResource implements \Deluxetech\LaRepo\Contracts\DtoContract
+class UserRepository extends Repository
+{
+    ...
+    /** @inheritdoc */
+    protected function createStrategy(): RepositoryStrategyContract
+    {
+        $strategy = new EloquentStrategy(User::class);
+
+        return $strategy;
+    }
+    ...
+}
 ```
 
-2) Next, you'll need to use Deluxetech\LaRepo\Traits\FetchesRepositoryData trait in controller classes. Or you can simply use it in your base Controller class.
+For simple cases when there's no much to do within the repository, you can use the generic \Deluxetech\LaRepo\EloquentRepository repository by passing the Laravel model name into the class constructor.
 
 ```php
-use \Deluxetech\LaRepo\Traits\FetchesRepositoryData;
+$userRepository = new EloquentRepository(User::class);
 ```
 
-3) Then, you'll be able to fetch data like in the example below:
+There's also a Deluxetech\LaRepo\Traits\FetchesRepositoryData trait, which you can use in your controller classes. It will provide you with a group of methods that will save you time writing some repetitive code.
 
 ```php
-$records = $this->getMany(
-    repository: ReadonlyGenericRepository::make(User::query()),
-    searchCriteria: SearchCriteriaFactory::createFromRequest(),
-    pagination: PaginationFactory::createFromRequest(require: true),
-    dto: UserResource::class
-);
+class UserController
+{
+    use FetchesRepositoryData;
+
+    protected $userRepo;
+
+    public function __construct(UserRepository $userRepo)
+    {
+        $this->userRepo = $userRepo;
+    }
+
+    ...
+    public function index()
+    {
+        return $this->getManyWithRequest($this->userRepo);
+    }
+    ...
+}
 ```
