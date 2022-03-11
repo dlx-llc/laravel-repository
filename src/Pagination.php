@@ -6,16 +6,12 @@ use Deluxetech\LaRepo\Contracts\PaginationContract;
 
 class Pagination implements PaginationContract
 {
-    /**
-     * Constructor.
-     *
-     * @param  int $perPage
-     * @param  int $page
-     * @return void
-     */
+    /** @inheritdoc */
     public function __construct(
-        public int $perPage,
-        public int $page
+        protected int $perPage,
+        protected int $page,
+        protected string $perPageName,
+        protected string $pageName
     ) {
         //
     }
@@ -35,6 +31,20 @@ class Pagination implements PaginationContract
     }
 
     /** @inheritdoc */
+    public function getPageName(): string
+    {
+        return $this->pageName;
+    }
+
+    /** @inheritdoc */
+    public function setPageName(string $name): static
+    {
+        $this->pageName = $name;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
     public function getPerPage(): int
     {
         return $this->perPage;
@@ -44,6 +54,20 @@ class Pagination implements PaginationContract
     public function setPerPage(int $perPage): static
     {
         $this->perPage = $perPage;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function getPerPageName(): string
+    {
+        return $this->perPageName;
+    }
+
+    /** @inheritdoc */
+    public function setPerPageName(string $name): static
+    {
+        $this->perPageName = $name;
 
         return $this;
     }

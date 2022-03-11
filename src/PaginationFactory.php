@@ -16,13 +16,24 @@ final class PaginationFactory
      *
      * @param  int $page
      * @param  int $perPage
+     * @param  string|null $pageName
+     * @param  string|null $perPageName
      * @return PaginationContract
      */
-    public static function create(int $page, int $perPage): PaginationContract
-    {
+    public static function create(
+        int $page,
+        int $perPage,
+        ?string $pageName = null,
+        ?string $perPageName = null
+    ): PaginationContract {
+        $pageName ??= Config::get('larepo.request_page_key');
+        $perPageName ??= Config::get('larepo.request_per_page_key');
+
         return App::makeWith(PaginationContract::class, [
             'perPage' => $perPage,
             'page' => $page,
+            'perPageName' => $perPageName,
+            'pageName' => $pageName,
         ]);
     }
 
@@ -31,45 +42,45 @@ final class PaginationFactory
      *
      * @param  bool $validate
      * @param  bool $require
-     * @param  string|null $pageKey
-     * @param  string|null $perPageKey
+     * @param  string|null $pageName
+     * @param  string|null $perPageName
      * @return PaginationContract|null
      */
     public static function createFromRequest(
         bool $validate = true,
         bool $require = true,
-        ?string $pageKey = null,
-        ?string $perPageKey = null
+        ?string $pageName = null,
+        ?string $perPageName = null
     ): ?PaginationContract {
         $page = Request::input('page');
-        $pageKey ??= Config::get('larepo.request_page_key');
+        $pageName ??= Config::get('larepo.request_page_key');
 
         $perPageDefault = Config::get('larepo.per_page_default');
         $perPage = Request::input('perPage', $perPageDefault);
-        $perPageKey ??= Config::get('larepo.request_per_page_key');
+        $perPageName ??= Config::get('larepo.request_per_page_key');
 
         if (!$require && !$page) {
             return null;
         } elseif ($validate) {
-            self::validate($pageKey, $perPageKey, $page, $perPage, $require);
+            self::validate($pageName, $perPageName, $page, $perPage, $require);
         }
 
-        return self::create($perPage, $page);
+        return self::create($perPage, $page, $perPageName, $pageName);
     }
 
     /**
      * Validates pagination params.
      *
-     * @param  string $pageKey
-     * @param  string $perPageKey
+     * @param  string $pageName
+     * @param  string $perPageName
      * @param  int|null $page
      * @param  int $perPage
      * @return void
      * @throws ValidationException
      */
     protected static function validate(
-        string $pageKey,
-        string $perPageKey,
+        string $pageName,
+        string $perPageName,
         ?int $page,
         int $perPage,
         bool $require = true
@@ -87,11 +98,11 @@ final class PaginationFactory
         }
 
         Validator::make([
-            $pageKey => $page,
-            $perPageKey => $perPage,
+            $pageName => $page,
+            $perPageName => $perPage,
         ], [
-            $pageKey => $pageRules,
-            $perPageKey => $perPageRules,
+            $pageName => $pageRules,
+            $perPageName => $perPageRules,
         ])->validate();
     }
 }

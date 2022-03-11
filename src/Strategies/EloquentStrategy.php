@@ -150,11 +150,20 @@ class EloquentStrategy implements RepositoryStrategyContract
     public function paginate(PaginationContract $pagination): Paginator
     {
         QueryHelper::instance()->preventAmbiguousQuery($this->query);
+        $page = $pagination->getPage();
+        $pageName = $pagination->getPageName();
+        $perPage = $pagination->getPerPage();
+        $perPageName = $pagination->getPerPageName();
 
-        return $this->query->paginate(
-            perPage: $pagination->getPerPage(),
-            page: $pagination->getPage()
+        $result = $this->query->paginate(
+            pageName: $pageName,
+            perPage: $perPage,
+            page: $page
         );
+
+        $result->appends($perPageName, $perPage);
+
+        return $result;
     }
 
     /** @inheritdoc */
