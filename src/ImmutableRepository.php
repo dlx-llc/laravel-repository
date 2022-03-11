@@ -193,6 +193,8 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
                     $query->with($key, function ($query) use ($value) {
                         $this->applyLoadContext($query, $value);
                     });
+                } else {
+                    $query->with($key);
                 }
             }
         }
