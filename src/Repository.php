@@ -9,18 +9,18 @@ abstract class Repository extends ImmutableRepository implements RepositoryContr
     /** @inheritdoc */
     public function create(array $attributes): object
     {
-        return $this->db->create($attributes);
+        return $this->strategy->create($attributes);
     }
 
     /** @inheritdoc */
     public function update(object $model, array $attributes): void
     {
-        $this->db->update($model, $attributes);
+        $this->strategy->update($model, $attributes);
     }
 
     /** @inheritdoc */
     public function delete(object $model): void
     {
-        $this->db->delete($model);
+        $this->strategy->delete($model);
     }
 }
