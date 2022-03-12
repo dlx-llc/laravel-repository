@@ -16,8 +16,8 @@
         }
     ],
     "require": {
-        "php": "7.4 - 8.x",
-        "laravel/framework": "7.0 - 9.x",
+        "php": "7.4 - 8",
+        "laravel/framework": "7.0 - 9",
         "reedware/laravel-relation-joins": "^3.0"
     },
     "require-dev": {
