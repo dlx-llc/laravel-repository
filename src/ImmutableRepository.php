@@ -7,7 +7,6 @@ use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
-use Deluxetech\LaRepo\Contracts\LoadContextContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
 use Deluxetech\LaRepo\Contracts\ImmutableRepositoryContract;
@@ -58,38 +57,6 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     public function setDataMapper(?DataMapperContract $dataMapper): static
     {
         $this->dataMapper = $dataMapper;
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function setLoadContext(LoadContextContract $context): static
-    {
-        $this->applyLoadContext($this->strategy, $context);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function select(string ...$attrs): static
-    {
-        $this->strategy->select(...$attrs);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function with(string|array $relations, \Closure $callback = null): static
-    {
-        $this->strategy->with($relations, $callback);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function withCount(array $relations): static
-    {
-        $this->strategy->withCount($relations);
 
         return $this;
     }
@@ -161,46 +128,14 @@ abstract class ImmutableRepository implements ImmutableRepositoryContract
     }
 
     /** @inheritdoc */
-    public function find(int|string $id): mixed
+    public function find(int|string $id): object
     {
         return $this->strategy->find($id);
     }
 
     /** @inheritdoc */
-    public function first(): mixed
+    public function first(): object
     {
         return $this->strategy->first();
-    }
-
-    /**
-     * Recursively loads the required relations.
-     *
-     * @param  mixed $query
-     * @param  LoadContextContract $context
-     * @return void
-     */
-    protected function applyLoadContext(mixed $query, LoadContextContract $context): void
-    {
-        if ($attrs = $context->getAttributes()) {
-            $query->select(...$attrs);
-        }
-
-        foreach ($context->getRelations() as $key => $value) {
-            if (is_int($key)) {
-                $query->with($value);
-            } elseif (is_string($key)) {
-                if (is_subclass_of($value, LoadContextContract::class)) {
-                    $query->with($key, function ($query) use ($value) {
-                        $this->applyLoadContext($query, $value);
-                    });
-                } else {
-                    $query->with($key);
-                }
-            }
-        }
-
-        if ($counts = $context->getRelationCounts()) {
-            $query->withCount($counts);
-        }
     }
 }

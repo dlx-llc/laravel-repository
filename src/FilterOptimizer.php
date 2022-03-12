@@ -13,7 +13,7 @@ use Deluxetech\LaRepo\Filters\RelationDoesNotExistFilter;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
- * @todo test and fix if needed
+ * @todo Remove filter optimizer and create an eloquent query optimizer instead.
  */
 class FilterOptimizer implements FilterOptimizerContract
 {

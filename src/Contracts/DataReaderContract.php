@@ -9,31 +9,6 @@ use Illuminate\Contracts\Pagination\Paginator;
 interface DataReaderContract
 {
     /**
-     * Specifies data attributes that should be fetched.
-     *
-     * @param  string ...$attrs
-     * @return static
-     */
-    public function select(string ...$attrs): static;
-
-    /**
-     * Specifies relationships that should be eager loaded with result(s).
-     *
-     * @param  string|array $relations
-     * @param  \Closure|null $callback
-     * @return static
-     */
-    public function with(string|array $relations, \Closure $callback = null): static;
-
-    /**
-     * Specifies relationship counts that should be loaded with result(s).
-     *
-     * @param  array $relations
-     * @return static
-     */
-    public function withCount(array $relations): static;
-
-    /**
      * Specifies the number of results that should be skipped.
      *
      * @param  int $count
@@ -105,14 +80,14 @@ interface DataReaderContract
      * Fetches a single record by ID.
      *
      * @param  int|string $id
-     * @return mixed
+     * @return object
      */
-    public function find(int|string $id): mixed;
+    public function find(int|string $id): object;
 
     /**
      * Fetches the first matching record.
      *
-     * @return mixed
+     * @return object
      */
-    public function first(): mixed;
+    public function first(): object;
 }

@@ -65,6 +65,12 @@ class EloquentStrategy implements RepositoryStrategyContract
     }
 
     /** @inheritdoc */
+    public function getQuery(): EloquentBuilder
+    {
+        return $this->query;
+    }
+
+    /** @inheritdoc */
     public function distinct(): static
     {
         $this->query->distinct();
@@ -84,22 +90,6 @@ class EloquentStrategy implements RepositoryStrategyContract
     public function select(string ...$attrs): static
     {
         $this->query->select($attrs);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function with(string|array $relations, \Closure $callback = null): static
-    {
-        $this->query->with($relations, $callback);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function withCount(array $relations): static
-    {
-        $this->query->withCount($relations);
 
         return $this;
     }
@@ -141,26 +131,18 @@ class EloquentStrategy implements RepositoryStrategyContract
     /** @inheritdoc */
     public function get(): Collection
     {
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
-
-        return $this->query->get();
+        return $this->fetch('get');
     }
 
     /** @inheritdoc */
     public function paginate(PaginationContract $pagination): Paginator
     {
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
         $page = $pagination->getPage();
         $pageName = $pagination->getPageName();
         $perPage = $pagination->getPerPage();
         $perPageName = $pagination->getPerPageName();
 
-        $result = $this->query->paginate(
-            pageName: $pageName,
-            perPage: $perPage,
-            page: $page
-        );
-
+        $result = $this->fetch('paginate', $perPage, ['*'], $pageName, $page);
         $result->appends($perPageName, $perPage);
 
         return $result;
@@ -169,41 +151,31 @@ class EloquentStrategy implements RepositoryStrategyContract
     /** @inheritdoc */
     public function cursor(): LazyCollection
     {
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
-
-        return $this->query->cursor();
+        return $this->fetch('cursor');
     }
 
     /** @inheritdoc */
     public function lazy(int $chunkSize = 1000): LazyCollection
     {
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
-
-        return $this->query->lazy($chunkSize);
+        return $this->fetch('lazy', $chunkSize);
     }
 
     /** @inheritdoc */
     public function count(): int
     {
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
-
-        return $this->query->count();
+        return $this->fetch('count');
     }
 
     /** @inheritdoc */
-    public function find(int|string $id): mixed
+    public function find(int|string $id): object
     {
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
-
-        return $this->query->find($id);
+        return $this->fetch('find', $id);
     }
 
     /** @inheritdoc */
-    public function first(): mixed
+    public function first(): object
     {
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
-
-        return $this->query->first();
+        return $this->fetch('first');
     }
 
     /** @inheritdoc */
@@ -224,6 +196,20 @@ class EloquentStrategy implements RepositoryStrategyContract
     public function delete(object $model): void
     {
         $model->delete();
+    }
+
+    /**
+     * Fetches data from the current query with the given method.
+     *
+     * @param  string $method
+     * @param  mixed ...$args
+     * @return mixed
+     */
+    protected function fetch(string $method, mixed ...$args): mixed
+    {
+        QueryHelper::instance()->preventAmbiguousQuery($this->query);
+
+        return $this->query->{$method}(...$args);
     }
 
     /**

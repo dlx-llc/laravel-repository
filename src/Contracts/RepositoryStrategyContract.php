@@ -14,6 +14,13 @@ interface RepositoryStrategyContract extends DataReaderContract, DataManipulator
     public function __construct(mixed $source);
 
     /**
+     * Returns the current query object.
+     *
+     * @return object
+     */
+    public function getQuery(): object;
+
+    /**
      * Specifies that duplicate records should be excluded.
      *
      * @return static
