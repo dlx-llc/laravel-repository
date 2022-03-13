@@ -37,15 +37,15 @@ interface LoadContextContract
     /**
      * Specifies the relation counts that should be loaded.
      *
-     * @param  array $counts
+     * @param  string ...$counts
      * @return static
      */
-    public function setRelationCounts(array $counts): static;
+    public function setRelationCounts(string ...$counts): static;
 
     /**
      * Returns the relation counts that should be loaded.
      *
-     * @return array
+     * @return array<string>
      */
     public function getRelationCounts(): array;
 }

@@ -50,7 +50,7 @@ class LoadContext implements LoadContextContract
     }
 
     /** @inheritdoc */
-    public function setRelationCounts(array $counts): static
+    public function setRelationCounts(string ...$counts): static
     {
         $this->relationCounts = $counts;
 

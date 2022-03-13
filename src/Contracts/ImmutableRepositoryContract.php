@@ -28,4 +28,13 @@ interface ImmutableRepositoryContract extends DataReaderContract
      * @return static
      */
     public function setLoadContext(LoadContextContract $context): static;
+
+    /**
+     * Loads missing parameters in the record in accordance with the load context.
+     *
+     * @param  object $record
+     * @param  LoadContextContract $context
+     * @return void
+     */
+    public function loadMissing(object $record, LoadContextContract $context): void;
 }
