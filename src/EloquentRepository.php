@@ -92,9 +92,9 @@ abstract class EloquentRepository extends Repository
      * Returns the relation count resolver callable.
      *
      * @param  string $relation
-     * @return callable
+     * @return callable|null
      */
-    final protected function getRelationCountResolver(string $relation): callable
+    final protected function getRelationCountResolver(string $relation): ?callable
     {
         return $this->relationCountResolvers[$relation] ?? null;
     }
