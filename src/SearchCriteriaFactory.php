@@ -51,22 +51,22 @@ final class SearchCriteriaFactory
         ?string $sortingKey = null,
         ?string $filtersKey = null
     ): SearchCriteriaContract {
+        $textSearchKey ??= Config::get('larepo.request_text_search_key');
+        $sortingKey ??= Config::get('larepo.request_sorting_key');
+        $filtersKey ??= Config::get('larepo.request_filters_key');
+
         $textSearch = Request::input($textSearchKey);
         $sorting = Request::input($sortingKey);
         $filters = Request::input($filtersKey);
 
         if ($validate) {
-            $textSearchKey ??= Config::get('larepo.request_text_search_key');
-            $sortingKey ??= Config::get('larepo.request_sorting_key');
-            $filtersKey ??= Config::get('larepo.request_filters_key');
-
             self::validate(
-                $textSearch,
-                $sorting,
-                $filters,
                 $textSearchKey,
                 $sortingKey,
-                $filtersKey
+                $filtersKey,
+                $textSearch,
+                $sorting,
+                $filters
             );
         }
 
