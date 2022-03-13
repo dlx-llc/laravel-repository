@@ -8,10 +8,10 @@ class Pagination implements PaginationContract
 {
     /** @inheritdoc */
     public function __construct(
-        protected int $perPage,
         protected int $page,
-        protected string $perPageName,
-        protected string $pageName
+        protected int $perPage,
+        protected string $pageName,
+        protected string $perPageName
     ) {
         //
     }

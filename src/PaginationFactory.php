@@ -30,10 +30,10 @@ final class PaginationFactory
         $perPageName ??= Config::get('larepo.request_per_page_key');
 
         return App::makeWith(PaginationContract::class, [
-            'perPage' => $perPage,
             'page' => $page,
-            'perPageName' => $perPageName,
+            'perPage' => $perPage,
             'pageName' => $pageName,
+            'perPageName' => $perPageName,
         ]);
     }
 
@@ -52,12 +52,12 @@ final class PaginationFactory
         ?string $pageName = null,
         ?string $perPageName = null
     ): ?PaginationContract {
-        $page = Request::input('page');
         $pageName ??= Config::get('larepo.request_page_key');
+        $page = Request::input($pageName);
 
-        $perPageDefault = Config::get('larepo.per_page_default');
-        $perPage = Request::input('perPage', $perPageDefault);
         $perPageName ??= Config::get('larepo.request_per_page_key');
+        $perPageDefault = Config::get('larepo.per_page_default');
+        $perPage = Request::input($perPageName, $perPageDefault);
 
         if (!$require && !$page) {
             return null;
@@ -65,7 +65,7 @@ final class PaginationFactory
             self::validate($pageName, $perPageName, $page, $perPage, $require);
         }
 
-        return self::create($perPage, $page, $perPageName, $pageName);
+        return self::create($page, $perPage, $pageName, $perPageName);
     }
 
     /**
