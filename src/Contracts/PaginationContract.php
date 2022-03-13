@@ -7,17 +7,17 @@ interface PaginationContract
     /**
      * Class constructor.
      *
-     * @param  int $perPage
      * @param  int $page
-     * @param  string $perPageName,
+     * @param  int $perPage
      * @param  string $pageName
+     * @param  string $perPageName
      * @return void
      */
     public function __construct(
-        int $perPage,
         int $page,
-        string $perPageName,
-        string $pageName
+        int $perPage,
+        string $pageName,
+        string $perPageName
     );
 
     /**
