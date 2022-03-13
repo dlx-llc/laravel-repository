@@ -208,8 +208,10 @@ class EloquentStrategy implements RepositoryStrategyContract
     protected function fetch(string $method, mixed ...$args): mixed
     {
         QueryHelper::instance()->preventAmbiguousQuery($this->query);
+        $result = $this->query->{$method}(...$args);
+        $this->reset();
 
-        return $this->query->{$method}(...$args);
+        return $result;
     }
 
     /**
