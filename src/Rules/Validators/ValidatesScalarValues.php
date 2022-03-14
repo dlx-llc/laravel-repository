@@ -71,7 +71,7 @@ trait ValidatesScalarValues
             }
         }
 
-        return count($this->errors) > $errCountBefore;
+        return count($this->errors) <= $errCountBefore;
     }
 
     /**
@@ -103,7 +103,7 @@ trait ValidatesScalarValues
             }
         }
 
-        return count($this->errors) > $errCountBefore;
+        return count($this->errors) <= $errCountBefore;
     }
 
     /**

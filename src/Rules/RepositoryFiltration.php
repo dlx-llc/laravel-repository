@@ -30,7 +30,7 @@ class RepositoryFiltration implements Rule
         } elseif ($value = App::make(FiltersCollectionFormatterContract::class)->parse($value)) {
             $validator = new Validator();
             $validator->validateFiltersCollection($attribute, $value);
-            $this->errors[] = [...$this->errors, $validator->getErrors()];
+            $this->errors = [...$this->errors, ...$validator->getErrors()];
         } else {
             $this->errors[] = __('larepo::validation.json', compact('attribute'));
         }

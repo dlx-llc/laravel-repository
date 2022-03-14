@@ -294,7 +294,7 @@ class EloquentStrategy implements RepositoryStrategyContract
         QueryBuilder|EloquentBuilder $query,
         FilterContract $filter
     ): void {
-        if ($handler = $this->filterHandlers[get_class($filter)]) {
+        if ($handler = $this->filterHandlers[get_class($filter)] ?? false) {
             $this->{$handler}($query, $filter);
 
             return;

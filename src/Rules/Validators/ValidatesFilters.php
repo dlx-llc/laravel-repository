@@ -36,7 +36,7 @@ trait ValidatesFilters
             }
         }
 
-        return count($this->errors) > $errCountBefore;
+        return count($this->errors) <= $errCountBefore;
     }
 
     /**
@@ -71,7 +71,7 @@ trait ValidatesFilters
             }
         }
 
-        return count($this->errors) > $errCountBefore;
+        return count($this->errors) <= $errCountBefore;
     }
 
 
