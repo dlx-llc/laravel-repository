@@ -10,6 +10,7 @@ use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\TextSearchContract;
 use Deluxetech\LaRepo\Contracts\LoadContextContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
+use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
 use Deluxetech\LaRepo\Rules\Formatters\SortingFormatter;
 use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
