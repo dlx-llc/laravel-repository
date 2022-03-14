@@ -79,6 +79,86 @@ class EloquentStrategy implements RepositoryStrategyContract
     }
 
     /** @inheritdoc */
+    public function where(string $attr, mixed $operator, mixed $value = null): static
+    {
+        $this->query->where($attr, $operator, $value);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhere(string $attr, mixed $operator, mixed $value = null): static
+    {
+        $this->query->orWhere($attr, $operator, $value);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function whereNull(string $attr): static
+    {
+        $this->query->whereNull($attr);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhereNull(string $attr): static
+    {
+        $this->query->orWhereNull($attr);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function whereNotNull(string $attr): static
+    {
+        $this->query->whereNotNull($attr);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhereNotNull(string $attr): static
+    {
+        $this->query->orWhereNotNull($attr);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function whereIn(string $attr, array $values): static
+    {
+        $this->query->whereIn($attr, $values);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhereIn(string $attr, array $values): static
+    {
+        $this->query->orWhereIn($attr, $values);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function whereNotIn(string $attr, array $values): static
+    {
+        $this->query->whereNotIn($attr, $values);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhereNotIn(string $attr, array $values): static
+    {
+        $this->query->orWhereNotIn($attr, $values);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
     public function reset(): static
     {
         $this->query = $this->query->getModel()->newQuery();
