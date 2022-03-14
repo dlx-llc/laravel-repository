@@ -192,20 +192,19 @@ abstract class EloquentRepository extends Repository
         } elseif ($record->relationLoaded($relation)) {
             $this->loadMissing($record->{$relation}, $loadContext);
         } else {
-            $record->load([
-                $relation => function ($query) use ($loadContext) {
-                    if ($attrs = $loadContext->getAttributes()) {
-                        $query->select($attrs);
-                    }
+            $query = $record->{$relation}();
 
-                    if ($counts = $loadContext->getRelationCounts()) {
-                        $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
-                        $query->withCount($counts);
-                    }
-                }
-            ]);
+            if ($attrs = $loadContext->getAttributes()) {
+                $query->select($attrs);
+            }
 
-            $relationRecord = $record->{$relation};
+            if ($counts = $loadContext->getRelationCounts()) {
+                $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
+                $query->withCount($counts);
+            }
+
+            $relationRecord = $query->getResults();
+            $record->setRelation($relation, $relationRecord);
             $subRelations = $loadContext->getRelations();
 
             if ($relationRecord && $subRelations) {
