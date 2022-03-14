@@ -58,17 +58,19 @@ trait FetchesRepositoryData
      * @param  ImmutableRepositoryContract $repository
      * @param  DataMapperContract|null $dataMapper
      * @param  LoadContextContract|null $loadContext
+     * @param  bool $pageRequired  TRUE by default.
      * @return Paginator|Collection
      */
     public function getManyWithRequest(
         ImmutableRepositoryContract $repository,
         ?DataMapperContract $dataMapper = null,
-        ?LoadContextContract $loadContext = null
+        ?LoadContextContract $loadContext = null,
+        bool $pageRequired = true
     ): Paginator|Collection {
         return $this->getMany(
             repository: $repository,
             searchCriteria: SearchCriteriaFactory::createFromRequest(),
-            pagination: PaginationFactory::createFromRequest(require: true),
+            pagination: PaginationFactory::createFromRequest(require: $pageRequired),
             dataMapper: $dataMapper,
             loadContext: $loadContext
         );
