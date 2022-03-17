@@ -1,6 +1,6 @@
 <?php
 
-namespace Deluxetech\LaRepo\Strategies;
+namespace Deluxetech\LaRepo\Eloquent;
 
 use Illuminate\Database\Query\JoinClause;
 use Illuminate\Database\Query\Builder as QueryBuilder;

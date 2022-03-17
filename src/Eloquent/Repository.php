@@ -1,10 +1,10 @@
 <?php
 
-namespace Deluxetech\LaRepo;
+namespace Deluxetech\LaRepo\Eloquent;
 
 use Deluxetech\LaRepo\Contracts\DataManipulatorContract;
 
-abstract class EloquentRepository extends EloquentReaderRepository implements DataManipulatorContract
+abstract class Repository extends ReadonlyRepository implements DataManipulatorContract
 {
     /** @inheritdoc */
     public function create(array $attributes): object
