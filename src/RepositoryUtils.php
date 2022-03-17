@@ -13,7 +13,7 @@ class RepositoryUtils
      */
     public static function checkClassExists(string $class): void
     {
-        if (!class_exists($class, false)) {
+        if (!class_exists($class, true)) {
             $msg = __('larepo::exceptions.class_not_defined', compact('class'));
 
             throw new \Exception($msg);
