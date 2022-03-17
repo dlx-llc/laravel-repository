@@ -36,6 +36,7 @@ class DataAttr implements DataAttrContract
             $this->relation = substr($name, 0, $lastDotPos);
             $this->name = substr($name, $lastDotPos + 1);
         } else {
+            $this->relation = null;
             $this->name = $name;
         }
     }
