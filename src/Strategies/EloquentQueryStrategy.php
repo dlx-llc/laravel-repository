@@ -33,10 +33,12 @@ use Illuminate\Database\Query\Builder as QueryBuilder;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Filters\RelationDoesNotExistFilter;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
-use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-class EloquentStrategy implements RepositoryStrategyContract
+/**
+ * Implements methods from DataReaderContract interface.
+ */
+trait EloquentQueryStrategy
 {
     /**
      * The current query object.
@@ -54,125 +56,6 @@ class EloquentStrategy implements RepositoryStrategyContract
         RelationExistsFilter::class => 'applyRelationExistsFilter',
         RelationDoesNotExistFilter::class => 'applyRelationDoesNotExistFilter',
     ];
-
-    /** @inheritdoc */
-    public function __construct(mixed $source)
-    {
-        RepositoryUtils::checkClassExists($source);
-        RepositoryUtils::checkClassImplements($source, Model::class);
-
-        $this->query = $source::query();
-    }
-
-    /** @inheritdoc */
-    public function getQuery(): EloquentBuilder
-    {
-        return $this->query;
-    }
-
-    /** @inheritdoc */
-    public function distinct(): static
-    {
-        $this->query->distinct();
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function where(string $attr, mixed $operator, mixed $value = null): static
-    {
-        $this->query->where($attr, $operator, $value);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function orWhere(string $attr, mixed $operator, mixed $value = null): static
-    {
-        $this->query->orWhere($attr, $operator, $value);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function whereNull(string $attr): static
-    {
-        $this->query->whereNull($attr);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function orWhereNull(string $attr): static
-    {
-        $this->query->orWhereNull($attr);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function whereNotNull(string $attr): static
-    {
-        $this->query->whereNotNull($attr);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function orWhereNotNull(string $attr): static
-    {
-        $this->query->orWhereNotNull($attr);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function whereIn(string $attr, array $values): static
-    {
-        $this->query->whereIn($attr, $values);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function orWhereIn(string $attr, array $values): static
-    {
-        $this->query->orWhereIn($attr, $values);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function whereNotIn(string $attr, array $values): static
-    {
-        $this->query->whereNotIn($attr, $values);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function orWhereNotIn(string $attr, array $values): static
-    {
-        $this->query->orWhereNotIn($attr, $values);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function reset(): static
-    {
-        $this->query = $this->query->getModel()->newQuery();
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function select(string ...$attrs): static
-    {
-        $this->query->select($attrs);
-
-        return $this;
-    }
 
     /** @inheritdoc */
     public function offset(int $offset): static
@@ -204,6 +87,14 @@ class EloquentStrategy implements RepositoryStrategyContract
         if ($filters = $criteria->getFilters()) {
             $this->applyFilters($this->query, $filters);
         }
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function reset(): static
+    {
+        $this->query = $this->query->getModel()->newQuery();
 
         return $this;
     }
@@ -258,24 +149,18 @@ class EloquentStrategy implements RepositoryStrategyContract
         return $this->fetch('first');
     }
 
-    /** @inheritdoc */
-    public function create(array $attributes): object
+    /**
+     * Initializes the query object from the given eloquent model.
+     *
+     * @param  string $model
+     * @return void
+     */
+    protected function initQuery(string $model): void
     {
-        $model = $this->query->getModel();
+        RepositoryUtils::checkClassExists($model);
+        RepositoryUtils::checkClassImplements($model, Model::class);
 
-        return $model->create($attributes);
-    }
-
-    /** @inheritdoc */
-    public function update(object $model, array $attributes): void
-    {
-        $model->update($attributes);
-    }
-
-    /** @inheritdoc */
-    public function delete(object $model): void
-    {
-        $model->delete();
+        $this->query = $model::query();
     }
 
     /**

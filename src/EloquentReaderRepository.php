@@ -3,17 +3,13 @@
 namespace Deluxetech\LaRepo;
 
 use Illuminate\Database\Eloquent\Model;
-use Deluxetech\LaRepo\Strategies\EloquentStrategy;
+use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\LoadContextContract;
+use Deluxetech\LaRepo\Strategies\EloquentQueryStrategy;
 
-abstract class ImmutableEloquentRepository extends ImmutableRepository
+abstract class EloquentReaderRepository implements DataReaderContract
 {
-    /**
-     * The eloquent model class.
-     *
-     * @var string
-     */
-    protected string $model;
+    use EloquentQueryStrategy;
 
     /**
      * Relation resolvers map.
@@ -29,12 +25,21 @@ abstract class ImmutableEloquentRepository extends ImmutableRepository
      */
     private array $relationCountResolvers = [];
 
-    /** @inheritdoc */
-    protected function createStrategy(): EloquentStrategy
-    {
-        $strategy = new EloquentStrategy($this->model);
+    /**
+     * Returns the eloquent model class name.
+     *
+     * @return string
+     */
+    abstract public function getModel(): string;
 
-        return $strategy;
+    /**
+     * Class constructor.
+     *
+     * @return void
+     */
+    public function __construct()
+    {
+        $this->initQuery($this->getModel());
     }
 
     /** @inheritdoc */
@@ -162,7 +167,7 @@ abstract class ImmutableEloquentRepository extends ImmutableRepository
         foreach ($relations as $key => $value) {
             $relation = is_int($key) ? $value : $key;
 
-            $resolver = is_a($record, $this->model)
+            $resolver = is_a($record, $this->getModel())
                 ? $this->getRelationResolver($relation)
                 : [$this, 'loadMissingRelation'];
 
@@ -230,7 +235,7 @@ abstract class ImmutableEloquentRepository extends ImmutableRepository
 
         foreach ($counts as $relation) {
             $countAttr = $relation . 'Count';
-            $resolver = is_a($record, $this->model)
+            $resolver = is_a($record, $this->getModel())
                 ? $this->getRelationCountResolver($relation)
                 : null;
 
