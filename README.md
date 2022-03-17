@@ -33,32 +33,34 @@ This package was built to use with the latest version of Laravel, but it should 
 
 ## Usage
 
-You can extend \Deluxetech\LaRepo\ImmutableRepository for data read only or \Deluxetech\LaRepo\Repository for data full access. You'll only need to define the abstract createStrategy() method.
+You can extend \Deluxetech\LaRepo\Eloquent\ReadonlyRepository for data read only or \Deluxetech\LaRepo\Eloquent\Repository for data full access. You'll only need to define the abstract getModel() method.
 
 ```php
+use Deluxetech\LaRepo\Eloquent\Repository;
+
 class UserRepository extends Repository
 {
-    ...
     /** @inheritdoc */
-    protected function createStrategy(): RepositoryStrategyContract
+    protected function getModel(): string
     {
-        $strategy = new EloquentStrategy(User::class);
-
-        return $strategy;
+        return User::class;
     }
-    ...
 }
 ```
 
-For simple cases when there's no much to do within the repository, you can use the generic \Deluxetech\LaRepo\EloquentRepository repository by passing the Laravel model name into the class constructor.
+For simple cases when there's no much to do within the repository, you can use the generic \Deluxetech\LaRepo\Eloquent\GenericRepository repository by passing the Laravel model name into the class constructor.
 
 ```php
-$userRepository = new EloquentRepository(User::class);
+use Deluxetech\LaRepo\Eloquent\GenericRepository;
+
+$userRepository = new GenericRepository(User::class);
 ```
 
 There's also a Deluxetech\LaRepo\Traits\FetchesRepositoryData trait, which you can use in your controller classes. It will provide you with a group of methods that will save you time writing some repetitive code.
 
 ```php
+use Deluxetech\LaRepo\Traits\FetchesRepositoryData;
+
 class UserController
 {
     use FetchesRepositoryData;
@@ -70,11 +72,9 @@ class UserController
         $this->userRepo = $userRepo;
     }
 
-    ...
     public function index()
     {
         return $this->getManyWithRequest($this->userRepo);
     }
-    ...
 }
 ```
