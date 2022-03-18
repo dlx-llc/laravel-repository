@@ -7,10 +7,10 @@ interface DataAttrContract
     /**
      * Class constructor.
      *
-     * @param  string $name
+     * @param  string ...$segments
      * @return void
      */
-    public function __construct(string $name);
+    public function __construct(string ...$segments);
 
     /**
      * Converts the object to string.
@@ -20,31 +20,45 @@ interface DataAttrContract
     public function __toString(): string;
 
     /**
+     * Indicates whether or not the attribute name is segmented.
+     *
+     * @return bool
+     */
+    public function isSegmented(): bool;
+
+    /**
      * Sets the attribute name.
      *
-     * @param  string $name
+     * @param  string ...$segments
      * @return void
      */
-    public function setName(string $name): void;
+    public function setName(string ...$segments): void;
 
     /**
-     * Returns the attribute's relation.
-     *
-     * @return string|null
-     */
-    public function getRelation(): ?string;
-
-    /**
-     * Returns the attribute name without the relation name.
+     * Returns the attribute name with all segments combined.
      *
      * @return string
      */
     public function getName(): string;
 
     /**
-     * Returns the attribute name including the relation name.
+     * Returns the attribute name segments.
+     *
+     * @return array<string>
+     */
+    public function getNameSegmented(): array;
+
+    /**
+     * Returns only the last segment of the attribute.
      *
      * @return string
      */
-    public function getNameWithRelation(): string;
+    public function getNameLastSegment(): string;
+
+    /**
+     * Returns the attribute name without the last segment.
+     *
+     * @return string
+     */
+    public function getNameExceptLastSegment(): string;
 }

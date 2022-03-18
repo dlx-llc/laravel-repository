@@ -29,7 +29,7 @@ class TextSearchFormatter implements TextSearchFormatterContract
         $attrs = $textSearch->getAttrs();
 
         foreach ($attrs as $i => $attr) {
-            $attrs[$i] = $attr->getNameWithRelation();
+            $attrs[$i] = $attr->getName();
         }
 
         $attrs = join(',', $attrs);

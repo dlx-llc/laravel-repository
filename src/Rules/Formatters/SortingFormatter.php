@@ -27,7 +27,7 @@ class SortingFormatter implements SortingFormatterContract
     /** @inheritdoc */
     public function stringify(SortingContract $sorting): string
     {
-        $attr = $sorting->getAttr()->getNameWithRelation();
+        $attr = $sorting->getAttr()->getName();
         $dir = $sorting->getDir();
 
         return "$attr,$dir";

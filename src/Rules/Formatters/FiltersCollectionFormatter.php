@@ -60,7 +60,7 @@ class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
 
         return json_encode([
             'operator' => $filter->getOperator(),
-            'attr' => $filter->getAttr()->getNameWithRelation(),
+            'attr' => $filter->getAttr()->getName(),
             'mode' => FilterFactory::getMode(get_class($filter)),
             'value' => $value,
         ]) ?: '';

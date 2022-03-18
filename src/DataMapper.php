@@ -111,7 +111,7 @@ class DataMapper implements DataMapperContract
      */
     protected function replaceDataAttrName(DataAttr $attr): void
     {
-        $attrName = $attr->getNameWithRelation();
+        $attrName = $attr->getName();
         $attrName = $this->get($attrName);
         $attr->setName($attrName);
     }

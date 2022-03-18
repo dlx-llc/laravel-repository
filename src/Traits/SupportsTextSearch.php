@@ -32,7 +32,7 @@ trait SupportsTextSearch
         }
 
         foreach ($params[1] as $i => $attr) {
-            $params[1][$i] = App::makeWith(DataAttrContract::class, ['name' => $attr]);
+            $params[1][$i] = App::makeWith(DataAttrContract::class, [$attr]);
         }
 
         $params = [$params[0], ...$params[1]];

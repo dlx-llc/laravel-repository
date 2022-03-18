@@ -7,6 +7,23 @@ use Deluxetech\LaRepo\Contracts\DataAttrContract;
 class DataAttr implements DataAttrContract
 {
     /**
+     * The data attribute segments delimiter.
+     *
+     * @var string
+     */
+    const DELIMITER = '.';
+
+    /**
+     * @var array<string>
+     */
+    protected array $segments;
+
+    /**
+     * @var bool
+     */
+    protected bool $isSegmented;
+
+    /**
      * @var string
      */
     protected string $name;
@@ -14,37 +31,50 @@ class DataAttr implements DataAttrContract
     /**
      * @var string|null
      */
-    protected ?string $relation = null;
+    protected ?string $exceptLastSegment;
+
+    /**
+     * @var string|null
+     */
+    protected ?string $lastSegment;
 
     /** @inheritdoc */
-    public function __construct(string $name)
+    public function __construct(string ...$segments)
     {
-        $this->setName($name);
+        $this->setName(...$segments);
     }
 
     /** @inheritdoc */
     public function __toString(): string
     {
-        return $this->getNameWithRelation();
+        return $this->getName();
     }
 
     /** @inheritdoc */
-    public function setName(string $name): void
+    public function isSegmented(): bool
     {
-        if (str_contains($name, '.')) {
-            $lastDotPos = strrpos($name, '.');
-            $this->relation = substr($name, 0, $lastDotPos);
-            $this->name = substr($name, $lastDotPos + 1);
-        } else {
-            $this->relation = null;
-            $this->name = $name;
+        return $this->isSegmented;
+    }
+
+    /** @inheritdoc */
+    public function setName(string ...$segments): void
+    {
+        $this->segments = [];
+
+        foreach ($segments as $segment) {
+            if (str_contains($segment, self::DELIMITER)) {
+                $segment = explode(self::DELIMITER, $segment);
+                $this->segments = [...$this->segments, ...$segment];
+            } else {
+                $this->segments[] = $segment;
+            }
         }
-    }
 
-    /** @inheritdoc */
-    public function getRelation(): ?string
-    {
-        return $this->relation;
+        $segmentsCount = count($this->segments);
+        $this->isSegmented = $segmentsCount > 1;
+        $this->name = join(self::DELIMITER, $this->segments);
+        $this->lastSegment = $this->segments[$segmentsCount - 1];
+        $this->exceptLastSegment = substr($this->name, 0, -strlen($this->lastSegment));
     }
 
     /** @inheritdoc */
@@ -54,8 +84,20 @@ class DataAttr implements DataAttrContract
     }
 
     /** @inheritdoc */
-    public function getNameWithRelation(): string
+    public function getNameSegmented(): array
     {
-        return $this->relation ? "{$this->relation}.{$this->name}" : $this->name;
+        return $this->segments;
+    }
+
+    /** @inheritdoc */
+    public function getNameLastSegment(): string
+    {
+        return $this->lastSegment;
+    }
+
+    /** @inheritdoc */
+    public function getNameExceptLastSegment(): string
+    {
+        return $this->exceptLastSegment;
     }
 }

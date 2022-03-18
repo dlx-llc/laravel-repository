@@ -65,7 +65,7 @@ final class FilterFactory
             throw new \Exception(__('larepo::exceptions.undefined_repo_filter_mode'));
         }
 
-        $attr = App::makeWith(DataAttrContract::class, ['name' => $attr]);
+        $attr = App::makeWith(DataAttrContract::class, [$attr]);
 
         return new $filterClass($attr, $value, $operator);
     }

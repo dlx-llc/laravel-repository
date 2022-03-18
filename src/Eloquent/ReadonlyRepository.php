@@ -267,11 +267,12 @@ abstract class ReadonlyRepository implements DataReaderContract
     {
         $attr = $sorting->getAttr();
 
-        if ($relation = $attr->getRelation()) {
+        if ($attr->isSegmented()) {
+            $relation = $attr->getNameExceptLastSegment();
             $this->query->leftJoinRelation($relation)->distinct();
             $lastJoin = last($this->query->getQuery()->joins);
             $lastJoinTable = QueryHelper::instance()->tableName($lastJoin);
-            $attr = $lastJoinTable . '.' . $attr->getName();
+            $attr = $lastJoinTable . '.' . $attr->getNameLastSegment();
             $this->query->orderBy($attr, $sorting->getDir());
         } else {
             $this->query->orderBy($attr->getName(), $sorting->getDir());
@@ -329,9 +330,9 @@ abstract class ReadonlyRepository implements DataReaderContract
         }
 
         $attr = $filter->getAttr();
-        $relation = $attr->getRelation();
 
-        if ($relation) {
+        if ($attr->isSegmented()) {
+            $relation = $attr->getNameExceptLastSegment();
             $query->whereHas($relation, fn($q) => $q->{$method}(...$args));
         } else {
             $query->{$method}(...$args);
@@ -349,7 +350,7 @@ abstract class ReadonlyRepository implements DataReaderContract
         QueryBuilder|EloquentBuilder $query,
         FilterContract $filter
     ): void {
-        $relation = $filter->getAttr()->getNameWithRelation();
+        $relation = $filter->getAttr()->getName();
         $query->whereHas($relation, function ($query) use ($filter) {
             $this->applyFilters($query, $filter->getValue());
         });
@@ -366,7 +367,7 @@ abstract class ReadonlyRepository implements DataReaderContract
         QueryBuilder|EloquentBuilder $query,
         FilterContract $filter
     ): void {
-        $relation = $filter->getAttr()->getNameWithRelation();
+        $relation = $filter->getAttr()->getName();
         $query->whereDoesntHave($relation, function ($query) use ($filter) {
             $this->applyFilters($query, $filter->getValue());
         });
@@ -380,7 +381,7 @@ abstract class ReadonlyRepository implements DataReaderContract
      */
     protected function getFilterQueryArgs(FilterContract $filter): array
     {
-        $attr = $filter->getAttr()->getName();
+        $attr = $filter->getAttr()->getNameLastSegment();
 
         return match (get_class($filter)) {
             IsLikeFilter::class => [$attr, 'like', '%' . $filter->getValue() . '%'],
@@ -432,13 +433,13 @@ abstract class ReadonlyRepository implements DataReaderContract
         string $text,
         bool $orCond
     ): void {
-        $field = $attr->getName();
-        $relation = $attr->getRelation();
+        $field = $attr->getNameLastSegment();
         $method = $orCond ? 'orWhere' : 'where';
         $args = [$field, 'like', '%' . $text . '%'];
 
-        if ($relation) {
+        if ($attr->isSegmented()) {
             $method .= 'Has';
+            $relation = $attr->getNameExceptLastSegment();
             $query->{$method}($relation, fn($q) => $q->where(...$args));
         } else {
             $query->{$method}(...$args);

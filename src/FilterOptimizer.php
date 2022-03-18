@@ -159,10 +159,10 @@ class FilterOptimizer implements FilterOptimizerContract
                 return false;
             }
 
-            $itemRel = $item->getAttr()->getRelation();
+            $itemRel = $item->getAttr()->getNameExceptLastSegment();
 
             if (!$itemRel && is_a($item, RelationExistsFilter::class)) {
-                $itemRel = $item->getAttr()->getName();
+                $itemRel = $item->getAttr()->getNameLastSegment();
             }
 
             if (is_null($itemRel)) {
@@ -195,20 +195,20 @@ class FilterOptimizer implements FilterOptimizerContract
             }
 
             $attr = $item->getAttr();
-            $relation = $attr->getRelation();
+            $relation = $attr->getNameExceptLastSegment();
 
             if (is_a($item, RelationExistsFilter::class)) {
-                $relation ??= $attr->getName();
+                $relation ??= $attr->getNameLastSegment();
                 $items[$i] = $item = App::makeWith(FiltersCollectionContract::class, [
                     $item->getOperator(),
                     ...$item->getValue(),
                 ]);
             } else {
-                $attr->setName($attr->getName());
+                $attr->setName($attr->getNameLastSegment());
             }
         }
 
-        $attr = App::makeWith(DataAttrContract::class, ['name' => $relation]);
+        $attr = App::makeWith(DataAttrContract::class, [$relation]);
 
         return new RelationExistsFilter($attr, $items, $operator);
     }

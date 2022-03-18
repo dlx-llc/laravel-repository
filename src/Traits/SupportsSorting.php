@@ -31,7 +31,7 @@ trait SupportsSorting
             throw new \Exception(__('larepo::exceptions.invalid_sorting_string'));
         }
 
-        $attr = App::makeWith(DataAttrContract::class, ['name' => $params[0]]);
+        $attr = App::makeWith(DataAttrContract::class, [$params[0]]);
         $this->setSorting(
             App::makeWith(SortingContract::class, [
                 'attr' => $attr,

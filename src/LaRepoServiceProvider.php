@@ -35,12 +35,15 @@ class LaRepoServiceProvider extends ServiceProvider
         $this->app->singleton(TextSearchFormatterContract::class, TextSearchFormatter::class);
         $this->app->singleton(FiltersCollectionFormatterContract::class, FiltersCollectionFormatter::class);
 
-        $this->app->bind(DataAttrContract::class, DataAttr::class);
         $this->app->bind(DataMapperContract::class, DataMapper::class);
         $this->app->bind(SortingContract::class, Sorting::class);
         $this->app->bind(PaginationContract::class, Pagination::class);
         $this->app->bind(SearchCriteriaContract::class, SearchCriteria::class);
         $this->app->bind(LoadContextContract::class, LoadContext::class);
+
+        $this->app->bind(DataAttrContract::class, function ($app, $params) {
+            return new DataAttr(...$params);
+        });
 
         $this->app->bind(TextSearchContract::class, function ($app, $params) {
             return new TextSearch(...$params);
