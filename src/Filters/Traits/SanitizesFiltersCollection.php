@@ -15,8 +15,12 @@ trait SanitizesFiltersCollection
      */
     protected function sanitizeFiltersCollection(mixed $value): FiltersCollectionContract
     {
-        $params = [$this->getOperator(), $value];
+        if (is_array($value)) {
+            $params = [$this->getOperator(), $value];
 
-        return App::makeWith(FiltersCollectionContract::class, $params);
+            return App::makeWith(FiltersCollectionContract::class, $params);
+        } else {
+            return $value;
+        }
     }
 }

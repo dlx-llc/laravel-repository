@@ -4,6 +4,7 @@ namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Facades\App;
 use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
@@ -79,7 +80,10 @@ trait SupportsFiltration
             $mode = $data['mode'];
             $value = $data['value'] ?? null;
 
-            if (is_array($value)) {
+            if (
+                $mode === FilterMode::EXISTS ||
+                $mode === FilterMode::DOES_NOT_EXIST
+            ) {
                 $value = $this->createFilter(['items' => $value]);
             }
 
