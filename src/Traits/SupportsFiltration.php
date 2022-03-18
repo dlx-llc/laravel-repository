@@ -79,6 +79,10 @@ trait SupportsFiltration
             $mode = $data['mode'];
             $value = $data['value'] ?? null;
 
+            if (is_array($value)) {
+                $value = $this->createFilter(['items' => $value]);
+            }
+
             return FilterFactory::create($mode, $attr, $value, $operator);
         }
     }

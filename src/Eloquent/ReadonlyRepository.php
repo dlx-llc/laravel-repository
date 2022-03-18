@@ -351,7 +351,7 @@ abstract class ReadonlyRepository implements DataReaderContract
     ): void {
         $relation = $filter->getAttr()->getNameWithRelation();
         $query->whereHas($relation, function ($query) use ($filter) {
-            $this->applyFilters($query, $filter->value);
+            $this->applyFilters($query, $filter->getValue());
         });
     }
 
@@ -368,7 +368,7 @@ abstract class ReadonlyRepository implements DataReaderContract
     ): void {
         $relation = $filter->getAttr()->getNameWithRelation();
         $query->whereDoesntHave($relation, function ($query) use ($filter) {
-            $this->applyFilters($query, $filter->value);
+            $this->applyFilters($query, $filter->getValue());
         });
     }
 
