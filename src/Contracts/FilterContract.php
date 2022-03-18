@@ -20,12 +20,14 @@ interface FilterContract
      * Class constructor.
      *
      * @param  DataAttrContract $attr  Data attribute to filter.
+     * @param  string $mode  The filter mode.
      * @param  mixed $value  The filter value.
      * @param  string $operator  The logical operator by which the filter will be combined with others.
      * @return void
      */
     public function __construct(
         DataAttrContract $attr,
+        string $mode,
         mixed $value,
         string $operator = FilterOperator::AND
     );
@@ -44,6 +46,14 @@ interface FilterContract
      * @return static
      */
     public function setAttr(DataAttrContract $attr): static;
+
+    /**
+     * Returns the filter mode.
+     *
+     * @return string
+     * @see \Deluxetech\LaRepo\Enums\FilterMode
+     */
+    public function getMode(): string;
 
     /**
      * Returns the filter value.

@@ -19,6 +19,7 @@ abstract class Filter implements FilterContract
     /** @inheritdoc */
     public function __construct(
         protected DataAttrContract $attr,
+        protected string $mode,
         protected mixed $value,
         protected string $operator = FilterOperator::AND
     ) {
@@ -37,6 +38,12 @@ abstract class Filter implements FilterContract
         $this->attr = $attr;
 
         return $this;
+    }
+
+    /** @inheritdoc */
+    public function getMode(): string
+    {
+        return $this->mode;
     }
 
     /** @inheritdoc */

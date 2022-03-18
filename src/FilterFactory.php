@@ -67,7 +67,7 @@ final class FilterFactory
 
         $attr = App::makeWith(DataAttrContract::class, [$attr]);
 
-        return new $filterClass($attr, $value, $operator);
+        return new $filterClass($attr, $mode, $value, $operator);
     }
 
     /**

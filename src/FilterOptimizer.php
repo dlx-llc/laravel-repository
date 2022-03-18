@@ -4,12 +4,11 @@ namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
+use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
-use Deluxetech\LaRepo\Filters\RelationExistsFilter;
 use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
-use Deluxetech\LaRepo\Filters\RelationDoesNotExistFilter;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
@@ -155,13 +154,13 @@ class FilterOptimizer implements FilterOptimizerContract
                 } while (is_a($item, FiltersCollectionContract::class));
             }
 
-            if (is_a($item, RelationDoesNotExistFilter::class)) {
+            if ($item->getMode() === FilterMode::DOES_NOT_EXIST) {
                 return false;
             }
 
             $itemRel = $item->getAttr()->getNameExceptLastSegment();
 
-            if (!$itemRel && is_a($item, RelationExistsFilter::class)) {
+            if (!$itemRel && $item->getMode() === FilterMode::EXISTS) {
                 $itemRel = $item->getAttr()->getNameLastSegment();
             }
 
@@ -197,7 +196,7 @@ class FilterOptimizer implements FilterOptimizerContract
             $attr = $item->getAttr();
             $relation = $attr->getNameExceptLastSegment();
 
-            if (is_a($item, RelationExistsFilter::class)) {
+            if ($item->getMode() === FilterMode::EXISTS) {
                 $relation ??= $attr->getNameLastSegment();
                 $items[$i] = $item = App::makeWith(FiltersCollectionContract::class, [
                     $item->getOperator(),
@@ -210,7 +209,7 @@ class FilterOptimizer implements FilterOptimizerContract
 
         $attr = App::makeWith(DataAttrContract::class, [$relation]);
 
-        return new RelationExistsFilter($attr, $items, $operator);
+        return FilterFactory::create(FilterMode::EXISTS, $attr, $items, $operator);
     }
 
     /**
