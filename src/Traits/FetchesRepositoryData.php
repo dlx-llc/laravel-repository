@@ -111,14 +111,14 @@ trait FetchesRepositoryData
      * @param  int|string $id
      * @param  DataMapperContract|null $dataMapper
      * @param  LoadContextContract|null $loadContext
-     * @return mixed
+     * @return object|null
      */
     public function getOneById(
         DataReaderContract $repository,
         int|string $id,
         ?DataMapperContract $dataMapper = null,
         ?LoadContextContract $loadContext = null
-    ): mixed {
+    ): ?object {
         if ($dataMapper) {
             $repository->setDataMapper($dataMapper);
         }
@@ -137,14 +137,14 @@ trait FetchesRepositoryData
      * @param  SearchCriteriaContract|null $searchCriteria,
      * @param  DataMapperContract|null $dataMapper
      * @param  LoadContextContract|null $loadContext
-     * @return mixed
+     * @return object|null
      */
     public function getFirst(
         DataReaderContract $repository,
         ?SearchCriteriaContract $searchCriteria = null,
         ?DataMapperContract $dataMapper = null,
         ?LoadContextContract $loadContext = null
-    ): mixed {
+    ): ?object {
         if ($dataMapper) {
             $repository->setDataMapper($dataMapper);
         }

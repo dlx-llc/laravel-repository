@@ -149,13 +149,13 @@ abstract class ReadonlyRepository implements DataReaderContract
     }
 
     /** @inheritdoc */
-    public function find(int|string $id): object
+    public function find(int|string $id): ?object
     {
         return $this->fetch('find', $id);
     }
 
     /** @inheritdoc */
-    public function first(): object
+    public function first(): ?object
     {
         return $this->fetch('first');
     }

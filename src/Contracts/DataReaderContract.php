@@ -80,16 +80,16 @@ interface DataReaderContract
      * Fetches a single record by ID.
      *
      * @param  int|string $id
-     * @return object
+     * @return object|null
      */
-    public function find(int|string $id): object;
+    public function find(int|string $id): ?object;
 
     /**
      * Fetches the first matching record.
      *
-     * @return object
+     * @return object|null
      */
-    public function first(): object;
+    public function first(): ?object;
 
     /**
      * Specifies the data attributes mapper.
