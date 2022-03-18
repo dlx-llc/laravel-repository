@@ -129,11 +129,16 @@ class DataMapper implements DataMapperContract
      */
     protected function replaceDataAttrName(DataAttr $attr, ?string $prefix = null): void
     {
-        $attr->addFromBeginning($prefix);
-        $attrName = $attr->getName();
+        if ($prefix) {
+            $attr->addFromBeginning($prefix);
+        }
 
+        $attrName = $attr->getName();
         $newName = $this->get($attrName);
         $attr->setName($newName);
-        $attr->removeFromBeginning($prefix);
+
+        if ($prefix) {
+            $attr->removeFromBeginning($prefix);
+        }
     }
 }
