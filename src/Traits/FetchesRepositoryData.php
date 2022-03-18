@@ -77,6 +77,34 @@ trait FetchesRepositoryData
     }
 
     /**
+     * Fetches data count from the given repository using request params.
+     *
+     * @param  DataReaderContract $repository
+     * @param  DataMapperContract|null $dataMapper
+     * @param  LoadContextContract|null $loadContext
+     * @return int
+     */
+    public function getCountWithRequest(
+        DataReaderContract $repository,
+        ?DataMapperContract $dataMapper = null,
+        ?LoadContextContract $loadContext = null
+    ): int {
+        if ($dataMapper) {
+            $repository->setDataMapper($dataMapper);
+        }
+
+        if ($loadContext) {
+            $repository->setLoadContext($loadContext);
+        }
+
+        if ($searchCriteria = SearchCriteriaFactory::createFromRequest()) {
+            $repository->search($searchCriteria);
+        }
+
+        return $repository->count();
+    }
+
+    /**
      * Fetches a single data model from the given repository by ID.
      *
      * @param  DataReaderContract $repository
