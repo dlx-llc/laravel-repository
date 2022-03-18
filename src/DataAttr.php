@@ -60,21 +60,29 @@ class DataAttr implements DataAttrContract
     public function setName(string ...$segments): void
     {
         $this->segments = [];
+        $this->addSegments(true, ...$segments);
+    }
 
-        foreach ($segments as $segment) {
-            if (str_contains($segment, self::DELIMITER)) {
-                $segment = explode(self::DELIMITER, $segment);
-                $this->segments = [...$this->segments, ...$segment];
-            } else {
-                $this->segments[] = $segment;
+    /** @inheritdoc */
+    public function addFromBeginning(string ...$segments): void
+    {
+        $this->addSegments(false, ...$segments);
+    }
+
+    /** @inheritdoc */
+    public function removeFromBeginning(string ...$segments): void
+    {
+        foreach ($segments as $i => $segment) {
+            if (
+                !isset($this->segments[$i]) ||
+                $this->segments[$i] !== $segment
+            ) {
+                return;
             }
         }
 
-        $segmentsCount = count($this->segments);
-        $this->isSegmented = $segmentsCount > 1;
-        $this->name = join(self::DELIMITER, $this->segments);
-        $this->lastSegment = $this->segments[$segmentsCount - 1];
-        $this->exceptLastSegment = substr($this->name, 0, -strlen($this->lastSegment));
+        $newSegments = array_slice($this->segments, $i + 1);
+        $this->setName(...$newSegments);
     }
 
     /** @inheritdoc */
@@ -99,5 +107,38 @@ class DataAttr implements DataAttrContract
     public function getNameExceptLastSegment(): string
     {
         return $this->exceptLastSegment;
+    }
+
+    /**
+     * Adds segments to the attribute name.
+     *
+     * @param  bool $fromEnd
+     * @param  string ...$segments
+     * @return void
+     */
+    protected function addSegments(bool $fromEnd, string ...$segments): void
+    {
+        foreach ($segments as $segment) {
+            if (str_contains($segment, self::DELIMITER)) {
+                $segment = explode(self::DELIMITER, $segment);
+
+                if ($fromEnd) {
+                    $this->segments = [...$this->segments, ...$segment];
+                } else {
+                    $this->segments = [...$segment, ...$this->segments];
+                }
+            } elseif ($fromEnd) {
+                $this->segments[] = $segment;
+            } else {
+                array_unshift($this->segments, $segment);
+            }
+        }
+
+        $segmentsCount = count($this->segments);
+        $this->isSegmented = $segmentsCount > 1;
+        $this->name = join(self::DELIMITER, $this->segments);
+        $this->lastSegment = $this->segments[$segmentsCount - 1];
+        $lastSegmentLen = strlen($this->lastSegment) + 1;
+        $this->exceptLastSegment = substr($this->name, 0, -$lastSegmentLen);
     }
 }

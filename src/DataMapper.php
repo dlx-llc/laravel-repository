@@ -2,6 +2,7 @@
 
 namespace Deluxetech\LaRepo;
 
+use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
@@ -89,17 +90,33 @@ class DataMapper implements DataMapperContract
      * Recursively maps domain model attributes of the given filter.
      *
      * @param  FiltersCollectionContract|FilterContract $filter
+     * @param  string|null $prefix
      * @return void
      */
-    protected function replaceFilterAttrName(FiltersCollectionContract|FilterContract $filter): void
-    {
+    protected function replaceFilterAttrName(
+        FiltersCollectionContract|FilterContract $filter,
+        ?string $prefix = null
+    ): void {
         if (is_a($filter, FiltersCollectionContract::class)) {
             foreach ($filter as $item) {
-                $this->replaceFilterAttrName($item);
+                $this->replaceFilterAttrName($item, $prefix);
+            }
+        } elseif (
+            in_array($filter->getMode(), [
+                FilterMode::EXISTS,
+                FilterMode::DOES_NOT_EXIST,
+            ])
+        ) {
+            $items = $filter->getValue();
+            $prefix = $filter->getAttr()->getName();
+
+            /** @var FilterContract|FiltersCollectionContract $item */
+            foreach ($items as $item) {
+                $this->replaceFilterAttrName($item, $prefix);
             }
         } else {
             $attr = $filter->getAttr();
-            $this->replaceDataAttrName($attr);
+            $this->replaceDataAttrName($attr, $prefix);
         }
     }
 
@@ -107,12 +124,16 @@ class DataMapper implements DataMapperContract
      * Replaces the domain model attribute  data attributes map if set.
      *
      * @param  DataAttr $attr
+     * @param  string|null $prefix
      * @return void
      */
-    protected function replaceDataAttrName(DataAttr $attr): void
+    protected function replaceDataAttrName(DataAttr $attr, ?string $prefix = null): void
     {
+        $attr->addFromBeginning($prefix);
         $attrName = $attr->getName();
-        $attrName = $this->get($attrName);
-        $attr->setName($attrName);
+
+        $newName = $this->get($attrName);
+        $attr->setName($newName);
+        $attr->removeFromBeginning($prefix);
     }
 }

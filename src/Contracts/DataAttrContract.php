@@ -35,6 +35,22 @@ interface DataAttrContract
     public function setName(string ...$segments): void;
 
     /**
+     * Adds name segments from the beginning of the attribute.
+     *
+     * @param  string ...$segments
+     * @return void
+     */
+    public function addFromBeginning(string ...$segments): void;
+
+    /**
+     * Removes name segments from the beginning of the attribute.
+     *
+     * @param  string ...$segments
+     * @return void
+     */
+    public function removeFromBeginning(string ...$segments): void;
+
+    /**
      * Returns the attribute name with all segments combined.
      *
      * @return string
