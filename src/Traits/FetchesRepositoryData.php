@@ -81,20 +81,14 @@ trait FetchesRepositoryData
      *
      * @param  DataReaderContract $repository
      * @param  DataMapperContract|null $dataMapper
-     * @param  LoadContextContract|null $loadContext
      * @return int
      */
     public function getCountWithRequest(
         DataReaderContract $repository,
-        ?DataMapperContract $dataMapper = null,
-        ?LoadContextContract $loadContext = null
+        ?DataMapperContract $dataMapper = null
     ): int {
         if ($dataMapper) {
             $repository->setDataMapper($dataMapper);
-        }
-
-        if ($loadContext) {
-            $repository->setLoadContext($loadContext);
         }
 
         if ($searchCriteria = SearchCriteriaFactory::createFromRequest()) {
