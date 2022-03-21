@@ -6,6 +6,9 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Deluxetech\LaRepo\Contracts\LoadContextContract;
 
+/**
+ * @todo add ability to load missing data on records collection.
+ */
 trait SupportsContextLoading
 {
     /**

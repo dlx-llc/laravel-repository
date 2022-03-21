@@ -77,6 +77,13 @@ interface DataReaderContract
     public function count(): int;
 
     /**
+     * Checks if records matching the query exist.
+     *
+     * @return bool
+     */
+    public function exists(): bool;
+
+    /**
      * Fetches a single record by ID.
      *
      * @param  int|string $id

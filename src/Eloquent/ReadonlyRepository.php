@@ -149,6 +149,12 @@ abstract class ReadonlyRepository implements DataReaderContract
     }
 
     /** @inheritdoc */
+    public function exists(): bool
+    {
+        return $this->fetch('exists');
+    }
+
+    /** @inheritdoc */
     public function find(int|string $id): ?object
     {
         return $this->fetch('find', $id);
