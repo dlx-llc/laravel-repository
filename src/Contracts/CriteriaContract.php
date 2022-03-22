@@ -14,12 +14,14 @@ interface CriteriaContract
      * @param  TextSearchContract|string|null $textSearch
      * @param  SortingContract|string|null $sorting
      * @param  FiltersCollectionContract|string|null $filters
+     * @param  LoadContextContract|null $context
      * @return void
      */
     public function __construct(
         TextSearchContract|string|null $textSearch = null,
         SortingContract|string|null $sorting = null,
-        FiltersCollectionContract|string|null $filters = null
+        FiltersCollectionContract|string|null $filters = null,
+        ?LoadContextContract $context = null
     );
 
     /**
@@ -90,4 +92,19 @@ interface CriteriaContract
      * @return static
      */
     public function setFilters(?FiltersCollectionContract $filters): static;
+
+    /**
+     * Returns the load context.
+     *
+     * @return LoadContextContract|null
+     */
+    public function getLoadContext(): ?LoadContextContract;
+
+    /**
+     * Specifies the load context.
+     *
+     * @param  LoadContextContract|null $context
+     * @return static
+     */
+    public function setLoadContext(?LoadContextContract $context): static;
 }

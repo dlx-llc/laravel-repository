@@ -39,14 +39,6 @@ trait SupportsContextLoading
     protected array $relationCountResolvers = [];
 
     /** @inheritdoc */
-    public function setLoadContext(LoadContextContract $context): static
-    {
-        $this->applyLoadContext($this->query, $context);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
     public function loadMissing(object $records, LoadContextContract $context): void
     {
         if (is_a($records, Model::class)) {

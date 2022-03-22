@@ -81,10 +81,14 @@ abstract class ReadonlyRepository implements DataReaderContract
     }
 
     /** @inheritdoc */
-    public function match(CriteriaContract $criteria): static
+    public function setCriteria(CriteriaContract $criteria): static
     {
         if ($this->dataMapper) {
             $this->dataMapper->applyOnCriteria($criteria);
+        }
+
+        if ($context = $criteria->getLoadContext()) {
+            $this->applyLoadContext($this->query, $context);
         }
 
         if ($textSearch = $criteria->getTextSearch()) {

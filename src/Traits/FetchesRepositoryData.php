@@ -25,26 +25,20 @@ trait FetchesRepositoryData
      * @param  CriteriaContract|null $criteria
      * @param  PaginationContract|null $pagination
      * @param  DataMapperContract|null $dataMapper
-     * @param  LoadContextContract|null $loadContext
      * @return Paginator|Collection
      */
     public function getMany(
         DataReaderContract $repository,
         ?CriteriaContract $criteria = null,
         ?PaginationContract $pagination = null,
-        ?DataMapperContract $dataMapper = null,
-        ?LoadContextContract $loadContext = null
+        ?DataMapperContract $dataMapper = null
     ): Paginator|Collection {
         if ($dataMapper) {
             $repository->setDataMapper($dataMapper);
         }
 
-        if ($loadContext) {
-            $repository->setLoadContext($loadContext);
-        }
-
         if ($criteria) {
-            $repository->match($criteria);
+            $repository->setCriteria($criteria);
         }
 
         return !is_null($pagination)
@@ -69,10 +63,9 @@ trait FetchesRepositoryData
     ): Paginator|Collection {
         return $this->getMany(
             repository: $repository,
-            criteria: CriteriaFactory::createFromRequest(),
+            criteria: CriteriaFactory::createFromRequest($loadContext),
             pagination: PaginationFactory::createFromRequest(require: $pageRequired),
-            dataMapper: $dataMapper,
-            loadContext: $loadContext
+            dataMapper: $dataMapper
         );
     }
 
@@ -92,7 +85,7 @@ trait FetchesRepositoryData
         }
 
         if ($criteria = CriteriaFactory::createFromRequest()) {
-            $repository->match($criteria);
+            $repository->setCriteria($criteria);
         }
 
         return $repository->count();
@@ -103,22 +96,22 @@ trait FetchesRepositoryData
      *
      * @param  DataReaderContract $repository
      * @param  int|string $id
+     * @param  CriteriaContract|null $criteria
      * @param  DataMapperContract|null $dataMapper
-     * @param  LoadContextContract|null $loadContext
      * @return object|null
      */
     public function getOneById(
         DataReaderContract $repository,
         int|string $id,
-        ?DataMapperContract $dataMapper = null,
-        ?LoadContextContract $loadContext = null
+        ?CriteriaContract $criteria = null,
+        ?DataMapperContract $dataMapper = null
     ): ?object {
         if ($dataMapper) {
             $repository->setDataMapper($dataMapper);
         }
 
-        if ($loadContext) {
-            $repository->setLoadContext($loadContext);
+        if ($criteria) {
+            $repository->setCriteria($criteria);
         }
 
         return $repository->find($id);
@@ -130,25 +123,19 @@ trait FetchesRepositoryData
      * @param  DataReaderContract $repository
      * @param  CriteriaContract|null $criteria,
      * @param  DataMapperContract|null $dataMapper
-     * @param  LoadContextContract|null $loadContext
      * @return object|null
      */
     public function getFirst(
         DataReaderContract $repository,
         ?CriteriaContract $criteria = null,
-        ?DataMapperContract $dataMapper = null,
-        ?LoadContextContract $loadContext = null
+        ?DataMapperContract $dataMapper = null
     ): ?object {
         if ($dataMapper) {
             $repository->setDataMapper($dataMapper);
         }
 
-        if ($loadContext) {
-            $repository->setLoadContext($loadContext);
-        }
-
         if ($criteria) {
-            $repository->match($criteria);
+            $repository->setCriteria($criteria);
         }
 
         return $repository->first();

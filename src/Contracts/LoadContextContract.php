@@ -2,6 +2,10 @@
 
 namespace Deluxetech\LaRepo\Contracts;
 
+/**
+ * Load context is basically an object containing information of what attributes,
+ * relations and relation counts should be fetched.
+ */
 interface LoadContextContract
 {
     /**

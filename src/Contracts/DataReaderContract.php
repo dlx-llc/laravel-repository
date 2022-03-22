@@ -30,7 +30,7 @@ interface DataReaderContract
      * @param  CriteriaContract $criteria
      * @return static
      */
-    public function match(CriteriaContract $criteria): static;
+    public function setCriteria(CriteriaContract $criteria): static;
 
     /**
      * Resets the query object to its initial state.
@@ -105,15 +105,6 @@ interface DataReaderContract
      * @return static
      */
     public function setDataMapper(?DataMapperContract $dataMapper): static;
-
-    /**
-     * Applies the load context. Specifies the source data attributes,
-     * relations and relation counts that should be loaded.
-     *
-     * @param  LoadContextContract $context
-     * @return static
-     */
-    public function setLoadContext(LoadContextContract $context): static;
 
     /**
      * Loads missing parameters in accordance with the given load context.
