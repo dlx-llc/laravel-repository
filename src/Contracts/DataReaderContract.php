@@ -116,11 +116,11 @@ interface DataReaderContract
     public function setLoadContext(LoadContextContract $context): static;
 
     /**
-     * Loads missing parameters in the record in accordance with the load context.
+     * Loads missing parameters in accordance with the given load context.
      *
-     * @param  object $record
+     * @param  object $records
      * @param  LoadContextContract $context
      * @return void
      */
-    public function loadMissing(object $record, LoadContextContract $context): void;
+    public function loadMissing(object $records, LoadContextContract $context): void;
 }

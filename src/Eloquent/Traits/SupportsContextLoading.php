@@ -4,6 +4,7 @@ namespace Deluxetech\LaRepo\Eloquent\Traits;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Deluxetech\LaRepo\Contracts\LoadContextContract;
 
 /**
@@ -48,11 +49,15 @@ trait SupportsContextLoading
     }
 
     /** @inheritdoc */
-    public function loadMissing(object $record, LoadContextContract $context): void
+    public function loadMissing(object $records, LoadContextContract $context): void
     {
-        $this->loadMissingAttrs($record, $context->getAttributes());
-        $this->loadMissingRelations($record, $context->getRelations());
-        $this->loadMissingRelationCounts($record, $context->getRelationCounts());
+        if (is_a($records, Model::class)) {
+            $records = Collection::make([$records]);
+        }
+
+        $this->loadMissingAttrs($records, $context->getAttributes());
+        $this->loadMissingRelations($records, $context->getRelations());
+        $this->loadMissingRelationCounts($records, $context->getRelationCounts());
     }
 
     /**
@@ -102,29 +107,30 @@ trait SupportsContextLoading
     }
 
     /**
-     * Loads missing attributes on the given model.
+     * Loads missing attributes.
      *
-     * @param  Model $record
+     * @param  Collection $records
      * @param  array $attrs
      * @return void
      */
-    protected function loadMissingAttrs(Model $record, array $attrs): void
+    protected function loadMissingAttrs(Collection $records, array $attrs): void
     {
-        if (!$attrs) {
+        if (!$attrs || $records->isEmpty()) {
             return;
         }
 
-        $id = $record->getKey();
+        $first = $records->first();
+        $idKey = $first->getKeyName();
 
-        if (!$id) {
+        if (!$first->{$idKey}) {
             return;
         }
 
         $missing = [];
-        $loaded = $record->getAttributes();
+        $loaded = $first->getAttributes();
 
         foreach ($attrs as $attr) {
-            if (!isset($record->{$attr}) && !array_key_exists($attr, $loaded)) {
+            if (!array_key_exists($attr, $loaded)) {
                 $missing[] = $attr;
             }
         }
@@ -133,36 +139,49 @@ trait SupportsContextLoading
             return;
         }
 
-        $missingAttrsRecord = $this->getQuery()->select($missing)->find($id);
+        $ids = $records->pluck($idKey)->all();
+        $missing[] = $idKey;
 
-        if (!$missingAttrsRecord) {
+        $missingAttrRecords = $this->getQuery()
+            ->whereIn($idKey, $ids)
+            ->get($missing);
+
+        if ($missingAttrRecords->isEmpty()) {
             return;
         }
 
-        $missingAttrs = $missingAttrsRecord->getAttributes();
+        $records = $records->groupBy($idKey);
+        $record = $missingAttrRecords->first();
+        $missingAttrs = $record->getAttributes();
 
-        foreach ($missingAttrs as $attr => $value) {
-            $record->setAttribute($attr, $value);
+        foreach ($missingAttrRecords as $record) {
+            $recToFill = $records[$record->{$idKey}];
+
+            foreach ($missingAttrs as $attr => $value) {
+                $recToFill->setAttribute($attr, $value);
+            }
         }
     }
 
     /**
-     * Loads missing relations on the given model.
+     * Loads missing relations.
      *
-     * @param  Model $record
+     * @param  Collection $records
      * @param  array $relations
      * @return void
      */
-    protected function loadMissingRelations(Model $record, array $relations): void
+    protected function loadMissingRelations(Collection $records, array $relations): void
     {
-        if (!$relations) {
+        if (!$relations || $records->isEmpty()) {
             return;
         }
+
+        $sameModel = is_a($records->first(), $this->getModel());
 
         foreach ($relations as $key => $value) {
             $relation = is_int($key) ? $value : $key;
 
-            $resolver = is_a($record, $this->getModel())
+            $resolver = $sameModel
                 ? $this->getRelationResolver($relation)
                 : [$this, 'loadMissingRelation'];
 
@@ -170,74 +189,100 @@ trait SupportsContextLoading
                 ? $value
                 : null;
 
-            call_user_func_array($resolver, [$record, $relation, $loadContext]);
+            call_user_func_array($resolver, [$records, $relation, $loadContext]);
         }
     }
 
     /**
      * Loads the missing relation.
      *
-     * @param  Model $record
+     * @param  Collection $records
      * @param  string $relation
      * @param  LoadContextContract|null $loadContext
      * @return void
      */
     protected function loadMissingRelation(
-        Model $record,
+        Collection $records,
         string $relation,
         ?LoadContextContract $loadContext = null
     ): void {
-        if (!$loadContext) {
-            $record->loadMissing($relation);
-        } elseif ($record->relationLoaded($relation)) {
-            $this->loadMissing($record->{$relation}, $loadContext);
+        if ($records->isEmpty()) {
+            return;
+        } elseif (!$loadContext) {
+            $records->loadMissing($relation);
         } else {
-            $query = $record->{$relation}();
+            $loaded = Collection::make();
+            $records = $records->filter(function ($record) use ($relation, $loaded) {
+                if ($relLoaded = $record->relationLoaded($relation)) {
+                    $loaded->add($record);
+                }
 
-            if ($attrs = $loadContext->getAttributes()) {
-                $query->select($attrs);
+                return !$relLoaded;
+            });
+
+            if ($loaded->isNotEmpty()) {
+                $this->loadMissing($loaded, $loadContext);
             }
 
-            if ($counts = $loadContext->getRelationCounts()) {
-                $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
-                $query->withCount($counts);
+            if ($records->isEmpty()) {
+                return;
             }
 
-            $relationRecord = $query->getResults();
-            $record->setRelation($relation, $relationRecord);
-            $subRelations = $loadContext->getRelations();
+            $records->load([
+                $relation => function ($query) use ($loadContext) {
+                    if ($attrs = $loadContext->getAttributes()) {
+                        $query->select($attrs);
+                    }
 
-            if ($relationRecord && $subRelations) {
-                $this->loadMissingRelations($relationRecord, $subRelations);
+                    if ($counts = $loadContext->getRelationCounts()) {
+                        $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
+                        $query->withCount($counts);
+                    }
+                },
+            ]);
+
+            if ($subRelations = $loadContext->getRelations()) {
+                $relationRecords = Collection::make();
+
+                foreach ($records as $record) {
+                    if (!is_null($record->{$relation})) {
+                        $relationRecords->add($record->{$relation});
+                    }
+                }
+
+                if ($relationRecords->isNotEmpty()) {
+                    $this->loadMissingRelations($relationRecords, $subRelations);
+                }
             }
         }
     }
 
     /**
-     * Loads missing relation counts on the given model.
+     * Loads missing relation counts.
      *
-     * @param  Model $record
+     * @param  Collection $records
      * @param  array $counts
      * @return void
      */
-    protected function loadMissingRelationCounts(Model $record, array $counts): void
+    protected function loadMissingRelationCounts(Collection $records, array $counts): void
     {
-        if (!$counts) {
+        if (!$counts || $records->isEmpty()) {
             return;
         }
 
         $missing = [];
+        $first = $records->first();
+        $sameModel = is_a($first, $this->getModel());
 
         foreach ($counts as $relation) {
             $countAttr = $relation . 'Count';
-            $resolver = is_a($record, $this->getModel())
+            $resolver = $sameModel
                 ? $this->getRelationCountResolver($relation)
                 : null;
 
             if ($resolver) {
-                $count = call_user_func_array($resolver, [$record, $relation]);
-                $record->{$countAttr} = is_int($count) ? $count : 0;
-            } elseif (!isset($record->{$countAttr})) {
+                call_user_func_array($resolver, [$records, $relation, $countAttr]);
+            } elseif (!isset($first->{$countAttr})) {
                 $missing[] = "{$relation} as {$countAttr}";
             }
         }
@@ -246,7 +291,7 @@ trait SupportsContextLoading
             return;
         }
 
-        $record->loadCount($missing);
+        $records->loadCount($missing);
     }
 
     /**
