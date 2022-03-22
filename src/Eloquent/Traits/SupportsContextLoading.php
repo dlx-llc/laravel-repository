@@ -6,10 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Deluxetech\LaRepo\Contracts\LoadContextContract;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-/**
- * @todo add ability to load missing data on records collection.
- */
 trait SupportsContextLoading
 {
     /**
@@ -208,8 +206,6 @@ trait SupportsContextLoading
     ): void {
         if ($records->isEmpty()) {
             return;
-        } elseif (!$loadContext) {
-            $records->loadMissing($relation);
         } else {
             $loaded = Collection::make();
             $records = $records->filter(function ($record) use ($relation, $loaded) {
@@ -228,33 +224,77 @@ trait SupportsContextLoading
                 return;
             }
 
-            $records->load([
-                $relation => function ($query) use ($loadContext) {
-                    if ($attrs = $loadContext->getAttributes()) {
-                        $query->select($attrs);
+            if (!$this->relationShouldBeLoaded($records, $relation)) {
+                return;
+            }
+
+            if ($loadContext) {
+                $records->load([
+                    $relation => function ($query) use ($loadContext) {
+                        if ($attrs = $loadContext->getAttributes()) {
+                            $query->select($attrs);
+                        }
+
+                        if ($counts = $loadContext->getRelationCounts()) {
+                            $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
+                            $query->withCount($counts);
+                        }
+                    },
+                ]);
+
+                if ($subRelations = $loadContext->getRelations()) {
+                    $relationRecords = Collection::make();
+
+                    foreach ($records as $record) {
+                        $value = $record->{$relation};
+
+                        if (!is_null($value)) {
+                            if (is_a($value, Collection::class)) {
+                                foreach ($value as $item) {
+                                    $relationRecords->add($item);
+                                }
+                            } else {
+                                $relationRecords->add($value);
+                            }
+                        }
                     }
 
-                    if ($counts = $loadContext->getRelationCounts()) {
-                        $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
-                        $query->withCount($counts);
-                    }
-                },
-            ]);
-
-            if ($subRelations = $loadContext->getRelations()) {
-                $relationRecords = Collection::make();
-
-                foreach ($records as $record) {
-                    if (!is_null($record->{$relation})) {
-                        $relationRecords->add($record->{$relation});
+                    if ($relationRecords->isNotEmpty()) {
+                        $this->loadMissingRelations($relationRecords, $subRelations);
                     }
                 }
-
-                if ($relationRecords->isNotEmpty()) {
-                    $this->loadMissingRelations($relationRecords, $subRelations);
-                }
+            } else {
+                $records->load($relation);
             }
         }
+    }
+
+    /**
+     * Checks if the relation loading should be performed.
+     * Foreign key check will prevent Eloquent from executing a query with a
+     * false statement (...where 0 = 1...).
+     *
+     * @param  Collection $records
+     * @param  string $relation
+     * @return bool
+     */
+    protected function relationShouldBeLoaded(Collection $records, string $relation): bool
+    {
+        $relationQuery = $records->first()->{$relation}();
+
+        if (is_a($relationQuery, BelongsTo::class)) {
+            $fk = $records->first()->{$relation}()->getForeignKeyName();
+
+            foreach ($records as $record) {
+                if (!is_null($record->{$fk})) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
