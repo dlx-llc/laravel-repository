@@ -5,10 +5,13 @@ namespace Deluxetech\LaRepo\Eloquent\Traits;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\LoadContextContract;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-trait SupportsContextLoading
+trait SupportsLoadContext
 {
     /**
      * Returns the query object.
@@ -16,6 +19,18 @@ trait SupportsContextLoading
      * @return Builder
      */
     abstract protected function getQuery(): Builder;
+
+    /**
+     * Applies criteria on the given query.
+     *
+     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  CriteriaContract $criteria
+     * @return void
+     */
+    abstract protected function applyCriteria(
+        QueryBuilder|EloquentBuilder $query,
+        CriteriaContract $criteria
+    ): void;
 
     /**
      * Returns the eloquent model class name.
@@ -166,20 +181,14 @@ trait SupportsContextLoading
             return;
         }
 
-        $sameModel = is_a($records->first(), $this->getModel());
-
         foreach ($relations as $key => $value) {
             $relation = is_int($key) ? $value : $key;
-
-            $resolver = $sameModel
-                ? $this->getRelationResolver($relation)
-                : [$this, 'loadMissingRelation'];
-
-            $loadContext = is_object($value) && is_subclass_of($value, LoadContextContract::class)
+            $resolver = $this->getRelationResolver($relation);
+            $criteria = is_object($value) && is_subclass_of($value, CriteriaContract::class)
                 ? $value
                 : null;
 
-            call_user_func_array($resolver, [$records, $relation, $loadContext]);
+            call_user_func_array($resolver, [$records, $relation, $criteria]);
         }
     }
 
@@ -188,73 +197,41 @@ trait SupportsContextLoading
      *
      * @param  Collection $records
      * @param  string $relation
-     * @param  LoadContextContract|null $loadContext
+     * @param  CriteriaContract|null $criteria
      * @return void
      */
     protected function loadMissingRelation(
         Collection $records,
         string $relation,
-        ?LoadContextContract $loadContext = null
+        ?CriteriaContract $criteria = null
     ): void {
         if ($records->isEmpty()) {
             return;
-        } else {
-            $loaded = Collection::make();
-            $records = $records->filter(function ($record) use ($relation, $loaded) {
-                if ($relLoaded = $record->relationLoaded($relation)) {
-                    $loaded->add($record);
-                }
+        }
 
-                return !$relLoaded;
-            });
-
-            if ($loaded->isNotEmpty()) {
-                $this->loadMissing($loaded, $loadContext);
+        $loaded = Collection::make();
+        $records = $records->filter(function ($record) use ($relation, $loaded) {
+            if ($relLoaded = $record->relationLoaded($relation)) {
+                $loaded->add($record);
             }
 
-            if ($records->isEmpty()) {
-                return;
-            }
+            return !$relLoaded;
+        });
 
-            if (!$this->relationShouldBeLoaded($records, $relation)) {
-                return;
-            }
+        $loadContext = $criteria->getLoadContext();
 
-            if ($loadContext) {
+        if ($loadContext && $loaded->isNotEmpty()) {
+            $this->loadMissing($loaded, $loadContext);
+        }
+
+        if (
+            $records->isNotEmpty() &&
+            $this->relationShouldBeLoaded($records, $relation)
+        ) {
+            if ($criteria) {
                 $records->load([
-                    $relation => function ($query) use ($loadContext) {
-                        if ($attrs = $loadContext->getAttributes()) {
-                            $query->select($attrs);
-                        }
-
-                        if ($counts = $loadContext->getRelationCounts()) {
-                            $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
-                            $query->withCount($counts);
-                        }
-                    },
+                    $relation => fn($q) => $this->applyCriteria($q, $criteria),
                 ]);
-
-                if ($subRelations = $loadContext->getRelations()) {
-                    $relationRecords = Collection::make();
-
-                    foreach ($records as $record) {
-                        $value = $record->{$relation};
-
-                        if (!is_null($value)) {
-                            if (is_a($value, Collection::class)) {
-                                foreach ($value as $item) {
-                                    $relationRecords->add($item);
-                                }
-                            } else {
-                                $relationRecords->add($value);
-                            }
-                        }
-                    }
-
-                    if ($relationRecords->isNotEmpty()) {
-                        $this->loadMissingRelations($relationRecords, $subRelations);
-                    }
-                }
             } else {
                 $records->load($relation);
             }
@@ -304,18 +281,25 @@ trait SupportsContextLoading
 
         $missing = [];
         $first = $records->first();
-        $sameModel = is_a($first, $this->getModel());
 
-        foreach ($counts as $relation) {
+        foreach ($counts as $key => $value) {
+            $relation = is_int($key) ? $value : $key;
             $countAttr = $relation . 'Count';
-            $resolver = $sameModel
-                ? $this->getRelationCountResolver($relation)
+            $resolver = $this->getRelationCountResolver($relation);
+            $criteria = is_object($value) && is_subclass_of($value, CriteriaContract::class)
+                ? $value
                 : null;
 
             if ($resolver) {
-                call_user_func_array($resolver, [$records, $relation, $countAttr]);
+                call_user_func_array($resolver, [$records, $relation, $countAttr, $criteria]);
             } elseif (!isset($first->{$countAttr})) {
-                $missing[] = "{$relation} as {$countAttr}";
+                $countExpression = "{$relation} as {$countAttr}";
+
+                if ($criteria) {
+                    $missing[$countExpression] = fn($q) => $this->applyCriteria($q, $criteria);
+                } else {
+                    $missing[] = $countExpression;
+                }
             }
         }
 
@@ -343,10 +327,8 @@ trait SupportsContextLoading
             if (is_int($key)) {
                 $query->with($value);
             } elseif (is_string($key)) {
-                if (is_subclass_of($value, LoadContextContract::class)) {
-                    $query->with($key, function ($query) use ($value) {
-                        $this->applyLoadContext($query, $value);
-                    });
+                if (is_subclass_of($value, CriteriaContract::class)) {
+                    $query->with($key, fn($q) => $this->applyCriteria($q, $value));
                 } else {
                     $query->with($key);
                 }
@@ -354,8 +336,20 @@ trait SupportsContextLoading
         }
 
         if ($counts = $context->getRelationCounts()) {
-            $counts = array_map(fn($r) => "$r as {$r}Count", $counts);
-            $query->withCount($counts);
+            $countArgs = [];
+
+            foreach ($counts as $key => $value) {
+                $relation = is_int($key) ? $value : $key;
+                $countExpression = "{$relation} as {$relation}Count";
+
+                if (is_object($value) && is_subclass_of($value, CriteriaContract::class)) {
+                    $countArgs[$countExpression] = fn($q) => $this->applyCriteria($q, $value);
+                } else {
+                    $countArgs[] = $countExpression;
+                }
+            }
+
+            $query->withCount($countArgs);
         }
     }
 }

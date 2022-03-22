@@ -32,6 +32,15 @@ interface LoadContextContract
     public function setRelations(array $relations): static;
 
     /**
+     * Adds a relation in the load context.
+     *
+     * @param  string $relation
+     * @param  CriteriaContract|null $criteria
+     * @return static
+     */
+    public function addRelation(string $relation, ?CriteriaContract $criteria = null): static;
+
+    /**
      * Returns the relations that should be loaded.
      *
      * @return array
@@ -41,10 +50,19 @@ interface LoadContextContract
     /**
      * Specifies the relation counts that should be loaded.
      *
-     * @param  string ...$counts
+     * @param  array $counts
      * @return static
      */
-    public function setRelationCounts(string ...$counts): static;
+    public function setRelationCounts(array $counts): static;
+
+    /**
+     * Adds a relation count in the load context.
+     *
+     * @param  string $relation
+     * @param  CriteriaContract|null $criteria
+     * @return static
+     */
+    public function addRelationCount(string $relation, ?CriteriaContract $criteria = null): static;
 
     /**
      * Returns the relation counts that should be loaded.

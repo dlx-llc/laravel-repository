@@ -55,6 +55,7 @@ trait SupportsFiltration
     /**
      * Applies the given filters on the query.
      *
+     * @param  QueryBuilder|EloquentBuilder $query
      * @param  FiltersCollectionContract $filters
      * @return void
      */

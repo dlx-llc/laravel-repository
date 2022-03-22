@@ -9,16 +9,17 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
-use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 abstract class ReadonlyRepository implements DataReaderContract
 {
     use Traits\SupportsSorting;
     use Traits\SupportsFiltration;
     use Traits\SupportsTextSearch;
-    use Traits\SupportsContextLoading;
+    use Traits\SupportsLoadContext;
 
     /**
      * The current query object.
@@ -26,13 +27,6 @@ abstract class ReadonlyRepository implements DataReaderContract
      * @var Builder
      */
     protected Builder $query;
-
-    /**
-     * The data mapper.
-     *
-     * @var DataMapperContract|null
-     */
-    protected ?DataMapperContract $dataMapper = null;
 
     /**
      * Returns the eloquent model class name.
@@ -73,35 +67,9 @@ abstract class ReadonlyRepository implements DataReaderContract
     }
 
     /** @inheritdoc */
-    public function setDataMapper(?DataMapperContract $dataMapper): static
-    {
-        $this->dataMapper = $dataMapper;
-
-        return $this;
-    }
-
-    /** @inheritdoc */
     public function setCriteria(CriteriaContract $criteria): static
     {
-        if ($this->dataMapper) {
-            $this->dataMapper->applyOnCriteria($criteria);
-        }
-
-        if ($context = $criteria->getLoadContext()) {
-            $this->applyLoadContext($this->query, $context);
-        }
-
-        if ($textSearch = $criteria->getTextSearch()) {
-            $this->applyTextSearch($textSearch);
-        }
-
-        if ($sorting = $criteria->getSorting()) {
-            $this->applySorting($sorting);
-        }
-
-        if ($filters = $criteria->getFilters()) {
-            $this->applyFilters($this->query, $filters);
-        }
+        $this->applyCriteria($this->query, $criteria);
 
         return $this;
     }
@@ -184,6 +152,34 @@ abstract class ReadonlyRepository implements DataReaderContract
         $this->reset();
 
         return $result;
+    }
+
+    /**
+     * Applies criteria on the given query.
+     *
+     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  CriteriaContract $criteria
+     * @return void
+     */
+    protected function applyCriteria(
+        QueryBuilder|EloquentBuilder $query,
+        CriteriaContract $criteria
+    ): void {
+        if ($context = $criteria->getLoadContext()) {
+            $this->applyLoadContext($query, $context);
+        }
+
+        if ($textSearch = $criteria->getTextSearch()) {
+            $this->applyTextSearch($query, $textSearch);
+        }
+
+        if ($sorting = $criteria->getSorting()) {
+            $this->applySorting($query, $sorting);
+        }
+
+        if ($filters = $criteria->getFilters()) {
+            $this->applyFilters($query, $filters);
+        }
     }
 
     /**

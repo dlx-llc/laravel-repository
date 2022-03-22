@@ -2,28 +2,24 @@
 
 namespace Deluxetech\LaRepo\Eloquent\Traits;
 
-use Illuminate\Database\Eloquent\Builder;
 use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Deluxetech\LaRepo\Contracts\SortingContract;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait SupportsSorting
 {
     /**
-     * Returns the query object.
-     *
-     * @return Builder
-     */
-    abstract protected function getQuery(): Builder;
-
-    /**
      * Applies the given sorting params on the query.
      *
+     * @param  QueryBuilder|EloquentBuilder $query
      * @param  SortingContract $sorting
      * @return void
      */
-    protected function applySorting(SortingContract $sorting): void
-    {
-        $query = $this->getQuery();
+    protected function applySorting(
+        QueryBuilder|EloquentBuilder $query,
+        SortingContract $sorting
+    ): void {
         $attr = $sorting->getAttr();
 
         if ($attr->isSegmented()) {

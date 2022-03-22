@@ -10,23 +10,18 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 trait SupportsTextSearch
 {
     /**
-     * Returns the query object.
-     *
-     * @return EloquentBuilder
-     */
-    abstract protected function getQuery(): EloquentBuilder;
-
-    /**
      * Applies the given text search params on the query.
      *
+     * @param  QueryBuilder|EloquentBuilder $query
      * @param  TextSearchContract $search
      * @return void
      */
-    protected function applyTextSearch(TextSearchContract $search): void
-    {
+    protected function applyTextSearch(
+        QueryBuilder|EloquentBuilder $query,
+        TextSearchContract $search
+    ): void {
         $attrs = $search->getAttrs();
         $attrsCount = count($attrs);
-        $query = $this->getQuery();
 
         if ($attrsCount === 1) {
             $this->searchForText($query, $attrs[0], $search->getText(), false);

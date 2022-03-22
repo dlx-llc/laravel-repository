@@ -33,11 +33,11 @@ trait FetchesRepositoryData
         ?PaginationContract $pagination = null,
         ?DataMapperContract $dataMapper = null
     ): Paginator|Collection {
-        if ($dataMapper) {
-            $repository->setDataMapper($dataMapper);
-        }
-
         if ($criteria) {
+            if ($dataMapper) {
+                $dataMapper->applyOnCriteria($criteria);
+            }
+
             $repository->setCriteria($criteria);
         }
 
@@ -80,11 +80,11 @@ trait FetchesRepositoryData
         DataReaderContract $repository,
         ?DataMapperContract $dataMapper = null
     ): int {
-        if ($dataMapper) {
-            $repository->setDataMapper($dataMapper);
-        }
-
         if ($criteria = CriteriaFactory::createFromRequest()) {
+            if ($dataMapper) {
+                $dataMapper->applyOnCriteria($criteria);
+            }
+
             $repository->setCriteria($criteria);
         }
 
@@ -106,11 +106,11 @@ trait FetchesRepositoryData
         ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null
     ): ?object {
-        if ($dataMapper) {
-            $repository->setDataMapper($dataMapper);
-        }
-
         if ($criteria) {
+            if ($dataMapper) {
+                $dataMapper->applyOnCriteria($criteria);
+            }
+
             $repository->setCriteria($criteria);
         }
 
@@ -130,11 +130,11 @@ trait FetchesRepositoryData
         ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null
     ): ?object {
-        if ($dataMapper) {
-            $repository->setDataMapper($dataMapper);
-        }
-
         if ($criteria) {
+            if ($dataMapper) {
+                $dataMapper->applyOnCriteria($criteria);
+            }
+
             $repository->setCriteria($criteria);
         }
 

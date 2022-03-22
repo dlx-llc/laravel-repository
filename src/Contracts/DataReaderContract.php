@@ -99,14 +99,6 @@ interface DataReaderContract
     public function first(): ?object;
 
     /**
-     * Specifies the data attributes mapper.
-     *
-     * @param  DataMapperContract|null $dataMapper
-     * @return static
-     */
-    public function setDataMapper(?DataMapperContract $dataMapper): static;
-
-    /**
      * Loads missing parameters in accordance with the given load context.
      *
      * @param  object $records
