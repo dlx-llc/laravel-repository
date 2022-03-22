@@ -4,8 +4,8 @@ namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
-use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 class DataMapper implements DataMapperContract
@@ -68,7 +68,7 @@ class DataMapper implements DataMapperContract
 
 
     /** @inheritdoc */
-    public function applyOnSearchCriteria(SearchCriteriaContract $criteria): void
+    public function applyOnCriteria(CriteriaContract $criteria): void
     {
         if ($textSearch = $criteria->getTextSearch()) {
             foreach ($textSearch->getAttrs() as $attr) {

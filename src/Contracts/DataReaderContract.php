@@ -25,12 +25,12 @@ interface DataReaderContract
     public function limit(int $count): static;
 
     /**
-     * Applies the search criteria.
+     * Applies the query criteria.
      *
-     * @param  SearchCriteriaContract $criteria
+     * @param  CriteriaContract $criteria
      * @return static
      */
-    public function search(SearchCriteriaContract $criteria): static;
+    public function match(CriteriaContract $criteria): static;
 
     /**
      * Resets the query object to its initial state.

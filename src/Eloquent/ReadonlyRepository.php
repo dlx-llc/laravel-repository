@@ -8,10 +8,10 @@ use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
+use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
-use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 
 abstract class ReadonlyRepository implements DataReaderContract
 {
@@ -81,10 +81,10 @@ abstract class ReadonlyRepository implements DataReaderContract
     }
 
     /** @inheritdoc */
-    public function search(SearchCriteriaContract $criteria): static
+    public function match(CriteriaContract $criteria): static
     {
         if ($this->dataMapper) {
-            $this->dataMapper->applyOnSearchCriteria($criteria);
+            $this->dataMapper->applyOnCriteria($criteria);
         }
 
         if ($textSearch = $criteria->getTextSearch()) {

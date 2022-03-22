@@ -28,11 +28,11 @@ interface DataMapperContract
     public function get(string $domainAttr): string;
 
     /**
-     * Replaces the search criteria domain model attributes with the
-     * corresponding source data attributes.
+     * Replaces domain model attributes in the criteria with the corresponding
+     * source data attributes.
      *
-     * @param  SearchCriteriaContract $criteria
+     * @param  CriteriaContract $criteria
      * @return void
      */
-    public function applyOnSearchCriteria(SearchCriteriaContract $criteria): void;
+    public function applyOnCriteria(CriteriaContract $criteria): void;
 }

@@ -2,7 +2,11 @@
 
 namespace Deluxetech\LaRepo\Contracts;
 
-interface SearchCriteriaContract
+/**
+ * The criteria is basically an object containing all the required information
+ * to prepare a query and fetch data from a repository.
+ */
+interface CriteriaContract
 {
     /**
      * Class constructor.
@@ -19,14 +23,14 @@ interface SearchCriteriaContract
     );
 
     /**
-     * Returns search criteria sorting params.
+     * Returns the sorting params.
      *
      * @return SortingContract|null
      */
     public function getSorting(): ?SortingContract;
 
     /**
-     * Specifies search criteria sorting params by raw string.
+     * Specifies sorting params using a raw string.
      *
      * @param  string $rawStr
      * @return static
@@ -34,7 +38,7 @@ interface SearchCriteriaContract
     public function setSortingRaw(string $rawStr): static;
 
     /**
-     * Specifies search criteria sorting params.
+     * Specifies sorting params.
      *
      * @param  SortingContract|null $sorting
      * @return static
@@ -42,14 +46,14 @@ interface SearchCriteriaContract
     public function setSorting(?SortingContract $sorting): static;
 
     /**
-     * Returns search criteria text search params.
+     * Returns text search params.
      *
      * @return TextSearchContract|null
      */
     public function getTextSearch(): ?TextSearchContract;
 
     /**
-     * Specifies search criteria text search params by raw string.
+     * Specifies text search params using a raw string.
      *
      * @param  string $rawStr
      * @return static
@@ -57,7 +61,7 @@ interface SearchCriteriaContract
     public function setTextSearchRaw(string $rawStr): static;
 
     /**
-     * Specifies search criteria text search params.
+     * Specifies text search params.
      *
      * @param  TextSearchContract|null $textSearch
      * @return static
@@ -65,14 +69,14 @@ interface SearchCriteriaContract
     public function setTextSearch(?TextSearchContract $textSearch): static;
 
     /**
-     * Returns search criteria filtration params.
+     * Returns filtration params.
      *
      * @return FiltersCollectionContract|null
      */
     public function getFilters(): ?FiltersCollectionContract;
 
     /**
-     * Specifies search criteria filtration params by raw string.
+     * Specifies filtration params using a raw string.
      *
      * @param  string $rawStr
      * @return static
@@ -80,7 +84,7 @@ interface SearchCriteriaContract
     public function setFiltersRaw(string $rawStr): static;
 
     /**
-     * Specifies search criteria filtration params.
+     * Specifies filtration params.
      *
      * @param  FiltersCollectionContract|null $filters
      * @return static

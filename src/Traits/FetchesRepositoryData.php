@@ -3,18 +3,18 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Collection;
+use Deluxetech\LaRepo\CriteriaFactory;
 use Deluxetech\LaRepo\PaginationFactory;
-use Deluxetech\LaRepo\SearchCriteriaFactory;
 use Illuminate\Contracts\Pagination\Paginator;
+use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\LoadContextContract;
-use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
- * applying search criteria, pagination, data mapping and load context.
+ * applying query criteria, pagination, data mapping and load context.
  */
 trait FetchesRepositoryData
 {
@@ -22,7 +22,7 @@ trait FetchesRepositoryData
      * Fetches data collection from the given repository.
      *
      * @param  DataReaderContract $repository
-     * @param  SearchCriteriaContract|null $searchCriteria
+     * @param  CriteriaContract|null $criteria
      * @param  PaginationContract|null $pagination
      * @param  DataMapperContract|null $dataMapper
      * @param  LoadContextContract|null $loadContext
@@ -30,7 +30,7 @@ trait FetchesRepositoryData
      */
     public function getMany(
         DataReaderContract $repository,
-        ?SearchCriteriaContract $searchCriteria = null,
+        ?CriteriaContract $criteria = null,
         ?PaginationContract $pagination = null,
         ?DataMapperContract $dataMapper = null,
         ?LoadContextContract $loadContext = null
@@ -43,8 +43,8 @@ trait FetchesRepositoryData
             $repository->setLoadContext($loadContext);
         }
 
-        if ($searchCriteria) {
-            $repository->search($searchCriteria);
+        if ($criteria) {
+            $repository->match($criteria);
         }
 
         return !is_null($pagination)
@@ -69,7 +69,7 @@ trait FetchesRepositoryData
     ): Paginator|Collection {
         return $this->getMany(
             repository: $repository,
-            searchCriteria: SearchCriteriaFactory::createFromRequest(),
+            criteria: CriteriaFactory::createFromRequest(),
             pagination: PaginationFactory::createFromRequest(require: $pageRequired),
             dataMapper: $dataMapper,
             loadContext: $loadContext
@@ -91,8 +91,8 @@ trait FetchesRepositoryData
             $repository->setDataMapper($dataMapper);
         }
 
-        if ($searchCriteria = SearchCriteriaFactory::createFromRequest()) {
-            $repository->search($searchCriteria);
+        if ($criteria = CriteriaFactory::createFromRequest()) {
+            $repository->match($criteria);
         }
 
         return $repository->count();
@@ -128,14 +128,14 @@ trait FetchesRepositoryData
      * Fetches a single data model from the given repository.
      *
      * @param  DataReaderContract $repository
-     * @param  SearchCriteriaContract|null $searchCriteria,
+     * @param  CriteriaContract|null $criteria,
      * @param  DataMapperContract|null $dataMapper
      * @param  LoadContextContract|null $loadContext
      * @return object|null
      */
     public function getFirst(
         DataReaderContract $repository,
-        ?SearchCriteriaContract $searchCriteria = null,
+        ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null,
         ?LoadContextContract $loadContext = null
     ): ?object {
@@ -147,8 +147,8 @@ trait FetchesRepositoryData
             $repository->setLoadContext($loadContext);
         }
 
-        if ($searchCriteria) {
-            $repository->search($searchCriteria);
+        if ($criteria) {
+            $repository->match($criteria);
         }
 
         return $repository->first();

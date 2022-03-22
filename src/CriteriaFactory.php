@@ -8,28 +8,28 @@ use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Deluxetech\LaRepo\Rules\RepositorySorting;
 use Deluxetech\LaRepo\Contracts\SortingContract;
+use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Rules\RepositoryFiltration;
 use Deluxetech\LaRepo\Rules\RepositoryTextSearch;
 use Deluxetech\LaRepo\Contracts\TextSearchContract;
-use Deluxetech\LaRepo\Contracts\SearchCriteriaContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
-final class SearchCriteriaFactory
+final class CriteriaFactory
 {
     /**
-     * Creates a new search criteria object.
+     * Creates a new criteria object.
      *
      * @param  TextSearchContract|string|null $textSearch
      * @param  SortingContract|string|null $sorting
      * @param  FiltersCollectionContract|string|null $filters
-     * @return SearchCriteriaContract
+     * @return CriteriaContract
      */
     public static function create(
         TextSearchContract|string|null $textSearch = null,
         SortingContract|string|null $sorting = null,
         FiltersCollectionContract|string|null $filters = null
-    ): SearchCriteriaContract {
-        return App::makeWith(SearchCriteriaContract::class, [
+    ): CriteriaContract {
+        return App::makeWith(CriteriaContract::class, [
             'textSearch' => $textSearch,
             'sorting' => $sorting,
             'filters' => $filters,
@@ -37,20 +37,20 @@ final class SearchCriteriaFactory
     }
 
     /**
-     * Creates a new search criteria object using parameters passed via request.
+     * Creates a new criteria object using parameters passed via request.
      *
      * @param  bool $validate
      * @param  string|null $textSearchKey
      * @param  string|null $sortingKey
      * @param  string|null $filtersKey
-     * @return SearchCriteriaContract
+     * @return CriteriaContract
      */
     public static function createFromRequest(
         bool $validate = true,
         ?string $textSearchKey = null,
         ?string $sortingKey = null,
         ?string $filtersKey = null
-    ): SearchCriteriaContract {
+    ): CriteriaContract {
         $textSearchKey ??= Config::get('larepo.request_text_search_key');
         $sortingKey ??= Config::get('larepo.request_sorting_key');
         $filtersKey ??= Config::get('larepo.request_filters_key');
@@ -74,7 +74,7 @@ final class SearchCriteriaFactory
     }
 
     /**
-     * Validates search criteria params.
+     * Validates criteria params.
      *
      * @param  string $textSearchKey
      * @param  string $sortingKey
