@@ -105,7 +105,7 @@ class DataMapper implements DataMapperContract
             in_array($filter->getMode(), [
                 FilterMode::EXISTS,
                 FilterMode::DOES_NOT_EXIST,
-            ])
+            ], true)
         ) {
             $items = $filter->getValue();
             $prefix = $filter->getAttr()->getName();

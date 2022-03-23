@@ -8,7 +8,33 @@ use Deluxetech\LaRepo\Enums\FilterOperator;
 trait ValidatesFilters
 {
     /**
-     * Checks if the given value is an array of filters.
+     * Checks if the given value is a valid filters array.
+     *
+     * @param  string $attribute
+     * @param  mixed $value
+     * @return bool
+     */
+    public function validateFiltersArr(string $attribute, mixed $value): bool
+    {
+        $errCountBefore = count($this->errors);
+
+        if (!is_array($value)) {
+            $this->addError('array', $attribute);
+        } else {
+            foreach ($value as $i => $item) {
+                if (isset($item['items'])) {
+                    $this->validateFiltersCollection("{$attribute}.{$i}", $item);
+                } else {
+                    $this->validateFilter("{$attribute}.{$i}", $item);
+                }
+            }
+        }
+
+        return count($this->errors) <= $errCountBefore;
+    }
+
+    /**
+     * Checks if the given value is a valid filters collection.
      *
      * @param  string $attribute
      * @param  mixed $value
@@ -20,18 +46,20 @@ trait ValidatesFilters
 
         if (!is_array($value)) {
             $this->addError('array', $attribute);
-        } elseif (empty($value)) {
-            $this->addError('required', $attribute);
         } else {
             if (array_key_exists('operator', $value)) {
                 $this->validateFilterOperator("{$attribute}.operator", $value['operator']);
             }
 
-            foreach ($value as $i => $item) {
-                if (isset($item['items'])) {
-                    $this->validateFiltersCollection("{$attribute}.{$i}", $item);
-                } else {
-                    $this->validateFilter("{$attribute}.{$i}", $item);
+            if (empty($value['items'])) {
+                $this->addError('required', "{$attribute}.items");
+            } else {
+                foreach ($value['items'] as $i => $item) {
+                    if (isset($item['items'])) {
+                        $this->validateFiltersCollection("{$attribute}.items.{$i}", $item);
+                    } else {
+                        $this->validateFilter("{$attribute}.items.{$i}", $item);
+                    }
                 }
             }
         }
@@ -84,7 +112,7 @@ trait ValidatesFilters
      */
     public function validateFilterOperator(string $attribute, mixed $value): bool
     {
-        if (!in_array($value, FilterOperator::cases())) {
+        if (!in_array($value, FilterOperator::cases(), true)) {
             $this->addError('in', $attribute);
 
             return false;
