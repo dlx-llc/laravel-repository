@@ -34,6 +34,10 @@ class LaRepoServiceProvider extends ServiceProvider
         $this->app->singleton(TextSearchFormatterContract::class, TextSearchFormatter::class);
         $this->app->singleton(FiltersCollectionFormatterContract::class, FiltersCollectionFormatter::class);
 
+        $this->app->singleton('larepo-utils', function($app) {
+            return new RepositoryUtils();
+        });
+
         $this->app->bind(DataMapperContract::class, DataMapper::class);
         $this->app->bind(SortingContract::class, Sorting::class);
         $this->app->bind(PaginationContract::class, Pagination::class);

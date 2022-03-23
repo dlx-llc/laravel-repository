@@ -2,8 +2,8 @@
 
 namespace Deluxetech\LaRepo\Eloquent;
 
+use Deluxetech\LaRepo\ClassUtils;
 use Illuminate\Support\Collection;
-use Deluxetech\LaRepo\RepositoryUtils;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -40,8 +40,8 @@ abstract class ReadonlyRepository implements DataReaderContract
     public function __construct()
     {
         $model = $this->getModel();
-        RepositoryUtils::checkClassExists($model);
-        RepositoryUtils::checkClassImplements($model, Model::class);
+        ClassUtils::checkClassExists($model);
+        ClassUtils::checkClassImplements($model, Model::class);
 
         $this->query = $model::query();
         $this->registerDefaultFilterHandlers();

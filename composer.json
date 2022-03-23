@@ -34,7 +34,10 @@
         "laravel": {
             "providers": [
                 "Deluxetech\\LaRepo\\LaRepoServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "LaRepo": "Deluxetech\\LaRepo\\Facades\\LaRepo"
+            }
         }
     },
     "autoload": {

@@ -79,8 +79,8 @@ final class FilterFactory
      */
     public static function register(string $mode, string $filterClass): void
     {
-        RepositoryUtils::checkClassExists($filterClass);
-        RepositoryUtils::checkClassImplements($filterClass, FilterContract::class);
+        ClassUtils::checkClassExists($filterClass);
+        ClassUtils::checkClassImplements($filterClass, FilterContract::class);
 
         $factory = self::getInstance();
         $factory->registry[$mode] = $filterClass;

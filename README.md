@@ -56,15 +56,13 @@ use Deluxetech\LaRepo\Eloquent\GenericRepository;
 $userRepository = new GenericRepository(User::class);
 ```
 
-There's also a Deluxetech\LaRepo\Traits\FetchesRepositoryData trait, which you can use in your controller classes. It will provide you with a group of methods that will save you time writing some repetitive code.
+There's also a \Deluxetech\LaRepo\Facades\LaRepo facade which provide you with a group of methods that may save you time writing some repetitive code.
 
 ```php
-use Deluxetech\LaRepo\Traits\FetchesRepositoryData;
+use \Deluxetech\LaRepo\Facades\LaRepo;
 
 class UserController
 {
-    use FetchesRepositoryData;
-
     protected $userRepo;
 
     public function __construct(UserRepository $userRepo)
@@ -74,7 +72,7 @@ class UserController
 
     public function index()
     {
-        return $this->getManyWithRequest($this->userRepo);
+        return LaRepo::getManyWithRequest($this->userRepo);
     }
 }
 ```
