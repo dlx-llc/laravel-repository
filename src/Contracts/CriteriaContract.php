@@ -9,22 +9,6 @@ namespace Deluxetech\LaRepo\Contracts;
 interface CriteriaContract
 {
     /**
-     * Class constructor.
-     *
-     * @param  TextSearchContract|string|null $textSearch
-     * @param  SortingContract|string|null $sorting
-     * @param  FiltersCollectionContract|string|null $filters
-     * @param  LoadContextContract|null $context
-     * @return void
-     */
-    public function __construct(
-        TextSearchContract|string|null $textSearch = null,
-        SortingContract|string|null $sorting = null,
-        FiltersCollectionContract|string|null $filters = null,
-        ?LoadContextContract $context = null
-    );
-
-    /**
      * Returns the sorting params.
      *
      * @return SortingContract|null
@@ -94,17 +78,65 @@ interface CriteriaContract
     public function setFilters(?FiltersCollectionContract $filters): static;
 
     /**
-     * Returns the load context.
+     * Specifies the attributes that should be loaded.
      *
-     * @return LoadContextContract|null
-     */
-    public function getLoadContext(): ?LoadContextContract;
-
-    /**
-     * Specifies the load context.
-     *
-     * @param  LoadContextContract|null $context
+     * @param  string ...$attributes
      * @return static
      */
-    public function setLoadContext(?LoadContextContract $context): static;
+    public function setAttributes(string ...$attributes): static;
+
+    /**
+     * Returns the attributes that should be loaded.
+     *
+     * @return array<string>
+     */
+    public function getAttributes(): array;
+
+    /**
+     * Specifies the relations that should be loaded.
+     *
+     * @param  array $relations
+     * @return static
+     */
+    public function setRelations(array $relations): static;
+
+    /**
+     * Adds a relation to load.
+     *
+     * @param  string $relation
+     * @param  CriteriaContract|null $criteria
+     * @return static
+     */
+    public function addRelation(string $relation, ?CriteriaContract $criteria = null): static;
+
+    /**
+     * Returns the relations that should be loaded.
+     *
+     * @return array
+     */
+    public function getRelations(): array;
+
+    /**
+     * Specifies the relation counts that should be loaded.
+     *
+     * @param  array $counts
+     * @return static
+     */
+    public function setRelationCounts(array $counts): static;
+
+    /**
+     * Adds a relation count to load.
+     *
+     * @param  string $relation
+     * @param  CriteriaContract|null $criteria
+     * @return static
+     */
+    public function addRelationCount(string $relation, ?CriteriaContract $criteria = null): static;
+
+    /**
+     * Returns the relation counts that should be loaded.
+     *
+     * @return array<string>
+     */
+    public function getRelationCounts(): array;
 }

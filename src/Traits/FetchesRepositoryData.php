@@ -3,18 +3,18 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Collection;
-use Deluxetech\LaRepo\CriteriaFactory;
+use Illuminate\Support\Facades\App;
 use Deluxetech\LaRepo\PaginationFactory;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
-use Deluxetech\LaRepo\Contracts\LoadContextContract;
+use Deluxetech\LaRepo\Rules\Validators\CriteriaValidator;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
- * applying query criteria, pagination, data mapping and load context.
+ * applying query criteria, pagination and data mapping.
  */
 trait FetchesRepositoryData
 {
@@ -50,20 +50,20 @@ trait FetchesRepositoryData
      * Fetches data collection from the given repository using request params.
      *
      * @param  DataReaderContract $repository
+     * @param  CriteriaContract|null $criteria
      * @param  DataMapperContract|null $dataMapper
-     * @param  LoadContextContract|null $loadContext
      * @param  bool $pageRequired  TRUE by default.
      * @return Paginator|Collection
      */
     public function getManyWithRequest(
         DataReaderContract $repository,
+        ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null,
-        ?LoadContextContract $loadContext = null,
         bool $pageRequired = true
     ): Paginator|Collection {
         return $this->getMany(
             repository: $repository,
-            criteria: CriteriaFactory::createFromRequest($loadContext),
+            criteria: $this->getRequestCriteria($criteria),
             pagination: PaginationFactory::createFromRequest(require: $pageRequired),
             dataMapper: $dataMapper
         );
@@ -80,7 +80,7 @@ trait FetchesRepositoryData
         DataReaderContract $repository,
         ?DataMapperContract $dataMapper = null
     ): int {
-        if ($criteria = CriteriaFactory::createFromRequest()) {
+        if ($criteria = $this->getRequestCriteria()) {
             if ($dataMapper) {
                 $dataMapper->applyOnCriteria($criteria);
             }
@@ -121,7 +121,7 @@ trait FetchesRepositoryData
      * Fetches a single data model from the given repository.
      *
      * @param  DataReaderContract $repository
-     * @param  CriteriaContract|null $criteria,
+     * @param  CriteriaContract|null $criteria
      * @param  DataMapperContract|null $dataMapper
      * @return object|null
      */
@@ -139,5 +139,26 @@ trait FetchesRepositoryData
         }
 
         return $repository->first();
+    }
+
+    /**
+     * Fetches criteria parameters from request and creates a new criteria object
+     * or fills the given one.
+     *
+     * @param  CriteriaContract|null $criteria
+     * @return CriteriaContract
+     */
+    protected function getRequestCriteria(?CriteriaContract $criteria = null): CriteriaContract
+    {
+        $criteriaValidator = new CriteriaValidator();
+        $criteriaValidator->validate();
+
+        if (is_null($criteria)) {
+            $criteria = App::make(CriteriaContract::class);
+        }
+
+        $criteriaValidator->fillValidated($criteria);
+
+        return $criteria;
     }
 }

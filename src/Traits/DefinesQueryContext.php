@@ -1,11 +1,10 @@
 <?php
 
-namespace Deluxetech\LaRepo;
+namespace Deluxetech\LaRepo\Traits;
 
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
-use Deluxetech\LaRepo\Contracts\LoadContextContract;
 
-class LoadContext implements LoadContextContract
+trait DefinesQueryContext
 {
     /**
      * @var array<string>
@@ -19,7 +18,7 @@ class LoadContext implements LoadContextContract
 
     /**
      * @var array[string, string => CriteriaContract|null]
-    */
+     */
     protected array $relationCounts = [];
 
     /** @inheritdoc */

@@ -8,18 +8,15 @@ use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Contracts\Pagination\Paginator;
-use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 abstract class ReadonlyRepository implements DataReaderContract
 {
     use Traits\SupportsSorting;
     use Traits\SupportsFiltration;
     use Traits\SupportsTextSearch;
-    use Traits\SupportsLoadContext;
+    use Traits\SupportsQueryContext;
 
     /**
      * The current query object.
@@ -62,14 +59,6 @@ abstract class ReadonlyRepository implements DataReaderContract
     public function limit(int $count): static
     {
         $this->query->limit($count);
-
-        return $this;
-    }
-
-    /** @inheritdoc */
-    public function addCriteria(CriteriaContract $criteria): static
-    {
-        $this->applyCriteria($this->query, $criteria);
 
         return $this;
     }
@@ -152,34 +141,6 @@ abstract class ReadonlyRepository implements DataReaderContract
         $this->reset();
 
         return $result;
-    }
-
-    /**
-     * Applies criteria on the given query.
-     *
-     * @param  QueryBuilder|EloquentBuilder $query
-     * @param  CriteriaContract $criteria
-     * @return void
-     */
-    protected function applyCriteria(
-        QueryBuilder|EloquentBuilder $query,
-        CriteriaContract $criteria
-    ): void {
-        if ($context = $criteria->getLoadContext()) {
-            $this->applyLoadContext($query, $context);
-        }
-
-        if ($textSearch = $criteria->getTextSearch()) {
-            $this->applyTextSearch($query, $textSearch);
-        }
-
-        if ($sorting = $criteria->getSorting()) {
-            $this->applySorting($query, $sorting);
-        }
-
-        if ($filters = $criteria->getFilters()) {
-            $this->applyFilters($query, $filters);
-        }
     }
 
     /**

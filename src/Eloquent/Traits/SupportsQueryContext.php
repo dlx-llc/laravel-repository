@@ -2,16 +2,14 @@
 
 namespace Deluxetech\LaRepo\Eloquent\Traits;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
-use Deluxetech\LaRepo\Contracts\LoadContextContract;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
-trait SupportsLoadContext
+trait SupportsQueryContext
 {
     /**
      * Returns the query object.
@@ -19,18 +17,6 @@ trait SupportsLoadContext
      * @return Builder
      */
     abstract protected function getQuery(): Builder;
-
-    /**
-     * Applies criteria on the given query.
-     *
-     * @param  QueryBuilder|EloquentBuilder $query
-     * @param  CriteriaContract $criteria
-     * @return void
-     */
-    abstract protected function applyCriteria(
-        QueryBuilder|EloquentBuilder $query,
-        CriteriaContract $criteria
-    ): void;
 
     /**
      * Returns the eloquent model class name.
@@ -54,15 +40,106 @@ trait SupportsLoadContext
     protected array $relationCountResolvers = [];
 
     /** @inheritdoc */
-    public function loadMissing(object $records, LoadContextContract $context): void
+    public function addCriteria(CriteriaContract $criteria): static
     {
-        if (is_a($records, Model::class)) {
+        $this->applyCriteria($this->getQuery(), $criteria);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function loadMissing(object $records, CriteriaContract $criteria): void
+    {
+        if (!is_a($records, Collection::class)) {
             $records = Collection::make([$records]);
         }
 
-        $this->loadMissingAttrs($records, $context->getAttributes());
-        $this->loadMissingRelations($records, $context->getRelations());
-        $this->loadMissingRelationCounts($records, $context->getRelationCounts());
+        $this->loadMissingAttrs($records, $criteria->getAttributes());
+        $this->loadMissingRelations($records, $criteria->getRelations());
+        $this->loadMissingRelationCounts($records, $criteria->getRelationCounts());
+    }
+
+    /**
+     * Applies criteria on the given query.
+     *
+     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  CriteriaContract $criteria
+     * @return void
+     */
+    protected function applyCriteria(
+        QueryBuilder|EloquentBuilder $query,
+        CriteriaContract $criteria
+    ): void {
+        if ($attrs = $criteria->getAttributes()) {
+            $query->select($attrs);
+        }
+
+        if ($relations = $criteria->getRelations()) {
+            $this->loadRelations($query, $relations);
+        }
+
+        if ($counts = $criteria->getRelationCounts()) {
+            $this->loadRelationCounts($query, $counts);
+        }
+
+        if ($textSearch = $criteria->getTextSearch()) {
+            $this->applyTextSearch($query, $textSearch);
+        }
+
+        if ($sorting = $criteria->getSorting()) {
+            $this->applySorting($query, $sorting);
+        }
+
+        if ($filters = $criteria->getFilters()) {
+            $this->applyFilters($query, $filters);
+        }
+    }
+
+    /**
+     * Loads the required relations.
+     *
+     * @param  object $query
+     * @param  array $relations
+     * @return void
+     */
+    protected function loadRelations(object $query, array $relations): void
+    {
+        foreach ($relations as $key => $value) {
+            if (is_int($key)) {
+                $query->with($value);
+            } elseif (is_string($key)) {
+                if (is_subclass_of($value, CriteriaContract::class)) {
+                    $query->with($key, fn($q) => $this->applyCriteria($q, $value));
+                } else {
+                    $query->with($key);
+                }
+            }
+        }
+    }
+
+    /**
+     * Loads the required relation counts.
+     *
+     * @param  object $query
+     * @param  array $counts
+     * @return void
+     */
+    protected function loadRelationCounts(object $query, array $counts): void
+    {
+        $countArgs = [];
+
+        foreach ($counts as $key => $value) {
+            $relation = is_int($key) ? $value : $key;
+            $countExpression = "{$relation} as {$relation}Count";
+
+            if (is_object($value) && is_subclass_of($value, CriteriaContract::class)) {
+                $countArgs[$countExpression] = fn($q) => $this->applyCriteria($q, $value);
+            } else {
+                $countArgs[] = $countExpression;
+            }
+        }
+
+        $query->withCount($countArgs);
     }
 
     /**
@@ -218,10 +295,8 @@ trait SupportsLoadContext
             return !$relLoaded;
         });
 
-        $loadContext = $criteria->getLoadContext();
-
-        if ($loadContext && $loaded->isNotEmpty()) {
-            $this->loadMissing($loaded, $loadContext);
+        if ($criteria && $loaded->isNotEmpty()) {
+            $this->loadMissing($loaded, $criteria);
         }
 
         if (
@@ -308,48 +383,5 @@ trait SupportsLoadContext
         }
 
         $records->loadCount($missing);
-    }
-
-    /**
-     * Recursively loads the required relations.
-     *
-     * @param  object $query
-     * @param  LoadContextContract $context
-     * @return void
-     */
-    protected function applyLoadContext(object $query, LoadContextContract $context): void
-    {
-        if ($attrs = $context->getAttributes()) {
-            $query->select($attrs);
-        }
-
-        foreach ($context->getRelations() as $key => $value) {
-            if (is_int($key)) {
-                $query->with($value);
-            } elseif (is_string($key)) {
-                if (is_subclass_of($value, CriteriaContract::class)) {
-                    $query->with($key, fn($q) => $this->applyCriteria($q, $value));
-                } else {
-                    $query->with($key);
-                }
-            }
-        }
-
-        if ($counts = $context->getRelationCounts()) {
-            $countArgs = [];
-
-            foreach ($counts as $key => $value) {
-                $relation = is_int($key) ? $value : $key;
-                $countExpression = "{$relation} as {$relation}Count";
-
-                if (is_object($value) && is_subclass_of($value, CriteriaContract::class)) {
-                    $countArgs[$countExpression] = fn($q) => $this->applyCriteria($q, $value);
-                } else {
-                    $countArgs[] = $countExpression;
-                }
-            }
-
-            $query->withCount($countArgs);
-        }
     }
 }

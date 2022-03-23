@@ -9,7 +9,6 @@ use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\TextSearchContract;
-use Deluxetech\LaRepo\Contracts\LoadContextContract;
 use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
 use Deluxetech\LaRepo\Rules\Formatters\SortingFormatter;
 use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
@@ -39,7 +38,6 @@ class LaRepoServiceProvider extends ServiceProvider
         $this->app->bind(SortingContract::class, Sorting::class);
         $this->app->bind(PaginationContract::class, Pagination::class);
         $this->app->bind(CriteriaContract::class, Criteria::class);
-        $this->app->bind(LoadContextContract::class, LoadContext::class);
 
         $this->app->bind(DataAttrContract::class, function ($app, $params) {
             return new DataAttr(...$params);

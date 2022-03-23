@@ -11,7 +11,7 @@ class DataAttr implements DataAttrContract
      *
      * @var string
      */
-    const DELIMITER = '.';
+    public const DELIMITER = '.';
 
     /**
      * @var array<string>

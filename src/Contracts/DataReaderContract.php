@@ -99,11 +99,11 @@ interface DataReaderContract
     public function first(): ?object;
 
     /**
-     * Loads missing parameters in accordance with the given load context.
+     * Loads missing parameters in accordance with the given criteria.
      *
      * @param  object $records
-     * @param  LoadContextContract $context
+     * @param  CriteriaContract $criteria
      * @return void
      */
-    public function loadMissing(object $records, LoadContextContract $context): void;
+    public function loadMissing(object $records, CriteriaContract $criteria): void;
 }
