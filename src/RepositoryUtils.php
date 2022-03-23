@@ -145,17 +145,19 @@ class RepositoryUtils
      * Creates a new pagination object using the parameters of the request.
      *
      * @param  bool $require
+     * @param  int|null $perPageMax
      * @param  string|null $pageKey
      * @param  string|null $perPageKey
      * @return PaginationContract
      */
     public function getRequestPagination(
         bool $require = true,
+        ?int $perPageMax = null,
         ?string $pageKey = null,
         ?string $perPageKey = null
     ): PaginationContract {
         $validator = new PaginationValidator($pageKey, $perPageKey);
-        $validator->validate($require);
+        $validator->validate($require, $perPageMax);
 
         return $validator->createFromValidated();
     }

@@ -50,10 +50,11 @@ class PaginationValidator
      * Validates criteria params.
      *
      * @param  bool $require
+     * @param  int|null $perPageMax
      * @return void
      * @throws ValidationException
      */
-    public function validate(bool $require): void
+    public function validate(bool $require, ?int $perPageMax = null): void
     {
         $page = Request::input($this->pageName);
         $perPageDefault = Config::get('larepo.per_page_default');
@@ -63,7 +64,7 @@ class PaginationValidator
             return;
         }
 
-        $perPageMax = Config::get('larepo.per_page_max');
+        $perPageMax ??= Config::get('larepo.per_page_max');
         $perPageRules = ['integer', 'min:1', 'max:' . $perPageMax];
         $pageRules = ['integer', 'min:1'];
 
