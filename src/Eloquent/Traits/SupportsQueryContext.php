@@ -20,13 +20,6 @@ trait SupportsQueryContext
     abstract protected function getQuery(): Builder;
 
     /**
-     * Returns the eloquent model class name.
-     *
-     * @return string
-     */
-    abstract public function getModel(): string;
-
-    /**
      * Relation resolvers map.
      *
      * @var array[string => callable]

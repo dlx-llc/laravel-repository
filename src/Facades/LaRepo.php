@@ -18,6 +18,8 @@ use Deluxetech\LaRepo\Contracts\PaginationContract;
  * @method static ?object getFirst(DataReaderContract $repository, ?CriteriaContract $criteria = null, ?DataMapperContract $dataMapper = null)  Fetches a single data model from the given repository.
  * @method static PaginationContract getRequestPagination(bool $require = true, ?int $perPageMax = null, ?string $pageKey = null, ?string $perPageKey = null)  Creates a new pagination object using the parameters of the request.
  * @method static CriteriaContract getRequestCriteria(?CriteriaContract $criteria = null, ?string $textSearchKey = null, ?string $sortingKey = null, ?string $filtersKey = null)  Fetches criteria parameters from the request and creates a new criteria object or fills the given one.
+ * @method static CriteriaContract newCriteria()  Creates a new query criteria object.
+ * @method static DataMapperContract newDataMapper()  Creates a new data mapper object.
  *
  * @see \Deluxetech\LaRepo\RepositoryUtils
  */

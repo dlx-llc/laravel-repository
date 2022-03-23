@@ -189,4 +189,24 @@ class RepositoryUtils
 
         return $criteria;
     }
+
+    /**
+     * Creates a new query criteria object.
+     *
+     * @return CriteriaContract
+     */
+    public function newCriteria(): CriteriaContract
+    {
+        return App::make(CriteriaContract::class);
+    }
+
+    /**
+     * Creates a new data mapper object.
+     *
+     * @return DataMapperContract
+     */
+    public function newDataMapper(): DataMapperContract
+    {
+        return App::make(DataMapperContract::class);
+    }
 }
