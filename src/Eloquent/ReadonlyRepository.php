@@ -67,7 +67,7 @@ abstract class ReadonlyRepository implements DataReaderContract
     }
 
     /** @inheritdoc */
-    public function setCriteria(CriteriaContract $criteria): static
+    public function addCriteria(CriteriaContract $criteria): static
     {
         $this->applyCriteria($this->query, $criteria);
 

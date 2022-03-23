@@ -38,7 +38,7 @@ trait FetchesRepositoryData
                 $dataMapper->applyOnCriteria($criteria);
             }
 
-            $repository->setCriteria($criteria);
+            $repository->addCriteria($criteria);
         }
 
         return !is_null($pagination)
@@ -85,7 +85,7 @@ trait FetchesRepositoryData
                 $dataMapper->applyOnCriteria($criteria);
             }
 
-            $repository->setCriteria($criteria);
+            $repository->addCriteria($criteria);
         }
 
         return $repository->count();
@@ -111,7 +111,7 @@ trait FetchesRepositoryData
                 $dataMapper->applyOnCriteria($criteria);
             }
 
-            $repository->setCriteria($criteria);
+            $repository->addCriteria($criteria);
         }
 
         return $repository->find($id);
@@ -135,7 +135,7 @@ trait FetchesRepositoryData
                 $dataMapper->applyOnCriteria($criteria);
             }
 
-            $repository->setCriteria($criteria);
+            $repository->addCriteria($criteria);
         }
 
         return $repository->first();

@@ -30,7 +30,7 @@ interface DataReaderContract
      * @param  CriteriaContract $criteria
      * @return static
      */
-    public function setCriteria(CriteriaContract $criteria): static;
+    public function addCriteria(CriteriaContract $criteria): static;
 
     /**
      * Resets the query object to its initial state.
