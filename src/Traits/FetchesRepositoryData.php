@@ -4,13 +4,13 @@ namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
-use Deluxetech\LaRepo\PaginationFactory;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Rules\Validators\CriteriaValidator;
+use Deluxetech\LaRepo\Rules\Validators\PaginationValidator;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
@@ -64,7 +64,7 @@ trait FetchesRepositoryData
         return $this->getMany(
             repository: $repository,
             criteria: $this->getRequestCriteria($criteria),
-            pagination: PaginationFactory::createFromRequest(require: $pageRequired),
+            pagination: $this->getRequestPagination($pageRequired),
             dataMapper: $dataMapper
         );
     }
@@ -142,22 +142,36 @@ trait FetchesRepositoryData
     }
 
     /**
-     * Fetches criteria parameters from request and creates a new criteria object
-     * or fills the given one.
+     * Creates a new pagination object using the parameters of the request.
+     *
+     * @param  bool $require
+     * @return PaginationContract
+     */
+    protected function getRequestPagination(bool $require = true): PaginationContract
+    {
+        $validator = new PaginationValidator();
+        $validator->validate($require);
+
+        return $validator->createFromValidated();
+    }
+
+    /**
+     * Fetches criteria parameters from the request and creates a new criteria
+     * object or fills the given one.
      *
      * @param  CriteriaContract|null $criteria
      * @return CriteriaContract
      */
     protected function getRequestCriteria(?CriteriaContract $criteria = null): CriteriaContract
     {
-        $criteriaValidator = new CriteriaValidator();
-        $criteriaValidator->validate();
+        $validator = new CriteriaValidator();
+        $validator->validate();
 
         if (is_null($criteria)) {
             $criteria = App::make(CriteriaContract::class);
         }
 
-        $criteriaValidator->fillValidated($criteria);
+        $validator->fillValidated($criteria);
 
         return $criteria;
     }
