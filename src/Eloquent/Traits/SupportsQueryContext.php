@@ -5,6 +5,7 @@ namespace Deluxetech\LaRepo\Eloquent\Traits;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -62,12 +63,12 @@ trait SupportsQueryContext
     /**
      * Applies criteria on the given query.
      *
-     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  QueryBuilder|EloquentBuilder|Relation $query
      * @param  CriteriaContract $criteria
      * @return void
      */
     protected function applyCriteria(
-        QueryBuilder|EloquentBuilder $query,
+        QueryBuilder|EloquentBuilder|Relation $query,
         CriteriaContract $criteria
     ): void {
         if ($attrs = $criteria->getAttributes()) {
