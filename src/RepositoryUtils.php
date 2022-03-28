@@ -7,8 +7,8 @@ use Illuminate\Support\Facades\App;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
-use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\RepositoryContract;
 use Deluxetech\LaRepo\Rules\Validators\CriteriaValidator;
 use Deluxetech\LaRepo\Rules\Validators\PaginationValidator;
 
@@ -21,14 +21,14 @@ class RepositoryUtils
     /**
      * Fetches data collection from the given repository.
      *
-     * @param  DataReaderContract $repository
+     * @param  RepositoryContract $repository
      * @param  CriteriaContract|null $criteria
      * @param  PaginationContract|null $pagination
      * @param  DataMapperContract|null $dataMapper
      * @return Paginator|Collection
      */
     public function getMany(
-        DataReaderContract $repository,
+        RepositoryContract $repository,
         ?CriteriaContract $criteria = null,
         ?PaginationContract $pagination = null,
         ?DataMapperContract $dataMapper = null
@@ -49,14 +49,14 @@ class RepositoryUtils
     /**
      * Fetches data collection from the given repository using request params.
      *
-     * @param  DataReaderContract $repository
+     * @param  RepositoryContract $repository
      * @param  CriteriaContract|null $criteria
      * @param  DataMapperContract|null $dataMapper
      * @param  bool $pageRequired  TRUE by default.
      * @return Paginator|Collection
      */
     public function getManyWithRequest(
-        DataReaderContract $repository,
+        RepositoryContract $repository,
         ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null,
         bool $pageRequired = true
@@ -72,12 +72,12 @@ class RepositoryUtils
     /**
      * Fetches data count from the given repository using request params.
      *
-     * @param  DataReaderContract $repository
+     * @param  RepositoryContract $repository
      * @param  DataMapperContract|null $dataMapper
      * @return int
      */
     public function getCountWithRequest(
-        DataReaderContract $repository,
+        RepositoryContract $repository,
         ?DataMapperContract $dataMapper = null
     ): int {
         if ($criteria = $this->getRequestCriteria()) {
@@ -94,14 +94,14 @@ class RepositoryUtils
     /**
      * Fetches a single data model from the given repository by ID.
      *
-     * @param  DataReaderContract $repository
+     * @param  RepositoryContract $repository
      * @param  int|string $id
      * @param  CriteriaContract|null $criteria
      * @param  DataMapperContract|null $dataMapper
      * @return object|null
      */
     public function getOneById(
-        DataReaderContract $repository,
+        RepositoryContract $repository,
         int|string $id,
         ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null
@@ -120,13 +120,13 @@ class RepositoryUtils
     /**
      * Fetches a single data model from the given repository.
      *
-     * @param  DataReaderContract $repository
+     * @param  RepositoryContract $repository
      * @param  CriteriaContract|null $criteria
      * @param  DataMapperContract|null $dataMapper
      * @return object|null
      */
     public function getFirst(
-        DataReaderContract $repository,
+        RepositoryContract $repository,
         ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null
     ): ?object {

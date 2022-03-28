@@ -7,11 +7,12 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Illuminate\Contracts\Pagination\Paginator;
-use Deluxetech\LaRepo\Contracts\DataReaderContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
 
-abstract class ReadonlyRepository implements DataReaderContract
+class EloquentStrategy implements RepositoryStrategyContract
 {
     use Traits\SupportsSorting;
     use Traits\SupportsFiltration;
@@ -26,20 +27,13 @@ abstract class ReadonlyRepository implements DataReaderContract
     protected Builder $query;
 
     /**
-     * Returns the eloquent model class name.
-     *
-     * @return string
-     */
-    abstract public function getModel(): string;
-
-    /**
      * Class constructor.
      *
+     * @param  string $model
      * @return void
      */
-    public function __construct()
+    public function __construct(string $model)
     {
-        $model = $this->getModel();
         ClassUtils::checkClassExists($model);
         ClassUtils::checkClassImplements($model, Model::class);
 
@@ -78,6 +72,18 @@ abstract class ReadonlyRepository implements DataReaderContract
     }
 
     /** @inheritdoc */
+    public function cursor(): LazyCollection
+    {
+        return $this->fetch('cursor');
+    }
+
+    /** @inheritdoc */
+    public function lazy(int $chunkSize = 1000): LazyCollection
+    {
+        return $this->fetch('lazy', $chunkSize);
+    }
+
+    /** @inheritdoc */
     public function paginate(PaginationContract $pagination): Paginator
     {
         $page = $pagination->getPage();
@@ -89,18 +95,6 @@ abstract class ReadonlyRepository implements DataReaderContract
         $result->appends($perPageName, $perPage);
 
         return $result;
-    }
-
-    /** @inheritdoc */
-    public function cursor(): LazyCollection
-    {
-        return $this->fetch('cursor');
-    }
-
-    /** @inheritdoc */
-    public function lazy(int $chunkSize = 1000): LazyCollection
-    {
-        return $this->fetch('lazy', $chunkSize);
     }
 
     /** @inheritdoc */

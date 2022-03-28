@@ -6,8 +6,16 @@ use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 
-interface DataReaderContract
+interface RepositoryStrategyContract
 {
+    /**
+     * Adds criteria for further query execution.
+     *
+     * @param  CriteriaContract $criteria
+     * @return static
+     */
+    public function addCriteria(CriteriaContract $criteria): static;
+
     /**
      * Specifies the number of results that should be skipped.
      *
@@ -25,49 +33,41 @@ interface DataReaderContract
     public function limit(int $count): static;
 
     /**
-     * Applies the query criteria.
-     *
-     * @param  CriteriaContract $criteria
-     * @return static
-     */
-    public function addCriteria(CriteriaContract $criteria): static;
-
-    /**
-     * Resets the query object to its initial state.
+     * Resets the query to its initial state.
      *
      * @return static
      */
     public function reset(): static;
 
     /**
-     * Fetches query results.
+     * Fetches results.
      *
      * @return Collection
      */
     public function get(): Collection;
 
     /**
-     * Fetches paginated query results.
-     *
-     * @param  PaginationContract $pagination
-     * @return Paginator
-     */
-    public function paginate(PaginationContract $pagination): Paginator;
-
-    /**
-     * Fetches query results via lazy collection.
+     * Fetches results via lazy collection.
      *
      * @return LazyCollection
      */
     public function cursor(): LazyCollection;
 
     /**
-     * Fetches query results in chunks via lazy collection.
+     * Fetches results in chunks via lazy collection.
      *
      * @param  int $chunkSize
      * @return LazyCollection
      */
     public function lazy(int $chunkSize = 1000): LazyCollection;
+
+    /**
+     * Fetches paginated results.
+     *
+     * @param  PaginationContract $pagination
+     * @return Paginator
+     */
+    public function paginate(PaginationContract $pagination): Paginator;
 
     /**
      * Returns the number of records matching the query.

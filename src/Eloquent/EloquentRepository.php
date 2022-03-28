@@ -2,7 +2,10 @@
 
 namespace Deluxetech\LaRepo\Eloquent;
 
-class GenericRepository extends Repository
+use Deluxetech\LaRepo\Repository;
+use Deluxetech\LaRepo\Contracts\RepositoryStrategyContract;
+
+class EloquentRepository extends Repository
 {
     /**
      * The eloquent model class name.
@@ -24,8 +27,8 @@ class GenericRepository extends Repository
     }
 
     /** @inheritdoc */
-    public function getModel(): string
+    public function createStrategy(): RepositoryStrategyContract
     {
-        return $this->model;
+        return new EloquentStrategy($this->model);
     }
 }

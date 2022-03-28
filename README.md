@@ -3,7 +3,12 @@
 [![Laravel Version](https://img.shields.io/badge/Laravel-7.x%2F8.x%2F9.x-blue)](https://laravel.com/)
 [![Latest Stable Version](http://poser.pugx.org/deluxetech/laravel-repository/v)](https://packagist.org/packages/deluxetech/laravel-repository) [![Total Downloads](http://poser.pugx.org/deluxetech/laravel-repository/downloads)](https://packagist.org/packages/deluxetech/laravel-repository) [![Latest Unstable Version](http://poser.pugx.org/deluxetech/laravel-repository/v/unstable)](https://packagist.org/packages/deluxetech/laravel-repository) [![License](http://poser.pugx.org/deluxetech/laravel-repository/license)](https://packagist.org/packages/deluxetech/laravel-repository) [![PHP Version Require](http://poser.pugx.org/deluxetech/laravel-repository/require/php)](https://packagist.org/packages/deluxetech/laravel-repository)
 
-Repository design pattern implementation for Laravel framework.
+## What is repository?
+Repository mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
+In this package you will find its implementation for the Laravel framework.
+
+## When to use it
+In a large system with many domain object types and many possible queries, Repository reduces the amount of code needed to deal with all the querying that goes on. Repository promotes the Specification pattern (in the form of a criteria object), which encapsulates the query to be performed. Also, Repository can be really useful in situations with multiple data sources.
 
 ## Installation
 
@@ -33,46 +38,25 @@ This package was built to use with the latest version of Laravel, but it should 
 
 ## Usage
 
-You can extend \Deluxetech\LaRepo\Eloquent\ReadonlyRepository for data read only or \Deluxetech\LaRepo\Eloquent\Repository for data full access. You'll only need to define the abstract getModel() method.
+You can use the generic EloquentRepository class by passing the Laravel model class name to its constructor. There's also a LaRepo facade which provide you with a group of methods that may save you time writing some repetitive code.
 
 ```php
-use Deluxetech\LaRepo\Eloquent\Repository;
-
-class UserRepository extends Repository
-{
-    /** @inheritdoc */
-    protected function getModel(): string
-    {
-        return User::class;
-    }
-}
-```
-
-For simple cases when there's no much to do within the repository, you can use the generic \Deluxetech\LaRepo\Eloquent\GenericRepository repository by passing the Laravel model name into the class constructor.
-
-```php
-use Deluxetech\LaRepo\Eloquent\GenericRepository;
-
-$userRepository = new GenericRepository(User::class);
-```
-
-There's also a \Deluxetech\LaRepo\Facades\LaRepo facade which provide you with a group of methods that may save you time writing some repetitive code.
-
-```php
-use \Deluxetech\LaRepo\Facades\LaRepo;
+use Deluxetech\LaRepo\Facades\LaRepo;
+use Deluxetech\LaRepo\Eloquent\EloquentRepository;
+use Deluxetech\LaRepo\Contracts\RepositoryContract;
 
 class UserController
 {
-    protected $userRepo;
+    protected RepositoryContract $repo;
 
-    public function __construct(UserRepository $userRepo)
+    public function __construct()
     {
-        $this->userRepo = $userRepo;
+        $this->repo = new EloquentRepository(User::class);
     }
 
     public function index()
     {
-        return LaRepo::getManyWithRequest($this->userRepo);
+        return LaRepo::getManyWithRequest($this->repo);
     }
 }
 ```

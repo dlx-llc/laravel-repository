@@ -3,6 +3,8 @@
 namespace Deluxetech\LaRepo\Contracts;
 
 /**
+ * @todo add where, orWhere and other such methods.
+ *
  * The criteria is basically an object containing all the required information
  * to prepare a query and fetch data from a repository.
  */
