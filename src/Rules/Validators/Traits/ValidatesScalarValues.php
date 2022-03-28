@@ -1,6 +1,6 @@
 <?php
 
-namespace Deluxetech\LaRepo\Rules\Validators;
+namespace Deluxetech\LaRepo\Rules\Validators\Traits;
 
 trait ValidatesScalarValues
 {

@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo;
 
-use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
@@ -19,9 +19,9 @@ abstract class Filter implements FilterContract
     /** @inheritdoc */
     public function __construct(
         protected DataAttrContract $attr,
-        protected string $mode,
+        protected string $operator,
         protected mixed $value,
-        protected string $operator = FilterOperator::AND
+        protected string $boolean = BooleanOperator::AND
     ) {
         $this->value = $this->sanitizeValue($value);
     }
@@ -41,9 +41,9 @@ abstract class Filter implements FilterContract
     }
 
     /** @inheritdoc */
-    public function getMode(): string
+    public function getOperator(): string
     {
-        return $this->mode;
+        return $this->operator;
     }
 
     /** @inheritdoc */
@@ -61,15 +61,15 @@ abstract class Filter implements FilterContract
     }
 
     /** @inheritdoc */
-    public function getOperator(): string
+    public function getBoolean(): string
     {
-        return $this->operator;
+        return $this->boolean;
     }
 
     /** @inheritdoc */
-    public function setOperator(string $operator): static
+    public function setBoolean(string $boolean): static
     {
-        $this->operator = $operator;
+        $this->boolean = $boolean;
 
         return $this;
     }

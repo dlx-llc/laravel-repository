@@ -8,9 +8,9 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "operator": "and",
+ *   "boolean": "and",
  *   "attr": "title",
- *   "mode": "like",
+ *   "operator": "like",
  *   "value": "example"
  * }
  */

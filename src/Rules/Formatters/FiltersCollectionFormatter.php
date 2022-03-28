@@ -19,7 +19,7 @@ class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
     public function stringify(FiltersCollectionContract $collection): string
     {
         return json_encode([
-            'operator' => $collection->getOperator(),
+            'boolean' => $collection->getBoolean(),
             'items' => $this->stringifyArray($collection->getItems()),
         ]) ?: '';
     }
@@ -59,9 +59,9 @@ class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
         }
 
         return json_encode([
-            'operator' => $filter->getOperator(),
+            'boolean' => $filter->getBoolean(),
             'attr' => $filter->getAttr()->getName(),
-            'mode' => FilterFactory::getMode(get_class($filter)),
+            'operator' => FilterFactory::getOperator(get_class($filter)),
             'value' => $value,
         ]) ?: '';
     }

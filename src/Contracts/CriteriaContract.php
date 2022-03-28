@@ -3,8 +3,6 @@
 namespace Deluxetech\LaRepo\Contracts;
 
 /**
- * @todo add where, orWhere and other such methods.
- *
  * The criteria is basically an object containing all the required information
  * to prepare a query and fetch data from a repository.
  */
@@ -70,6 +68,26 @@ interface CriteriaContract
      * @return static
      */
     public function setFiltersRaw(string $rawStr): static;
+
+    /**
+     * Adds a where clause to the criteria.
+     *
+     * @param  string $attr
+     * @param  string $operator
+     * @param  mixed  $value
+     * @return static
+     */
+    public function where(string $attr, string $operator, mixed $value = null): static;
+
+    /**
+     * Adds an or where clause to the criteria.
+     *
+     * @param  string $attr
+     * @param  string $operator
+     * @param  mixed  $value
+     * @return static
+     */
+    public function orWhere(string $attr, string $operator, mixed $value = null): static;
 
     /**
      * Specifies filtration params.

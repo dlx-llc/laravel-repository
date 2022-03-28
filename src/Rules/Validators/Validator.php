@@ -4,9 +4,9 @@ namespace Deluxetech\LaRepo\Rules\Validators;
 
 class Validator
 {
-    use ValidatesFilters;
-    use ValidatesNullValues;
-    use ValidatesScalarValues;
+    use Traits\ValidatesFilters;
+    use Traits\ValidatesNullValues;
+    use Traits\ValidatesScalarValues;
 
     /**
      * Validation errors.

@@ -4,8 +4,8 @@ namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Facades\App;
 use Deluxetech\LaRepo\FilterFactory;
-use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
@@ -35,7 +35,7 @@ trait SupportsFiltration
             throw new \Exception(__('larepo::exceptions.invalid_filters_string'));
         }
 
-        $filters = App::makeWith(FiltersCollectionContract::class);
+        $filters = App::make(FiltersCollectionContract::class);
 
         foreach ($dataArr as $filterData) {
             $filter = $this->createFilter($filterData);
@@ -56,6 +56,41 @@ trait SupportsFiltration
         return $this;
     }
 
+    /** @inheritdoc */
+    public function where(string $attr, string $operator, mixed $value = null): static
+    {
+        $this->addFilter($attr, $operator, $value, BooleanOperator::AND);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhere(string $attr, string $operator, mixed $value = null): static
+    {
+        $this->addFilter($attr, $operator, $value, BooleanOperator::OR);
+
+        return $this;
+    }
+
+    /**
+     * Adds a new filter.
+     *
+     * @param  string $attr
+     * @param  string $operator
+     * @param  mixed  $value
+     * @param  string $boolean
+     * @return void
+     */
+    protected function addFilter(string $attr, string $operator, mixed $value, string $boolean): void
+    {
+        if (is_null($this->filters)) {
+            $this->setFilters(App::make(FiltersCollectionContract::class));
+        }
+
+        $filter = FilterFactory::create($operator, $attr, $value, $boolean);
+        $this->filters->add($filter);
+    }
+
     /**
      * Creates a repository filter object from the given associative array.
      *
@@ -64,10 +99,10 @@ trait SupportsFiltration
      */
     protected function createFilter(array $data): FiltersCollectionContract|FilterContract
     {
-        $operator = $data['operator'] ?? FilterOperator::AND;
+        $boolean = $data['boolean'] ?? BooleanOperator::AND;
 
         if (isset($data['items'])) {
-            $collection = App::makeWith(FiltersCollectionContract::class, [$operator]);
+            $collection = App::makeWith(FiltersCollectionContract::class, [$boolean]);
 
             foreach ($data['items'] as $item) {
                 $item = $this->createFilter($item);
@@ -77,17 +112,17 @@ trait SupportsFiltration
             return $collection;
         } else {
             $attr = $data['attr'];
-            $mode = $data['mode'];
+            $operator = $data['operator'];
             $value = $data['value'] ?? null;
 
             if (
-                $mode === FilterMode::EXISTS ||
-                $mode === FilterMode::DOES_NOT_EXIST
+                $operator === FilterOperator::EXISTS ||
+                $operator === FilterOperator::DOES_NOT_EXIST
             ) {
                 $value = $this->createFilter(['items' => $value]);
             }
 
-            return FilterFactory::create($mode, $attr, $value, $operator);
+            return FilterFactory::create($operator, $attr, $value, $boolean);
         }
     }
 }

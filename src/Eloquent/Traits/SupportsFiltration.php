@@ -2,8 +2,8 @@
 
 namespace Deluxetech\LaRepo\Eloquent\Traits;
 
-use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
@@ -25,31 +25,31 @@ trait SupportsFiltration
      */
     protected function registerDefaultFilterHandlers(): void
     {
-        $this->setFilterHandler(FilterMode::EXISTS, [$this, 'applyRelationExistsFilter']);
-        $this->setFilterHandler(FilterMode::DOES_NOT_EXIST, [$this, 'applyRelationDoesNotExistFilter']);
+        $this->setFilterHandler(FilterOperator::EXISTS, [$this, 'applyRelationExistsFilter']);
+        $this->setFilterHandler(FilterOperator::DOES_NOT_EXIST, [$this, 'applyRelationDoesNotExistFilter']);
     }
 
     /**
      * Specifies the filter handler function.
      *
-     * @param  string $mode
+     * @param  string $operator
      * @param  callable $handler
      * @return void
      */
-    protected function setFilterHandler(string $mode, callable $handler): void
+    protected function setFilterHandler(string $operator, callable $handler): void
     {
-        $this->filterHandlers[$mode] = $handler;
+        $this->filterHandlers[$operator] = $handler;
     }
 
     /**
      * Returns the filter handler function.
      *
-     * @param  string $mode
+     * @param  string $operator
      * @return callable
      */
-    protected function getFilterHandler(string $mode): callable
+    protected function getFilterHandler(string $operator): callable
     {
-        return $this->filterHandlers[$mode] ?? [$this, 'applyFilterByDefaultStrategy'];
+        return $this->filterHandlers[$operator] ?? [$this, 'applyFilterByDefaultStrategy'];
     }
 
     /**
@@ -63,9 +63,9 @@ trait SupportsFiltration
         QueryBuilder|EloquentBuilder $query,
         FiltersCollectionContract $filters
     ): void {
-        $method = match ($filters->getOperator()) {
-            FilterOperator::AND => 'where',
-            FilterOperator::OR => 'orWhere',
+        $method = match ($filters->getBoolean()) {
+            BooleanOperator::AND => 'where',
+            BooleanOperator::OR => 'orWhere',
         };
 
         $query->{$method}(function ($query) use ($filters) {
@@ -90,8 +90,8 @@ trait SupportsFiltration
         QueryBuilder|EloquentBuilder $query,
         FilterContract $filter
     ): void {
-        $mode = $filter->getMode();
-        $handler = $this->getFilterHandler($mode);
+        $operator = $filter->getOperator();
+        $handler = $this->getFilterHandler($operator);
 
         call_user_func_array($handler, [$query, $filter]);
     }
@@ -110,7 +110,7 @@ trait SupportsFiltration
         $args = $this->getFilterQueryArgs($filter);
         $method = $this->getFilterQueryMethod($filter);
 
-        if ($filter->getOperator() === FilterOperator::OR) {
+        if ($filter->getBoolean() === BooleanOperator::OR) {
             $method = 'or' . ucfirst($method);
         }
 
@@ -168,16 +168,16 @@ trait SupportsFiltration
     {
         $attr = $filter->getAttr()->getNameLastSegment();
 
-        return match ($filter->getMode()) {
-            FilterMode::IS_LIKE => [$attr, 'like', '%' . $filter->getValue() . '%'],
-            FilterMode::IS_NOT_LIKE => [$attr, 'not like', '%' . $filter->getValue() . '%'],
-            FilterMode::IS_GREATER => [$attr, '>', $filter->getValue()],
-            FilterMode::IS_GREATER_OR_EQUAL => [$attr, '>=', $filter->getValue()],
-            FilterMode::IS_LOWER => [$attr, '<', $filter->getValue()],
-            FilterMode::IS_LOWER_OR_EQUAL => [$attr, '<=', $filter->getValue()],
-            FilterMode::NOT_EQUALS_TO => [$attr, '!=', $filter->getValue()],
-            FilterMode::IS_NULL => [$attr],
-            FilterMode::IS_NOT_NULL => [$attr],
+        return match ($filter->getOperator()) {
+            FilterOperator::IS_LIKE => [$attr, 'like', '%' . $filter->getValue() . '%'],
+            FilterOperator::IS_NOT_LIKE => [$attr, 'not like', '%' . $filter->getValue() . '%'],
+            FilterOperator::IS_GREATER => [$attr, '>', $filter->getValue()],
+            FilterOperator::IS_GREATER_OR_EQUAL => [$attr, '>=', $filter->getValue()],
+            FilterOperator::IS_LOWER => [$attr, '<', $filter->getValue()],
+            FilterOperator::IS_LOWER_OR_EQUAL => [$attr, '<=', $filter->getValue()],
+            FilterOperator::NOT_EQUALS_TO => [$attr, '!=', $filter->getValue()],
+            FilterOperator::IS_NULL => [$attr],
+            FilterOperator::IS_NOT_NULL => [$attr],
             default => [$attr, $filter->getValue()],
         };
     }
@@ -190,15 +190,15 @@ trait SupportsFiltration
      */
     protected function getFilterQueryMethod(FilterContract $filter): string
     {
-        return match ($filter->getMode()) {
-            FilterMode::INCLUDED_IN => 'whereIn',
-            FilterMode::NOT_INCLUDED_IN => 'whereNotIn',
-            FilterMode::IN_RANGE => 'whereBetween',
-            FilterMode::NOT_IN_RANGE => 'whereNotBetween',
-            FilterMode::IS_NULL => 'whereNull',
-            FilterMode::IS_NOT_NULL => 'whereNotNull',
-            FilterMode::CONTAINS => 'whereJsonContains',
-            FilterMode::DOES_NOT_CONTAIN => 'whereJsonDoesntContain',
+        return match ($filter->getOperator()) {
+            FilterOperator::INCLUDED_IN => 'whereIn',
+            FilterOperator::NOT_INCLUDED_IN => 'whereNotIn',
+            FilterOperator::IN_RANGE => 'whereBetween',
+            FilterOperator::NOT_IN_RANGE => 'whereNotBetween',
+            FilterOperator::IS_NULL => 'whereNull',
+            FilterOperator::IS_NOT_NULL => 'whereNotNull',
+            FilterOperator::CONTAINS => 'whereJsonContains',
+            FilterOperator::DOES_NOT_CONTAIN => 'whereJsonDoesntContain',
             default => 'where',
         };
     }

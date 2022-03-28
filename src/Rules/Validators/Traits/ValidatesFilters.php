@@ -1,9 +1,9 @@
 <?php
 
-namespace Deluxetech\LaRepo\Rules\Validators;
+namespace Deluxetech\LaRepo\Rules\Validators\Traits;
 
 use Deluxetech\LaRepo\FilterFactory;
-use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 
 trait ValidatesFilters
 {
@@ -47,8 +47,8 @@ trait ValidatesFilters
         if (!is_array($value)) {
             $this->addError('array', $attribute);
         } else {
-            if (array_key_exists('operator', $value)) {
-                $this->validateFilterOperator("{$attribute}.operator", $value['operator']);
+            if (array_key_exists('boolean', $value)) {
+                $this->validateBooleanOperator("{$attribute}.boolean", $value['boolean']);
             }
 
             if (empty($value['items'])) {
@@ -81,17 +81,17 @@ trait ValidatesFilters
         if (!is_array($value)) {
             $this->addError('array', $attribute);
         } else {
-            if (array_key_exists('operator', $value)) {
-                $this->validateFilterOperator("{$attribute}.operator", $value['operator']);
+            if (array_key_exists('boolean', $value)) {
+                $this->validateBooleanOperator("{$attribute}.boolean", $value['boolean']);
             }
 
             $attr = $value['attr'] ?? null;
-            $mode = $value['mode'] ?? null;
+            $operator = $value['operator'] ?? null;
             $this->validateFilterAttr("{$attribute}.attr", $attr);
 
-            if ($this->validateFilterMode("{$attribute}.mode", $mode)) {
+            if ($this->validateFilterOperator("{$attribute}.operator", $operator)) {
                 $filterVal = $value['value'] ?? null;
-                $filterClass = FilterFactory::getClass($mode);
+                $filterClass = FilterFactory::getClass($operator);
 
                 if ($errors = $filterClass::validateValue($attribute, $filterVal)) {
                     $this->addError(...$errors);
@@ -104,15 +104,15 @@ trait ValidatesFilters
 
 
     /**
-     * Validates the given filter logical operator.
+     * Validates the given filter boolean operator.
      *
      * @param  string $attribute
      * @param  mixed $value
      * @return bool
      */
-    public function validateFilterOperator(string $attribute, mixed $value): bool
+    public function validateBooleanOperator(string $attribute, mixed $value): bool
     {
-        if (!in_array($value, FilterOperator::cases(), true)) {
+        if (!in_array($value, BooleanOperator::cases(), true)) {
             $this->addError('in', $attribute);
 
             return false;
@@ -155,19 +155,19 @@ trait ValidatesFilters
     }
 
     /**
-     * Validates the given filter mode.
+     * Validates the given filter operator.
      *
      * @param  string $attribute
      * @param  mixed $value
      * @return bool
      */
-    public function validateFilterMode(string $attribute, mixed $value): bool
+    public function validateFilterOperator(string $attribute, mixed $value): bool
     {
         if (is_null($value)) {
             $this->addError('required', $attribute);
 
             return false;
-        } elseif (!FilterFactory::modeRegistered($value)) {
+        } elseif (!FilterFactory::operatorRegistered($value)) {
             $this->addError('in', $attribute);
 
             return false;

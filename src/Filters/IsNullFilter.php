@@ -8,9 +8,9 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "operator": "and",
+ *   "boolean": "and",
  *   "attr": "deleted_at",
- *   "mode": "null"
+ *   "operator": "null"
  * }
  */
 class IsNullFilter extends Filter

@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo;
 
-use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
@@ -24,22 +24,22 @@ class FiltersCollection implements FiltersCollectionContract
 
     /** {@inheritdoc} */
     public function __construct(
-        protected string $operator = FilterOperator::AND,
+        protected string $boolean = BooleanOperator::AND,
         FiltersCollectionContract|FilterContract ...$items
     ) {
         $this->items = $items;
     }
 
     /** {@inheritdoc} */
-    public function getOperator(): string
+    public function getBoolean(): string
     {
-        return $this->operator;
+        return $this->boolean;
     }
 
     /** {@inheritdoc} */
-    public function setOperator(string $operator): static
+    public function setBoolean(string $boolean): static
     {
-        $this->operator = $operator;
+        $this->boolean = $boolean;
 
         return $this;
     }

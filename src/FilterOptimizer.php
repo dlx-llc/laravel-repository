@@ -4,8 +4,8 @@ namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
-use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
@@ -65,20 +65,20 @@ class FilterOptimizer implements FilterOptimizerContract
         if ($collection->count() === 1) {
             // If there is only one item, then return that item instead of the collection.
             $item = $collection[0];
-            $item->setOperator($collection->getOperator());
+            $item->setBoolean($collection->getBoolean());
 
             return [$item];
         } else {
-            // If there is at least one logical OR operator then we shouldn't
+            // If there is at least one boolean OR operator then we shouldn't
             // decompose the collection.
             foreach ($collection as $i => $item) {
-                if ($i && $item->getOperator() === FilterOperator::OR) {
+                if ($i && $item->getBoolean() === BooleanOperator::OR) {
                     return [$collection];
                 }
             }
 
             // Otherwise, it should be decomposed as it has no effect.
-            $collection[0]->setOperator($collection->getOperator());
+            $collection[0]->setBoolean($collection->getBoolean());
 
             return $collection->getItems();
         }
@@ -102,7 +102,7 @@ class FilterOptimizer implements FilterOptimizerContract
             $collection->setItems(
                 $this->combineSameRelationFiltersArr(
                     $items,
-                    $collection->getOperator()
+                    $collection->getBoolean()
                 )
             );
 
@@ -116,7 +116,7 @@ class FilterOptimizer implements FilterOptimizerContract
         for ($i = 1; $i < $itemsCount; $i++) {
             $item = $items[$i];
 
-            if ($item->getOperator() === FilterOperator::AND) {
+            if ($item->getBoolean() === BooleanOperator::AND) {
                 $chunk[] = $item;
             } else {
                 $this->combineReplaceFilters($items, $chunk, $chunkStart);
@@ -154,13 +154,13 @@ class FilterOptimizer implements FilterOptimizerContract
                 } while (is_a($item, FiltersCollectionContract::class));
             }
 
-            if ($item->getMode() === FilterMode::DOES_NOT_EXIST) {
+            if ($item->getOperator() === FilterOperator::DOES_NOT_EXIST) {
                 return false;
             }
 
             $itemRel = $item->getAttr()->getNameExceptLastSegment();
 
-            if (!$itemRel && $item->getMode() === FilterMode::EXISTS) {
+            if (!$itemRel && $item->getOperator() === FilterOperator::EXISTS) {
                 $itemRel = $item->getAttr()->getNameLastSegment();
             }
 
@@ -180,26 +180,26 @@ class FilterOptimizer implements FilterOptimizerContract
      * Combines validated same relation filters.
      *
      * @param  array $items
-     * @param  string $operator
+     * @param  string $boolean
      * @return FilterContract
      */
-    protected function combineSameRelationFiltersArr(array $items, string $operator): FilterContract
+    protected function combineSameRelationFiltersArr(array $items, string $boolean): FilterContract
     {
         foreach ($items as $i => $item) {
             if (is_a($item, FiltersCollectionContract::class)) {
                 $items[$i] = $item = $this->combineSameRelationFiltersArr(
                     $item->getItems(),
-                    $item->getOperator()
+                    $item->getBoolean()
                 );
             }
 
             $attr = $item->getAttr();
             $relation = $attr->getNameExceptLastSegment();
 
-            if ($item->getMode() === FilterMode::EXISTS) {
+            if ($item->getOperator() === FilterOperator::EXISTS) {
                 $relation ??= $attr->getNameLastSegment();
                 $items[$i] = $item = App::makeWith(FiltersCollectionContract::class, [
-                    $item->getOperator(),
+                    $item->getBoolean(),
                     ...$item->getValue(),
                 ]);
             } else {
@@ -209,7 +209,7 @@ class FilterOptimizer implements FilterOptimizerContract
 
         $attr = App::makeWith(DataAttrContract::class, [$relation]);
 
-        return FilterFactory::create(FilterMode::EXISTS, $attr, $items, $operator);
+        return FilterFactory::create(FilterOperator::EXISTS, $attr, $items, $boolean);
     }
 
     /**
@@ -230,7 +230,7 @@ class FilterOptimizer implements FilterOptimizerContract
         if ($chunkCount > 1 && $this->isSameRelationFiltersArr($chunk)) {
             $combined = $this->combineSameRelationFiltersArr(
                 $chunk,
-                $chunk[0]->getOperator()
+                $chunk[0]->getBoolean()
             );
 
             array_splice($source, $offset, $chunkCount, $combined);

@@ -5,36 +5,36 @@ namespace Deluxetech\LaRepo\Contracts;
 use Iterator;
 use Countable;
 use ArrayAccess;
-use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 
 interface FiltersCollectionContract extends Iterator, Countable, ArrayAccess
 {
     /**
      * Class constructor.
      *
-     * @param  string $operator  The logical operator by which the filters collection will be combined with others.
+     * @param  string $boolean  The boolean operator by which the filters collection will be combined with others.
      * @param  FiltersCollectionContract|FilterContract ...$items
      * @return void
      */
     public function __construct(
-        string $operator = FilterOperator::AND,
+        string $boolean = BooleanOperator::AND,
         FiltersCollectionContract|FilterContract ...$items
     );
 
     /**
-     * Returns the logical operator by which the filter will be combined with others.
+     * Returns the boolean operator by which the filter will be combined with others.
      *
      * @return string
      */
-    public function getOperator(): string;
+    public function getBoolean(): string;
 
     /**
-     * Specifies the logical operator by which the filter will be combined with others.
+     * Specifies the boolean operator by which the filter will be combined with others.
      *
-     * @param  string $operator
+     * @param  string $boolean
      * @return static
      */
-    public function setOperator(string $operator): static;
+    public function setBoolean(string $boolean): static;
 
     /**
      * Returns the collection items.

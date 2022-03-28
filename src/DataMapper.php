@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo;
 
-use Deluxetech\LaRepo\Enums\FilterMode;
+use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
@@ -102,9 +102,9 @@ class DataMapper implements DataMapperContract
                 $this->replaceFilterAttrName($item, $prefix);
             }
         } elseif (
-            in_array($filter->getMode(), [
-                FilterMode::EXISTS,
-                FilterMode::DOES_NOT_EXIST,
+            in_array($filter->getOperator(), [
+                FilterOperator::EXISTS,
+                FilterOperator::DOES_NOT_EXIST,
             ], true)
         ) {
             $items = $filter->getValue();

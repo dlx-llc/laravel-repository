@@ -16,7 +16,7 @@ trait SanitizesFiltersCollection
     protected function sanitizeFiltersCollection(mixed $value): FiltersCollectionContract
     {
         if (is_array($value)) {
-            $params = [$this->getOperator(), $value];
+            $params = [$this->getBoolean(), $value];
 
             return App::makeWith(FiltersCollectionContract::class, $params);
         } else {

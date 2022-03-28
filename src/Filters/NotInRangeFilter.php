@@ -8,9 +8,9 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "operator": "and",
+ *   "boolean": "and",
  *   "attr": "date_of_birth",
- *   "mode": "!range",
+ *   "operator": "!range",
  *   "value": ["1990-01-01", "1999-12-31"]
  * }
  */

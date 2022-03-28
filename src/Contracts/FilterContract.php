@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo\Contracts;
 
-use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
 interface FilterContract
@@ -20,16 +20,16 @@ interface FilterContract
      * Class constructor.
      *
      * @param  DataAttrContract $attr  Data attribute to filter.
-     * @param  string $mode  The filter mode.
+     * @param  string $operator  The filter operator.
      * @param  mixed $value  The filter value.
-     * @param  string $operator  The logical operator by which the filter will be combined with others.
+     * @param  string $boolean  The boolean operator by which the filter will be combined with others.
      * @return void
      */
     public function __construct(
         DataAttrContract $attr,
-        string $mode,
+        string $operator,
         mixed $value,
-        string $operator = FilterOperator::AND
+        string $boolean = BooleanOperator::AND
     );
 
     /**
@@ -48,12 +48,12 @@ interface FilterContract
     public function setAttr(DataAttrContract $attr): static;
 
     /**
-     * Returns the filter mode.
+     * Returns the filter operator.
      *
      * @return string
-     * @see \Deluxetech\LaRepo\Enums\FilterMode
+     * @see \Deluxetech\LaRepo\Enums\FilterOperator
      */
-    public function getMode(): string;
+    public function getOperator(): string;
 
     /**
      * Returns the filter value.
@@ -71,17 +71,17 @@ interface FilterContract
     public function setValue(mixed $value): static;
 
     /**
-     * Returns the logical operator by which the filter will be combined with others.
+     * Returns the boolean operator by which the filter will be combined with others.
      *
      * @return string
      */
-    public function getOperator(): string;
+    public function getBoolean(): string;
 
     /**
-     * Specifies the logical operator by which the filter will be combined with others.
+     * Specifies the boolean operator by which the filter will be combined with others.
      *
-     * @param  string $operator
+     * @param  string $boolean
      * @return static
      */
-    public function setOperator(string $operator): static;
+    public function setBoolean(string $boolean): static;
 }

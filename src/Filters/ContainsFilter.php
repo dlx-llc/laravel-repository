@@ -8,9 +8,9 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "operator": "and",
+ *   "boolean": "and",
  *   "attr": "json_arr",
- *   "mode": "contains",
+ *   "operator": "contains",
  *   "value": "example"
  * }
  */

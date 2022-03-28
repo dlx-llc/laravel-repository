@@ -8,18 +8,18 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
 /**
  * Example:
  * {
- *   "operator": "and",
+ *   "boolean": "and",
  *   "attr": "contributors",
- *   "mode": "!exists",
+ *   "operator": "!exists",
  *   "value": [
  *     {
  *       "attr": "age",
- *       "mode": ">",
+ *       "operator": ">",
  *       "value": "29"
  *     },
  *     {
  *       "attr": "role.name",
- *       "mode": "like",
+ *       "operator": "like",
  *       "value": "developer"
  *     }
  *   ]
