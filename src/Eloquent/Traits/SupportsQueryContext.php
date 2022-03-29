@@ -2,6 +2,7 @@
 
 namespace Deluxetech\LaRepo\Eloquent\Traits;
 
+use Deluxetech\LaRepo\Facades\LaRepo;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
@@ -20,6 +21,13 @@ trait SupportsQueryContext
     abstract protected function getQuery(): Builder;
 
     /**
+     * The current query criteria.
+     *
+     * @var CriteriaContract|null
+     */
+    protected ?CriteriaContract $criteria = null;
+
+    /**
      * Relation resolvers map.
      *
      * @var array[string => callable]
@@ -36,9 +44,27 @@ trait SupportsQueryContext
     /** @inheritdoc */
     public function addCriteria(CriteriaContract $criteria): static
     {
-        $this->applyCriteria($this->getQuery(), $criteria);
+        $this->criteria->merge($criteria);
 
         return $this;
+    }
+
+    /** @inheritdoc */
+    public function setCriteria(?CriteriaContract $criteria): static
+    {
+        $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function getCriteria(): CriteriaContract
+    {
+        if (is_null($this->criteria)) {
+            $this->criteria = LaRepo::newCriteria();
+        }
+
+        return $this->criteria;
     }
 
     /** @inheritdoc */

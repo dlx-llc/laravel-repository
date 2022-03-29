@@ -117,6 +117,20 @@ abstract class Repository implements RepositoryContract
     }
 
     /** @inheritdoc */
+    public function setCriteria(?CriteriaContract $criteria): static
+    {
+        $this->strategy->setCriteria($criteria);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function getCriteria(): CriteriaContract
+    {
+        return $this->strategy->getCriteria();
+    }
+
+    /** @inheritdoc */
     public function loadMissing(object $records, CriteriaContract $criteria): void
     {
         $this->strategy->loadMissing($records, $criteria);

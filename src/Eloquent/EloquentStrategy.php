@@ -60,6 +60,7 @@ class EloquentStrategy implements RepositoryStrategyContract
     /** @inheritdoc */
     public function reset(): static
     {
+        $this->setCriteria(null);
         $this->query = $this->query->getModel()->newQuery();
 
         return $this;
@@ -130,6 +131,10 @@ class EloquentStrategy implements RepositoryStrategyContract
      */
     protected function fetch(string $method, mixed ...$args): mixed
     {
+        if (isset($this->criteria)) {
+            $this->applyCriteria($this->query, $this->criteria);
+        }
+
         QueryHelper::instance()->preventAmbiguousQuery($this->query);
         $result = $this->query->{$method}(...$args);
         $this->reset();
