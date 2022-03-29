@@ -9,6 +9,14 @@ namespace Deluxetech\LaRepo\Contracts;
 interface CriteriaContract
 {
     /**
+     * Merges query criteria.
+     *
+     * @param  CriteriaContract $criteria
+     * @return static
+     */
+    public function merge(CriteriaContract $criteria): static;
+
+    /**
      * Returns the sorting params.
      *
      * @return SortingContract|null
@@ -156,7 +164,7 @@ interface CriteriaContract
     /**
      * Returns the relation counts that should be loaded.
      *
-     * @return array<string>
+     * @return array
      */
     public function getRelationCounts(): array;
 }
