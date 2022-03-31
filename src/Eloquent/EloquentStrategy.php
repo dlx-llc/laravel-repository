@@ -27,6 +27,13 @@ class EloquentStrategy implements RepositoryStrategyContract
     protected Builder $query;
 
     /**
+     * Callback functions that will be triggered before fetching data.
+     *
+     * @var array<callable>
+     */
+    protected array $fetchCallbacks = [];
+
+    /**
      * Class constructor.
      *
      * @param  string $model
@@ -62,6 +69,22 @@ class EloquentStrategy implements RepositoryStrategyContract
     {
         $this->setCriteria(null);
         $this->query = $this->query->getModel()->newQuery();
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function addFetchCallback(callable $callback): static
+    {
+        $this->fetchCallbacks[] = $callback;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function clearFetchCallbacks(): static
+    {
+        $this->fetchCallbacks = [];
 
         return $this;
     }
@@ -133,6 +156,10 @@ class EloquentStrategy implements RepositoryStrategyContract
     {
         if (isset($this->criteria)) {
             $this->applyCriteria($this->query, $this->criteria);
+        }
+
+        foreach ($this->fetchCallbacks as $callback) {
+            call_user_func($callback);
         }
 
         QueryHelper::instance()->preventAmbiguousQuery($this->query);

@@ -55,6 +55,21 @@ interface RepositoryStrategyContract
     public function reset(): static;
 
     /**
+     * Adds a function that will be called before fetching data.
+     *
+     * @param  callable $callback
+     * @return static
+     */
+    public function addFetchCallback(callable $callback): static;
+
+    /**
+     * Removes all the fetch callbacks specified before.
+     *
+     * @return static
+     */
+    public function clearFetchCallbacks(): static;
+
+    /**
      * Fetches results.
      *
      * @return Collection

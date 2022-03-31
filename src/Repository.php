@@ -62,6 +62,22 @@ abstract class Repository implements RepositoryContract
     }
 
     /** @inheritdoc */
+    public function addFetchCallback(callable $callback): static
+    {
+        $this->strategy->addFetchCallback($callback);
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function clearFetchCallbacks(): static
+    {
+        $this->strategy->clearFetchCallbacks();
+
+        return $this;
+    }
+
+    /** @inheritdoc */
     public function get(): Collection
     {
         return $this->strategy->get();
