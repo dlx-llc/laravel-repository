@@ -57,16 +57,26 @@ trait SupportsFiltration
     }
 
     /** @inheritdoc */
-    public function where(string $attr, string $operator, mixed $value = null): static
+    public function where(string $attr, mixed $operator, mixed $value = null): static
     {
+        if (func_num_args() === 2) {
+            $value = $operator;
+            $operator = FilterOperator::EQUALS_TO;
+        }
+
         $this->addFilter($attr, $operator, $value, BooleanOperator::AND);
 
         return $this;
     }
 
     /** @inheritdoc */
-    public function orWhere(string $attr, string $operator, mixed $value = null): static
+    public function orWhere(string $attr, mixed $operator, mixed $value = null): static
     {
+        if (func_num_args() === 2) {
+            $value = $operator;
+            $operator = FilterOperator::EQUALS_TO;
+        }
+
         $this->addFilter($attr, $operator, $value, BooleanOperator::OR);
 
         return $this;

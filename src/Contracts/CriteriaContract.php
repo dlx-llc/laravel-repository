@@ -81,21 +81,23 @@ interface CriteriaContract
      * Adds a where clause to the criteria.
      *
      * @param  string $attr
-     * @param  string $operator
+     * @param  mixed $operator
      * @param  mixed  $value
      * @return static
+     * @see \Deluxetech\LaRepo\Enums\FilterOperator
      */
-    public function where(string $attr, string $operator, mixed $value = null): static;
+    public function where(string $attr, mixed $operator, mixed $value = null): static;
 
     /**
      * Adds an or where clause to the criteria.
      *
      * @param  string $attr
-     * @param  string $operator
+     * @param  mixed $operator
      * @param  mixed  $value
      * @return static
+     * @see \Deluxetech\LaRepo\Enums\FilterOperator
      */
-    public function orWhere(string $attr, string $operator, mixed $value = null): static;
+    public function orWhere(string $attr, mixed $operator, mixed $value = null): static;
 
     /**
      * Specifies filtration params.

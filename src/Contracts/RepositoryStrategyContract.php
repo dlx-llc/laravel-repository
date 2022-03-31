@@ -27,9 +27,9 @@ interface RepositoryStrategyContract
     /**
      * Returns the current query criteria.
      *
-     * @return CriteriaContract
+     * @return ?CriteriaContract
      */
-    public function getCriteria(): CriteriaContract;
+    public function getCriteria(): ?CriteriaContract;
 
     /**
      * Specifies the number of results that should be skipped.

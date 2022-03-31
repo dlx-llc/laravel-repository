@@ -3,6 +3,7 @@
 namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Collection;
+use Deluxetech\LaRepo\Facades\LaRepo;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
@@ -125,7 +126,7 @@ abstract class Repository implements RepositoryContract
     }
 
     /** @inheritdoc */
-    public function getCriteria(): CriteriaContract
+    public function getCriteria(): ?CriteriaContract
     {
         return $this->strategy->getCriteria();
     }
@@ -134,5 +135,39 @@ abstract class Repository implements RepositoryContract
     public function loadMissing(object $records, CriteriaContract $criteria): void
     {
         $this->strategy->loadMissing($records, $criteria);
+    }
+
+    /** @inheritdoc */
+    public function where(): static
+    {
+        $this->callOnCriteria('where', func_get_args());
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhere(): static
+    {
+        $this->callOnCriteria('orWhere', func_get_args());
+
+        return $this;
+    }
+
+    /**
+     * Calls the given method the criteria.
+     *
+     * @param  string $method
+     * @param  array $args
+     * @return mixed
+     */
+    protected function callOnCriteria(string $method, array $args): mixed
+    {
+        $criteria = $this->strategy->getCriteria();
+
+        if (!$criteria) {
+            $criteria = LaRepo::newCriteria();
+        }
+
+        return $criteria->{$method}(...$args);
     }
 }
