@@ -43,7 +43,11 @@ trait SupportsQueryContext
     /** @inheritdoc */
     public function addCriteria(CriteriaContract $criteria): static
     {
-        $this->criteria->merge($criteria);
+        if ($this->criteria) {
+            $this->criteria->merge($criteria);
+        } else {
+            $this->criteria = $criteria;
+        }
 
         return $this;
     }
