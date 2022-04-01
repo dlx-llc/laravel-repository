@@ -70,6 +70,22 @@ interface RepositoryStrategyContract
     public function clearFetchCallbacks(): static;
 
     /**
+     * Adds a function that will be called with the fetched results as its first
+     * parameter.
+     *
+     * @param  callable $callback
+     * @return static
+     */
+    public function addResultCallback(callable $callback): static;
+
+    /**
+     * Removes all the result callbacks specified before.
+     *
+     * @return static
+     */
+    public function clearResultCallbacks(): static;
+
+    /**
      * Fetches results.
      *
      * @return Collection

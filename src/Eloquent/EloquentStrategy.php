@@ -34,6 +34,13 @@ class EloquentStrategy implements RepositoryStrategyContract
     protected array $fetchCallbacks = [];
 
     /**
+     * Callback functions that will be triggered after fetching data on results.
+     *
+     * @var array<callable>
+     */
+    protected array $resultCallbacks = [];
+
+    /**
      * Class constructor.
      *
      * @param  string $model
@@ -85,6 +92,22 @@ class EloquentStrategy implements RepositoryStrategyContract
     public function clearFetchCallbacks(): static
     {
         $this->fetchCallbacks = [];
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function addResultCallback(callable $callback): static
+    {
+        $this->resultCallbacks[] = $callback;
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function clearResultCallbacks(): static
+    {
+        $this->resultCallbacks = [];
 
         return $this;
     }
@@ -165,6 +188,10 @@ class EloquentStrategy implements RepositoryStrategyContract
         QueryHelper::instance()->preventAmbiguousQuery($this->query);
         $result = $this->query->{$method}(...$args);
         $this->reset();
+
+        foreach ($this->resultCallbacks as $callback) {
+            call_user_func($callback, $result);
+        }
 
         return $result;
     }
