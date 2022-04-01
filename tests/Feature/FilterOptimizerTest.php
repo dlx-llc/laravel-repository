@@ -5,8 +5,8 @@ namespace Deluxetech\LaRepo\Tests\Feature;
 use Deluxetech\LaRepo\FilterFactory;
 use Deluxetech\LaRepo\Tests\TestCase;
 use Deluxetech\LaRepo\FilterOptimizer;
-use Deluxetech\LaRepo\Enums\FilterMode;
 use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
@@ -27,17 +27,17 @@ final class FilterOptimizerTest extends TestCase
         $nestedIdleCollection = $this->createFiltersCollection();
 
         $filter1 = FilterFactory::create(
-            FilterMode::IS_LIKE,
+            FilterOperator::IS_LIKE,
             'attr1',
             'val1',
-            FilterOperator::OR
+            BooleanOperator::OR
         );
 
         $filter2 = FilterFactory::create(
-            FilterMode::IS_LIKE,
+            FilterOperator::IS_LIKE,
             'attr2',
             'val2',
-            FilterOperator::AND
+            BooleanOperator::AND
         );
 
         $nestedIdleCollection->setItems($filter1, $filter2);

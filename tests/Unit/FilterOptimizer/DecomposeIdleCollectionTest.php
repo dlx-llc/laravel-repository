@@ -4,7 +4,7 @@ namespace Deluxetech\LaRepo\Tests\Unit\FilterOptimizer;
 
 use Deluxetech\LaRepo\Tests\TestCase;
 use Deluxetech\LaRepo\FilterOptimizer;
-use Deluxetech\LaRepo\Enums\FilterOperator;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Tests\Unit\Traits\CallsPrivateMethods;
@@ -48,7 +48,7 @@ final class DecomposeIdleCollectionTest extends TestCase
     public function testArrayOfTheOnlyItemReturned(): void
     {
         $optimizer = new FilterOptimizer();
-        $collectionOperator = FilterOperator::OR;
+        $collectionOperator = BooleanOperator::OR;
 
         $item = $this->createMock(FilterContract::class);
         $collection = $this->createMock(FiltersCollectionContract::class);
@@ -56,8 +56,8 @@ final class DecomposeIdleCollectionTest extends TestCase
         $collection->expects($this->once())->method('isEmpty')->willReturn(false);
         $collection->expects($this->once())->method('count')->willReturn(1);
         $collection->expects($this->once())->method('offsetGet')->with(0)->willReturn($item);
-        $collection->expects($this->once())->method('getOperator')->willReturn($collectionOperator);
-        $item->expects($this->once())->method('setOperator')->with($collectionOperator);
+        $collection->expects($this->once())->method('getBoolean')->willReturn($collectionOperator);
+        $item->expects($this->once())->method('setBoolean')->with($collectionOperator);
 
         $result = $this->callPrivateMethod($optimizer, self::TESTEE, [$collection]);
 
@@ -73,7 +73,7 @@ final class DecomposeIdleCollectionTest extends TestCase
     public function testAndLogicalOperatorCollectionDecomposed(): void
     {
         $optimizer = new FilterOptimizer();
-        $collectionOperator = FilterOperator::OR;
+        $collectionOperator = BooleanOperator::OR;
 
         $collection = $this->createMock(FiltersCollectionContract::class);
         $items = [
@@ -88,15 +88,15 @@ final class DecomposeIdleCollectionTest extends TestCase
 
         foreach ($items as $i => $item) {
             $offsetGetRetValMap[] = [$i, $item];
-            $item->expects($this->any())->method('getOperator')->willReturn(FilterOperator::AND);
+            $item->expects($this->any())->method('getBoolean')->willReturn(BooleanOperator::AND);
         }
 
         $collection->expects($this->atLeastOnce())
             ->method('offsetGet')
             ->will($this->returnValueMap($offsetGetRetValMap));
 
-        $collection->expects($this->atLeastOnce())->method('getOperator')->willReturn($collectionOperator);
-        $items[0]->expects($this->atLeastOnce())->method('setOperator')->with($collectionOperator);
+        $collection->expects($this->atLeastOnce())->method('getBoolean')->willReturn($collectionOperator);
+        $items[0]->expects($this->atLeastOnce())->method('setBoolean')->with($collectionOperator);
         $collection->expects($this->atLeastOnce())->method('getItems')->willReturn($items);
 
         $result = $this->callPrivateMethod($optimizer, self::TESTEE, [$collection]);
