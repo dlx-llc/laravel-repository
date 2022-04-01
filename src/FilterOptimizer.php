@@ -4,6 +4,7 @@ namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
+use Deluxetech\LaRepo\Facades\LaRepo;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
@@ -29,7 +30,7 @@ class FilterOptimizer implements FilterOptimizerContract
         $items = $collection->getItems();
 
         foreach ($items as $i => $item) {
-            if (is_a($item, FiltersCollection::class)) {
+            if (is_a($item, FiltersCollectionContract::class)) {
                 $items[$i] = $this->decomposeIdleCollection($item);
             }
         }
@@ -52,7 +53,7 @@ class FilterOptimizer implements FilterOptimizerContract
         $items = [];
 
         foreach ($collection as $i => $item) {
-            if (is_a($item, FiltersCollection::class)) {
+            if (is_a($item, FiltersCollectionContract::class)) {
                 // Decompose meaningless nested collections recursively.
                 $items = [...$items, ...$this->decomposeIdleCollection($item)];
             } else {
@@ -198,10 +199,10 @@ class FilterOptimizer implements FilterOptimizerContract
 
             if ($item->getOperator() === FilterOperator::EXISTS) {
                 $relation ??= $attr->getNameLastSegment();
-                $items[$i] = $item = App::makeWith(FiltersCollectionContract::class, [
+                $items[$i] = $item = LaRepo::newFiltersCollection(
                     $item->getBoolean(),
-                    ...$item->getValue(),
-                ]);
+                    ...$item->getValue()
+                );
             } else {
                 $attr->setName($attr->getNameLastSegment());
             }
@@ -209,7 +210,7 @@ class FilterOptimizer implements FilterOptimizerContract
 
         $attr = App::makeWith(DataAttrContract::class, [$relation]);
 
-        return FilterFactory::create(FilterOperator::EXISTS, $attr, $items, $boolean);
+        return LaRepo::newFilter($attr, FilterOperator::EXISTS, $items, $boolean);
     }
 
     /**

@@ -4,11 +4,14 @@ namespace Deluxetech\LaRepo\Facades;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Facade;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Illuminate\Contracts\Pagination\Paginator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
  * @method static Paginator|Collection getMany(RepositoryContract $repository, ?CriteriaContract $criteria = null, ?PaginationContract $pagination = null, ?DataMapperContract $dataMapper = null)  Fetches data collection from the given repository.
@@ -20,6 +23,8 @@ use Deluxetech\LaRepo\Contracts\RepositoryContract;
  * @method static CriteriaContract getRequestCriteria(?CriteriaContract $criteria = null, ?string $textSearchKey = null, ?string $sortingKey = null, ?string $filtersKey = null)  Fetches criteria parameters from the request and creates a new criteria object or fills the given one.
  * @method static CriteriaContract newCriteria()  Creates a new query criteria object.
  * @method static DataMapperContract newDataMapper()  Creates a new data mapper object.
+ * @method static FilterContract newFilter(string $attr, string $operator, mixed $value, string $boolean = BooleanOperator::AND)  Creates a new filter object.
+ * @method static FiltersCollectionContract newFiltersCollection(string $boolean = BooleanOperator::AND, FiltersCollectionContract|FilterContract ...$items)  Creates a new filters collection object.
  *
  * @see \Deluxetech\LaRepo\RepositoryUtils
  */

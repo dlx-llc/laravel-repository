@@ -2,13 +2,10 @@
 
 namespace Deluxetech\LaRepo;
 
-use Illuminate\Support\Facades\App;
 use Deluxetech\LaRepo\Enums\FilterOperator;
-use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
-use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
-final class FilterFactory
+final class FilterRegistry
 {
     /**
      * A registry of filter operators and corresponding filter class names.
@@ -39,39 +36,12 @@ final class FilterFactory
     /**
      * The only instance of this class.
      *
-     * @var FilterFactory|null
+     * @var self|null
      */
-    private static ?FilterFactory $instance = null;
+    private static ?self $instance = null;
 
     /**
-     * Creates a filter object.
-     *
-     * @param  string $operator
-     * @param  string $attr
-     * @param  mixed $value
-     * @param  string $boolean
-     * @return FilterContract
-     * @throws \Exception
-     */
-    public static function create(
-        string $operator,
-        string $attr,
-        mixed $value,
-        string $boolean = BooleanOperator::AND
-    ): FilterContract {
-        $filterClass = self::getClass($operator);
-
-        if (!$filterClass) {
-            throw new \Exception(__('larepo::exceptions.undefined_repo_filter_operator'));
-        }
-
-        $attr = App::makeWith(DataAttrContract::class, [$attr]);
-
-        return new $filterClass($attr, $operator, $value, $boolean);
-    }
-
-    /**
-     * Adds a filter operator to filter class pair.
+     * Registers a new filter operator with the corresponding filter class.
      *
      * @param  string $operator
      * @param  string $filterClass
@@ -92,7 +62,7 @@ final class FilterFactory
      * @param  string $operator
      * @return bool
      */
-    public static function operatorRegistered(string $operator): bool
+    public static function isRegistered(string $operator): bool
     {
         return !is_null(self::getClass($operator));
     }

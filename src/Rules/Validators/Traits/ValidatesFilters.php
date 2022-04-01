@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo\Rules\Validators\Traits;
 
-use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\FilterRegistry;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 
 trait ValidatesFilters
@@ -91,7 +91,7 @@ trait ValidatesFilters
 
             if ($this->validateFilterOperator("{$attribute}.operator", $operator)) {
                 $filterVal = $value['value'] ?? null;
-                $filterClass = FilterFactory::getClass($operator);
+                $filterClass = FilterRegistry::getClass($operator);
 
                 if ($errors = $filterClass::validateValue($attribute, $filterVal)) {
                     $this->addError(...$errors);
@@ -167,7 +167,7 @@ trait ValidatesFilters
             $this->addError('required', $attribute);
 
             return false;
-        } elseif (!FilterFactory::operatorRegistered($value)) {
+        } elseif (!FilterRegistry::isRegistered($value)) {
             $this->addError('in', $attribute);
 
             return false;

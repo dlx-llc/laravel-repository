@@ -4,12 +4,16 @@ namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\App;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Illuminate\Contracts\Pagination\Paginator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
 use Deluxetech\LaRepo\Rules\Validators\CriteriaValidator;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Rules\Validators\PaginationValidator;
 
 /**
@@ -208,5 +212,46 @@ class RepositoryUtils
     public function newDataMapper(): DataMapperContract
     {
         return App::make(DataMapperContract::class);
+    }
+
+    /**
+     * Creates a new filter object.
+     *
+     * @param  string $attr
+     * @param  string $operator
+     * @param  mixed $value
+     * @param  string $boolean
+     * @return FilterContract
+     * @throws \Exception
+     */
+    public function newFilter(
+        string $attr,
+        string $operator,
+        mixed $value,
+        string $boolean = BooleanOperator::AND
+    ): FilterContract {
+        $filterClass = FilterRegistry::getClass($operator);
+
+        if (!$filterClass) {
+            throw new \Exception(__('larepo::exceptions.undefined_repo_filter_operator'));
+        }
+
+        $attr = App::makeWith(DataAttrContract::class, [$attr]);
+
+        return new $filterClass($attr, $operator, $value, $boolean);
+    }
+
+    /**
+     * Creates a new filters collection object.
+     *
+     * @param  string $boolean
+     * @param  FiltersCollectionContract|FilterContract ...$items
+     * @return FiltersCollectionContract
+     */
+    public function newFiltersCollection(
+        string $boolean = BooleanOperator::AND,
+        FiltersCollectionContract|FilterContract ...$items
+    ): FiltersCollectionContract {
+        return App::makeWith(FiltersCollectionContract::class, [$boolean, ...$items]);
     }
 }

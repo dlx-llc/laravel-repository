@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo\Rules\Formatters;
 
-use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\FilterRegistry;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
@@ -61,7 +61,7 @@ class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
         return json_encode([
             'boolean' => $filter->getBoolean(),
             'attr' => $filter->getAttr()->getName(),
-            'operator' => FilterFactory::getOperator(get_class($filter)),
+            'operator' => FilterRegistry::getOperator(get_class($filter)),
             'value' => $value,
         ]) ?: '';
     }

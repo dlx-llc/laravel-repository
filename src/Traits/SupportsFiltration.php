@@ -3,7 +3,7 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Facades\App;
-use Deluxetech\LaRepo\FilterFactory;
+use Deluxetech\LaRepo\Facades\LaRepo;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
@@ -35,7 +35,7 @@ trait SupportsFiltration
             throw new \Exception(__('larepo::exceptions.invalid_filters_string'));
         }
 
-        $filters = App::make(FiltersCollectionContract::class);
+        $filters = LaRepo::newFiltersCollection();
 
         foreach ($dataArr as $filterData) {
             $filter = $this->createFilter($filterData);
@@ -94,10 +94,10 @@ trait SupportsFiltration
     protected function addFilter(string $attr, string $operator, mixed $value, string $boolean): void
     {
         if (is_null($this->filters)) {
-            $this->setFilters(App::make(FiltersCollectionContract::class));
+            $this->setFilters(LaRepo::newFiltersCollection());
         }
 
-        $filter = FilterFactory::create($operator, $attr, $value, $boolean);
+        $filter = LaRepo::newFilter($attr, $operator, $value, $boolean);
         $this->filters->add($filter);
     }
 
@@ -112,7 +112,7 @@ trait SupportsFiltration
         $boolean = $data['boolean'] ?? BooleanOperator::AND;
 
         if (isset($data['items'])) {
-            $collection = App::makeWith(FiltersCollectionContract::class, [$boolean]);
+            $collection = LaRepo::newFiltersCollection($boolean);
 
             foreach ($data['items'] as $item) {
                 $item = $this->createFilter($item);
@@ -132,7 +132,7 @@ trait SupportsFiltration
                 $value = $this->createFilter(['items' => $value]);
             }
 
-            return FilterFactory::create($operator, $attr, $value, $boolean);
+            return LaRepo::newFilter($attr, $operator, $value, $boolean);
         }
     }
 }
