@@ -177,12 +177,12 @@ class EloquentStrategy implements RepositoryStrategyContract
      */
     protected function fetch(string $method, mixed ...$args): mixed
     {
-        if (isset($this->criteria)) {
-            $this->applyCriteria($this->query, $this->criteria);
-        }
-
         foreach ($this->fetchCallbacks as $callback) {
             call_user_func($callback);
+        }
+
+        if (isset($this->criteria)) {
+            $this->applyCriteria($this->query, $this->criteria);
         }
 
         QueryHelper::instance()->preventAmbiguousQuery($this->query);
