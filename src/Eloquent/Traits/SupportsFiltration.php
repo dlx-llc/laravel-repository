@@ -136,9 +136,13 @@ trait SupportsFiltration
         FilterContract $filter
     ): void {
         $relation = $filter->getAttr()->getName();
-        $query->whereHas($relation, function ($query) use ($filter) {
-            $this->applyFilters($query, $filter->getValue());
-        });
+        $args = [$relation];
+
+        if ($subFilters = $filter->getValue()) {
+            $args[] = fn($q) => $this->applyFilters($q, $subFilters);
+        }
+
+        $query->whereHas(...$args);
     }
 
     /**
@@ -153,9 +157,13 @@ trait SupportsFiltration
         FilterContract $filter
     ): void {
         $relation = $filter->getAttr()->getName();
-        $query->whereDoesntHave($relation, function ($query) use ($filter) {
-            $this->applyFilters($query, $filter->getValue());
-        });
+        $args = [$relation];
+
+        if ($subFilters = $filter->getValue()) {
+            $args[] = fn($q) => $this->applyFilters($q, $subFilters);
+        }
+
+        $query->whereDoesntHave(...$args);
     }
 
     /**
