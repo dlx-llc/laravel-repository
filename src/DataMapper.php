@@ -107,12 +107,13 @@ class DataMapper implements DataMapperContract
                 FilterOperator::DOES_NOT_EXIST,
             ], true)
         ) {
-            $items = $filter->getValue();
-            $prefix = $filter->getAttr()->getName();
+            if ($items = $filter->getValue()) {
+                $prefix = $filter->getAttr()->getName();
 
-            /** @var FilterContract|FiltersCollectionContract $item */
-            foreach ($items as $item) {
-                $this->replaceFilterAttrName($item, $prefix);
+                /** @var FilterContract|FiltersCollectionContract $item */
+                foreach ($items as $item) {
+                    $this->replaceFilterAttrName($item, $prefix);
+                }
             }
         } else {
             $attr = $filter->getAttr();

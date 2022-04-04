@@ -32,12 +32,20 @@ class RelationDoesNotExistFilter extends Filter
     /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
     {
+        if (empty($value)) {
+            return null;
+        }
+
         return $this->sanitizeFiltersCollection($value);
     }
 
     /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
+        if (is_null($value)) {
+            return [];
+        }
+
         $validator = new Validator();
         $validator->validateFiltersCollection($attribute, $value);
 

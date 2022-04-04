@@ -125,11 +125,13 @@ trait SupportsFiltration
             $operator = $data['operator'];
             $value = $data['value'] ?? null;
 
-            if (
-                $operator === FilterOperator::EXISTS ||
-                $operator === FilterOperator::DOES_NOT_EXIST
-            ) {
-                $value = $this->createFilter(['items' => $value]);
+            if (!empty($value)) {
+                if (
+                    $operator === FilterOperator::EXISTS ||
+                    $operator === FilterOperator::DOES_NOT_EXIST
+                ) {
+                    $value = $this->createFilter(['items' => $value]);
+                }
             }
 
             return LaRepo::newFilter($attr, $operator, $value, $boolean);
