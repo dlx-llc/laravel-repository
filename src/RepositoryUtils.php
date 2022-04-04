@@ -152,14 +152,14 @@ class RepositoryUtils
      * @param  int|null $perPageMax
      * @param  string|null $pageKey
      * @param  string|null $perPageKey
-     * @return PaginationContract
+     * @return PaginationContract|null
      */
     public function getRequestPagination(
         bool $require = true,
         ?int $perPageMax = null,
         ?string $pageKey = null,
         ?string $perPageKey = null
-    ): PaginationContract {
+    ): ?PaginationContract {
         $validator = new PaginationValidator($pageKey, $perPageKey);
         $validator->validate($require, $perPageMax);
 

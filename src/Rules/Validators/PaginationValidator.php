@@ -84,10 +84,14 @@ class PaginationValidator
     /**
      * Creates a pagination object from the validated data.
      *
-     * @return PaginationContract
+     * @return PaginationContract|null
      */
-    public function createFromValidated(): PaginationContract
+    public function createFromValidated(): ?PaginationContract
     {
+        if (!$this->validated) {
+            return null;
+        }
+
         return App::makeWith(PaginationContract::class, [
             'page' => $this->validated[$this->pageName],
             'perPage' => $this->validated[$this->perPageName],
