@@ -47,7 +47,7 @@ class RelationDoesNotExistFilter extends Filter
         }
 
         $validator = new Validator();
-        $validator->validateFiltersCollection($attribute, $value);
+        $validator->validateFiltersArr($attribute, $value);
 
         return $validator->getErrors();
     }

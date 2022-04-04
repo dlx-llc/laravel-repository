@@ -94,7 +94,7 @@ trait ValidatesFilters
                 $filterClass = FilterRegistry::getClass($operator);
 
                 if ($errors = $filterClass::validateValue("{$attribute}.value", $filterVal)) {
-                    $this->addError(...$errors);
+                    $this->addErrors(...$errors);
                 }
             }
         }
