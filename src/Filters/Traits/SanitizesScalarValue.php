@@ -16,12 +16,14 @@ trait SanitizesScalarValue
     protected function sanitizeScalarValue(mixed $value): bool|int|float|string
     {
         if (is_string($value)) {
-            $value = $this->parseDateString($value);
-        } elseif (!is_scalar($value)) {
-            $value = '';
+            return $this->parseDateString($value);
+        } elseif (is_scalar($value)) {
+            return $value;
+        } elseif (is_object($value) && method_exists($value, '__toString')) {
+            return $value->__toString();
+        } else {
+            return '';
         }
-
-        return $value;
     }
 
     /**

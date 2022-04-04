@@ -198,6 +198,7 @@ abstract class Repository implements RepositoryContract
 
         if (!$criteria) {
             $criteria = LaRepo::newCriteria();
+            $this->strategy->setCriteria($criteria);
         }
 
         return $criteria->{$method}(...$args);
