@@ -109,17 +109,19 @@ trait SupportsFiltration
     ): void {
         $args = $this->getFilterQueryArgs($filter);
         $method = $this->getFilterQueryMethod($filter);
-
-        if ($filter->getBoolean() === BooleanOperator::OR) {
-            $method = 'or' . ucfirst($method);
-        }
-
         $attr = $filter->getAttr();
 
         if ($attr->isSegmented()) {
             $relation = $attr->getNameExceptLastSegment();
-            $query->whereHas($relation, fn($q) => $q->{$method}(...$args));
+            $relMethod = $filter->getBoolean() === BooleanOperator::OR
+                ? 'orWhereHas' : 'whereHas';
+
+            $query->{$relMethod}($relation, fn($q) => $q->{$method}(...$args));
         } else {
+            if ($filter->getBoolean() === BooleanOperator::OR) {
+                $method = 'or' . ucfirst($method);
+            }
+
             $query->{$method}(...$args);
         }
     }

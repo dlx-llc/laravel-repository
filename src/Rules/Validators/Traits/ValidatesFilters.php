@@ -102,7 +102,6 @@ trait ValidatesFilters
         return count($this->errors) <= $errCountBefore;
     }
 
-
     /**
      * Validates the given filter boolean operator.
      *
