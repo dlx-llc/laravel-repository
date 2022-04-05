@@ -308,7 +308,13 @@ trait SupportsQueryContext
         $loaded = Collection::make();
         $records = $records->filter(function ($record) use ($relation, $loaded) {
             if ($relLoaded = $record->relationLoaded($relation)) {
-                $loaded->add($record);
+                if (is_a($record->{$relation}, Collection::class)) {
+                    foreach ($record->{$relation} as $relRecord) {
+                        $loaded->add($relRecord);
+                    }
+                } else {
+                    $loaded->add($record->{$relation});
+                }
             }
 
             return !$relLoaded;
