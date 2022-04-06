@@ -148,8 +148,8 @@ interface RepositoryStrategyContract
      * Loads missing parameters in accordance with the given criteria.
      *
      * @param  object $records
-     * @param  CriteriaContract $criteria
+     * @param  CriteriaContract|null $criteria
      * @return void
      */
-    public function loadMissing(object $records, CriteriaContract $criteria): void;
+    public function loadMissing(object $records, ?CriteriaContract $criteria): void;
 }

@@ -67,9 +67,11 @@ trait SupportsQueryContext
     }
 
     /** @inheritdoc */
-    public function loadMissing(object $records, CriteriaContract $criteria): void
+    public function loadMissing(object $records, ?CriteriaContract $criteria): void
     {
-        if (!is_a($records, Collection::class)) {
+        if (!$criteria) {
+            return;
+        } elseif (!is_a($records, Collection::class)) {
             $records = Collection::make([$records]);
         }
 
