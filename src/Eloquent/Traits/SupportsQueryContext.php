@@ -22,9 +22,9 @@ trait SupportsQueryContext
     /**
      * The current query criteria.
      *
-     * @var CriteriaContract|null
+     * @var CriteriaContract
      */
-    protected ?CriteriaContract $criteria = null;
+    protected CriteriaContract $criteria;
 
     /**
      * Relation resolvers map.
@@ -43,17 +43,13 @@ trait SupportsQueryContext
     /** @inheritdoc */
     public function addCriteria(CriteriaContract $criteria): static
     {
-        if ($this->criteria) {
-            $this->criteria->merge($criteria);
-        } else {
-            $this->criteria = $criteria->clone();
-        }
+        $this->criteria->merge($criteria);
 
         return $this;
     }
 
     /** @inheritdoc */
-    public function setCriteria(?CriteriaContract $criteria): static
+    public function setCriteria(CriteriaContract $criteria): static
     {
         $this->criteria = $criteria;
 
@@ -61,7 +57,7 @@ trait SupportsQueryContext
     }
 
     /** @inheritdoc */
-    public function getCriteria(): ?CriteriaContract
+    public function getCriteria(): CriteriaContract
     {
         return $this->criteria;
     }

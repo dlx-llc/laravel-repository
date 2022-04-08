@@ -41,7 +41,7 @@ class Criteria implements CriteriaContract
 
         if ($filters = $criteria->getFilters()) {
             if (is_null($this->filters)) {
-                $this->filters = $filters;
+                $this->filters = $filters->clone();
             } else {
                 $this->filters->add($filters);
             }

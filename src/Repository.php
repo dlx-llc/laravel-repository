@@ -3,7 +3,6 @@
 namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Collection;
-use Deluxetech\LaRepo\Facades\LaRepo;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
@@ -150,7 +149,7 @@ abstract class Repository implements RepositoryContract
     }
 
     /** @inheritdoc */
-    public function setCriteria(?CriteriaContract $criteria): static
+    public function setCriteria(CriteriaContract $criteria): static
     {
         $this->strategy->setCriteria($criteria);
 
@@ -158,7 +157,7 @@ abstract class Repository implements RepositoryContract
     }
 
     /** @inheritdoc */
-    public function getCriteria(): ?CriteriaContract
+    public function getCriteria(): CriteriaContract
     {
         return $this->strategy->getCriteria();
     }
@@ -172,7 +171,7 @@ abstract class Repository implements RepositoryContract
     /** @inheritdoc */
     public function where(): static
     {
-        $this->callOnCriteria('where', func_get_args());
+        $this->strategy->getCriteria()->where(...func_get_args());
 
         return $this;
     }
@@ -180,27 +179,8 @@ abstract class Repository implements RepositoryContract
     /** @inheritdoc */
     public function orWhere(): static
     {
-        $this->callOnCriteria('orWhere', func_get_args());
+        $this->strategy->getCriteria()->orWhere(...func_get_args());
 
         return $this;
-    }
-
-    /**
-     * Calls the given method the criteria.
-     *
-     * @param  string $method
-     * @param  array $args
-     * @return mixed
-     */
-    protected function callOnCriteria(string $method, array $args): mixed
-    {
-        $criteria = $this->strategy->getCriteria();
-
-        if (!$criteria) {
-            $criteria = LaRepo::newCriteria();
-            $this->strategy->setCriteria($criteria);
-        }
-
-        return $criteria->{$method}(...$args);
     }
 }

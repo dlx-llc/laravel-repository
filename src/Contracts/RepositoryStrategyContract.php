@@ -9,7 +9,7 @@ use Illuminate\Contracts\Pagination\Paginator;
 interface RepositoryStrategyContract
 {
     /**
-     * Adds query criteria if not set or merges with the existing criteria.
+     * Adds query criteria.
      *
      * @param  CriteriaContract $criteria
      * @return static
@@ -17,19 +17,19 @@ interface RepositoryStrategyContract
     public function addCriteria(CriteriaContract $criteria): static;
 
     /**
-     * Specifies the query criteria.
+     * Specifies the query criteria. Removes the previously specified criteria(s).
      *
-     * @param  CriteriaContract|null $criteria
+     * @param  CriteriaContract $criteria
      * @return static
      */
-    public function setCriteria(?CriteriaContract $criteria): static;
+    public function setCriteria(CriteriaContract $criteria): static;
 
     /**
      * Returns the current query criteria.
      *
-     * @return ?CriteriaContract
+     * @return CriteriaContract
      */
-    public function getCriteria(): ?CriteriaContract;
+    public function getCriteria(): CriteriaContract;
 
     /**
      * Specifies the number of results that should be skipped.

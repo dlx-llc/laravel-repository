@@ -4,6 +4,7 @@ namespace Deluxetech\LaRepo\Eloquent;
 
 use Deluxetech\LaRepo\ClassUtils;
 use Illuminate\Support\Collection;
+use Deluxetech\LaRepo\Facades\LaRepo;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
@@ -52,6 +53,7 @@ class EloquentStrategy implements RepositoryStrategyContract
         ClassUtils::checkClassImplements($model, Model::class);
 
         $this->query = $model::query();
+        $this->criteria = LaRepo::newCriteria();
         $this->registerDefaultFilterHandlers();
     }
 
@@ -74,7 +76,7 @@ class EloquentStrategy implements RepositoryStrategyContract
     /** @inheritdoc */
     public function reset(): static
     {
-        $this->setCriteria(null);
+        $this->setCriteria(LaRepo::newCriteria());
         $this->query = $this->query->getModel()->newQuery();
 
         return $this;
