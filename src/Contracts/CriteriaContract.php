@@ -17,6 +17,13 @@ interface CriteriaContract
     public function merge(CriteriaContract $criteria): static;
 
     /**
+     * Makes a duplicate of the criteria object.
+     *
+     * @return static
+     */
+    public function clone(): static;
+
+    /**
      * Returns the sorting params.
      *
      * @return SortingContract|null

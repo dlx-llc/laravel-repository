@@ -49,4 +49,18 @@ class Criteria implements CriteriaContract
 
         return $this;
     }
+
+    /** @inheritdoc */
+    public function clone(): static
+    {
+        $clone = new static();
+        $clone->setAttributes(...$this->getAttributes());
+        $clone->setRelations($this->getRelations());
+        $clone->setRelationCounts($this->getRelationCounts());
+        $clone->setSorting($this->getSorting());
+        $clone->setTextSearch($this->getTextSearch());
+        $clone->setFilters($this->getFilters());
+
+        return $clone;
+    }
 }

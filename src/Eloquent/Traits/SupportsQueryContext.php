@@ -46,7 +46,7 @@ trait SupportsQueryContext
         if ($this->criteria) {
             $this->criteria->merge($criteria);
         } else {
-            $this->criteria = $criteria;
+            $this->criteria = $criteria->clone();
         }
 
         return $this;
