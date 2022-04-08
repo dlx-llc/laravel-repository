@@ -5,6 +5,7 @@ namespace Deluxetech\LaRepo;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
@@ -122,13 +123,13 @@ class DataMapper implements DataMapperContract
     }
 
     /**
-     * Replaces the domain model attribute  data attributes map if set.
+     * Replaces the domain model attribute data attributes map if set.
      *
-     * @param  DataAttr $attr
+     * @param  DataAttrContract $attr
      * @param  string|null $prefix
      * @return void
      */
-    protected function replaceDataAttrName(DataAttr $attr, ?string $prefix = null): void
+    protected function replaceDataAttrName(DataAttrContract $attr, ?string $prefix = null): void
     {
         if ($prefix) {
             $attr->addFromBeginning($prefix);
