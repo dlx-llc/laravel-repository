@@ -66,8 +66,13 @@ trait DefinesQueryContext
     /** @inheritdoc */
     public function setRelationCounts(array $counts): static
     {
-        foreach ($counts as $relation) {
-            $this->addRelationCount($relation);
+        foreach ($counts as $relation => $criteria) {
+            if (is_int($relation)) {
+                $relation = $criteria;
+                $criteria = null;
+            }
+
+            $this->addRelationCount($relation, $criteria);
         }
 
         return $this;
