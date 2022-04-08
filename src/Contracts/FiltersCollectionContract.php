@@ -22,6 +22,13 @@ interface FiltersCollectionContract extends Iterator, Countable, ArrayAccess
     );
 
     /**
+     * Makes a duplicate of the collection object.
+     *
+     * @return static
+     */
+    public function clone(): static;
+
+    /**
      * Returns the boolean operator by which the filter will be combined with others.
      *
      * @return string

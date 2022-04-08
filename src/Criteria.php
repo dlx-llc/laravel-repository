@@ -59,7 +59,7 @@ class Criteria implements CriteriaContract
         $clone->setRelationCounts($this->getRelationCounts());
         $clone->setSorting($this->getSorting());
         $clone->setTextSearch($this->getTextSearch());
-        $clone->setFilters($this->getFilters());
+        $clone->setFilters($this->getFilters()?->clone());
 
         return $clone;
     }

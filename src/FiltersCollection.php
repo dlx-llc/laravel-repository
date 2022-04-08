@@ -30,6 +30,16 @@ class FiltersCollection implements FiltersCollectionContract
         $this->items = $items;
     }
 
+    /** @inheritdoc */
+    public function clone(): static
+    {
+        $clone = new static();
+        $clone->setItems(...$this->getItems());
+        $clone->setBoolean($this->getBoolean());
+
+        return $clone;
+    }
+
     /** {@inheritdoc} */
     public function getBoolean(): string
     {
