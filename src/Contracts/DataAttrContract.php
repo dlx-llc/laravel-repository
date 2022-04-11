@@ -27,6 +27,13 @@ interface DataAttrContract
     public function isSegmented(): bool;
 
     /**
+     * Returns the number of segments.
+     *
+     * @return int
+     */
+    public function countSegments(): int;
+
+    /**
      * Sets the attribute name.
      *
      * @param  string ...$segments
@@ -65,16 +72,23 @@ interface DataAttrContract
     public function getNameSegmented(): array;
 
     /**
+     * Returns only the first segment of the attribute.
+     *
+     * @return string|null
+     */
+    public function getNameFirstSegment(): ?string;
+
+    /**
      * Returns only the last segment of the attribute.
      *
-     * @return string
+     * @return string|null
      */
-    public function getNameLastSegment(): string;
+    public function getNameLastSegment(): ?string;
 
     /**
      * Returns the attribute name without the last segment.
      *
-     * @return string
+     * @return string|null
      */
-    public function getNameExceptLastSegment(): string;
+    public function getNameExceptLastSegment(): ?string;
 }

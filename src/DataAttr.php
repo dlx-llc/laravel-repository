@@ -33,11 +33,6 @@ class DataAttr implements DataAttrContract
      */
     protected ?string $exceptLastSegment;
 
-    /**
-     * @var string|null
-     */
-    protected ?string $lastSegment;
-
     /** @inheritdoc */
     public function __construct(string ...$segments)
     {
@@ -54,6 +49,12 @@ class DataAttr implements DataAttrContract
     public function isSegmented(): bool
     {
         return $this->isSegmented;
+    }
+
+    /** @inheritdoc */
+    public function countSegments(): int
+    {
+        return count($this->segments);
     }
 
     /** @inheritdoc */
@@ -98,13 +99,21 @@ class DataAttr implements DataAttrContract
     }
 
     /** @inheritdoc */
-    public function getNameLastSegment(): string
+    public function getNameFirstSegment(): ?string
     {
-        return $this->lastSegment;
+        return $this->segments[0] ?? null;
     }
 
     /** @inheritdoc */
-    public function getNameExceptLastSegment(): string
+    public function getNameLastSegment(): ?string
+    {
+        $i = count($this->segments) - 1;
+
+        return $this->segments[$i] ?? null;
+    }
+
+    /** @inheritdoc */
+    public function getNameExceptLastSegment(): ?string
     {
         return $this->exceptLastSegment;
     }
@@ -137,8 +146,12 @@ class DataAttr implements DataAttrContract
         $segmentsCount = count($this->segments);
         $this->isSegmented = $segmentsCount > 1;
         $this->name = join(self::DELIMITER, $this->segments);
-        $this->lastSegment = $this->segments[$segmentsCount - 1];
-        $lastSegmentLen = strlen($this->lastSegment) + 1;
-        $this->exceptLastSegment = substr($this->name, 0, -$lastSegmentLen);
+
+        if ($segmentsCount) {
+            $lastSegmentLen = strlen($this->segments[$segmentsCount - 1]) + 1;
+            $this->exceptLastSegment = substr($this->name, 0, -$lastSegmentLen) ?: null;
+        } else {
+            $this->exceptLastSegment = null;
+        }
     }
 }
