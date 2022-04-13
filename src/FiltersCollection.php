@@ -55,6 +55,48 @@ class FiltersCollection implements FiltersCollectionContract
     }
 
     /** {@inheritdoc} */
+    public function containsBoolOr(): bool
+    {
+        $count = count($this->items);
+
+        if ($count < 2) {
+            return false;
+        }
+
+        for ($i = 1; $i < $count; $i++) {
+            if ($this->items[$i]->getBoolean() === BooleanOperator::OR) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /** {@inheritdoc} */
+    public function checkBooleansAreSame(): bool
+    {
+        $count = count($this->items);
+
+        if ($count < 3) {
+            return true;
+        }
+
+        $b1 = $this->items[1]->getBoolean();
+
+        for ($i = 2; $i < $count; $i++) {
+            $b2 = $this->items[$i]->getBoolean();
+
+            if ($b1 !== $b2) {
+                return false;
+            }
+
+            $b1 = $b2;
+        }
+
+        return true;
+    }
+
+    /** {@inheritdoc} */
     public function getItems(): array
     {
         return $this->items;

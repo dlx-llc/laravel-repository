@@ -24,7 +24,7 @@ final class DecomposeIdleCollectionTest extends TestCase
     private const TESTEE = 'decomposeIdleCollection';
 
     /**
-     * Test method returns empty array when empty collection is given.
+     * Test method returns null when empty collection is given.
      *
      * @return void
      */
@@ -37,15 +37,15 @@ final class DecomposeIdleCollectionTest extends TestCase
 
         $result = $this->callPrivateMethod($optimizer, self::TESTEE, [$collection]);
 
-        $this->assertEquals([], $result);
+        $this->assertNull($result);
     }
 
     /**
-     * Test method returns an array containing the only item in the collection.
+     * Test method returns the only item in the collection.
      *
      * @return void
      */
-    public function testArrayOfTheOnlyItemReturned(): void
+    public function testTheOnlyItemReturned(): void
     {
         $optimizer = new FilterOptimizer();
         $collectionOperator = BooleanOperator::OR;
@@ -61,7 +61,7 @@ final class DecomposeIdleCollectionTest extends TestCase
 
         $result = $this->callPrivateMethod($optimizer, self::TESTEE, [$collection]);
 
-        $this->assertEquals([$item], $result);
+        $this->assertEquals($item, $result);
     }
 
     /**
@@ -81,22 +81,12 @@ final class DecomposeIdleCollectionTest extends TestCase
             $this->createMock(FilterContract::class),
         ];
 
-        $collection->expects($this->atLeastOnce())->method('isEmpty')->willReturn(false);
-        $collection->expects($this->atLeastOnce())->method('count')->willReturn(count($items));
-
-        $offsetGetRetValMap = [];
-
-        foreach ($items as $i => $item) {
-            $offsetGetRetValMap[] = [$i, $item];
-            $item->expects($this->any())->method('getBoolean')->willReturn(BooleanOperator::AND);
-        }
-
-        $collection->expects($this->atLeastOnce())
-            ->method('offsetGet')
-            ->will($this->returnValueMap($offsetGetRetValMap));
-
-        $collection->expects($this->atLeastOnce())->method('getBoolean')->willReturn($collectionOperator);
-        $items[0]->expects($this->atLeastOnce())->method('setBoolean')->with($collectionOperator);
+        $collection->expects($this->once())->method('isEmpty')->willReturn(false);
+        $collection->expects($this->once())->method('count')->willReturn(count($items));
+        $collection->expects($this->once())->method('containsBoolOr')->willReturn(false);
+        $collection->expects($this->once())->method('offsetGet')->with(0)->willReturn($items[0]);
+        $collection->expects($this->once())->method('getBoolean')->willReturn($collectionOperator);
+        $items[0]->expects($this->once())->method('setBoolean')->with($collectionOperator);
         $collection->expects($this->atLeastOnce())->method('getItems')->willReturn($items);
 
         $result = $this->callPrivateMethod($optimizer, self::TESTEE, [$collection]);

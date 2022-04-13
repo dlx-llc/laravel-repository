@@ -51,6 +51,22 @@ interface FiltersCollectionContract extends Iterator, Countable, ArrayAccess
     public function getItems(): array;
 
     /**
+     * Checks if there is at least one item in the collection that has "or" boolean.
+     * The first item's boolean operator doesn't matter.
+     *
+     * @return bool
+     */
+    public function containsBoolOr(): bool;
+
+    /**
+     * Checks if all the items in the collection have the same boolean operator.
+     * The first item's boolean operator doesn't matter.
+     *
+     * @return bool
+     */
+    public function checkBooleansAreSame(): bool;
+
+    /**
      * Checks if the collection is empty.
      *
      * @return bool

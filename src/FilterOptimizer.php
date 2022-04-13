@@ -2,7 +2,6 @@
 
 namespace Deluxetech\LaRepo;
 
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\App;
 use Deluxetech\LaRepo\Facades\LaRepo;
 use Deluxetech\LaRepo\Enums\FilterOperator;
@@ -12,70 +11,101 @@ use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\FilterOptimizerContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
-/**
- * @todo Remove filter optimizer and create an eloquent query optimizer instead.
- */
 class FilterOptimizer implements FilterOptimizerContract
 {
-    /**
-     * Removes meaningless collections and groups same relation filters if possible.
-     *
-     * @param  FiltersCollectionContract $collection
-     * @return void
-     */
+    /** @inheritdoc */
     public function optimize(FiltersCollectionContract $collection): void
     {
-        $this->combineSameRelationFilters($collection);
+        $result = $this->optimizeOrOmit($collection);
 
-        $items = $collection->getItems();
-
-        foreach ($items as $i => $item) {
-            if (is_a($item, FiltersCollectionContract::class)) {
-                $items[$i] = $this->decomposeIdleCollection($item);
-            }
+        if (is_null($result)) {
+            $collection->setItems();
+        } elseif (is_array($result)) {
+            $collection->setItems(...$result);
+        } elseif (is_a($result, FilterContract::class)) {
+            $collection->setItems($result);
         }
+    }
 
-        $collection->setItems(...Arr::flatten($items));
+    /**
+     * Optimizes the given filter (collection).
+     *
+     * @param  FiltersCollectionContract $collection
+     * @return FiltersCollectionContract|FilterContract|array<FiltersCollectionContract|FilterContract>|null
+     */
+    protected function optimizeOrOmit(
+        FiltersCollectionContract|FilterContract $filter
+    ): FiltersCollectionContract|FilterContract|array|null {
+        if (is_a($filter, FilterContract::class)) {
+            $operator = $filter->getOperator();
+
+            if (
+                $operator === FilterOperator::EXISTS ||
+                $operator === FilterOperator::DOES_NOT_EXIST
+            ) {
+                $value = $filter->getValue();
+
+                if (!is_null($value)) {
+                    $value = $this->optimizeOrOmit($value);
+
+                    if (is_a($value, FilterContract::class)) {
+                        $relation = $filter->getAttr()->getName();
+                        $value->getAttr()->addFromBeginning($relation);
+                        $value->setBoolean($filter->getBoolean());
+                        $filter = $value;
+                    } else {
+                        $filter->setValue($value);
+                    }
+                }
+            }
+
+            return $filter;
+        } else {
+            $this->combineSameRelationFilters($filter);
+
+            $i = 0;
+
+            while (isset($filter[$i])) {
+                $item = $this->optimizeOrOmit($filter[$i]);
+
+                if (is_null($item)) {
+                    $filter->splice($i, 1);
+                } elseif (is_array($item)) {
+                    $filter->splice($i, 1, ...$item);
+                    $subCount = count($item);
+                    $i += $subCount;
+                } else {
+                    $filter[$i] = $item;
+                    $i++;
+                }
+            }
+
+            return $this->decomposeIdleCollection($filter);
+        }
     }
 
     /**
      * Decomposes the given filters collection if it has no effect.
      *
      * @param  FiltersCollectionContract $collection
-     * @return array<FiltersCollectionContract|FilterContract>
+     * @return FiltersCollectionContract|FilterContract|array<FiltersCollectionContract|FilterContract>|null
      */
-    protected function decomposeIdleCollection(FiltersCollectionContract $collection): array
-    {
+    protected function decomposeIdleCollection(
+        FiltersCollectionContract $collection
+    ): FiltersCollectionContract|FilterContract|array|null {
         if ($collection->isEmpty()) {
-            return [];
-        }
-
-        $items = [];
-
-        foreach ($collection as $i => $item) {
-            if (is_a($item, FiltersCollectionContract::class)) {
-                // Decompose meaningless nested collections recursively.
-                $items = [...$items, ...$this->decomposeIdleCollection($item)];
-            } else {
-                $items[] = $item;
-            }
-        }
-
-        $collection->setItems(...$items);
-
-        if ($collection->count() === 1) {
+            return null;
+        } elseif ($collection->count() === 1) {
             // If there is only one item, then return that item instead of the collection.
             $item = $collection[0];
             $item->setBoolean($collection->getBoolean());
 
-            return [$item];
+            return $item;
         } else {
-            // If there is at least one boolean OR operator then we shouldn't
+            // If there is at least one boolean OR operator then we can't
             // decompose the collection.
-            foreach ($collection as $i => $item) {
-                if ($i && $item->getBoolean() === BooleanOperator::OR) {
-                    return [$collection];
-                }
+            if ($collection->containsBoolOr()) {
+                return $collection;
             }
 
             // Otherwise, it should be decomposed as it has no effect.

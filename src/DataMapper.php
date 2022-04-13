@@ -111,7 +111,6 @@ class DataMapper implements DataMapperContract
             if ($items = $filter->getValue()) {
                 $prefix = $filter->getAttr()->getName();
 
-                /** @var FilterContract|FiltersCollectionContract $item */
                 foreach ($items as $item) {
                     $this->replaceFilterAttrName($item, $prefix);
                 }
