@@ -132,6 +132,7 @@ class DataMapper implements DataMapperContract
     {
         if ($prefix) {
             $attr->addFromBeginning($prefix);
+            $segmentsCount = $attr->countSegments();
         }
 
         $attrName = $attr->getName();
@@ -139,6 +140,13 @@ class DataMapper implements DataMapperContract
         $attr->setName($newName);
 
         if ($prefix) {
+            $newSegmentsCount = $attr->countSegments();
+
+            if ($newSegmentsCount < $segmentsCount) {
+                // Revert the change if the number of layers has been reduced.
+                $attr->setName($attrName);
+            }
+
             $attr->removeFromBeginning($prefix);
         }
     }
