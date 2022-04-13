@@ -2,6 +2,7 @@
 
 namespace Deluxetech\LaRepo\Rules\Validators;
 
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
@@ -73,22 +74,23 @@ class CriteriaValidator
         $data = $rules = [];
 
         if (!is_null($textSearch)) {
-            $data[$this->textSearchKey] = $textSearch;
+            $this->setDotStrAsAssoc($data, $this->textSearchKey, $textSearch);
             $rules[$this->textSearchKey] = [new RepositoryTextSearch()];
         }
 
         if (!is_null($sorting)) {
-            $data[$this->sortingKey] = $sorting;
+            $this->setDotStrAsAssoc($data, $this->sortingKey, $sorting);
             $rules[$this->sortingKey] = [new RepositorySorting()];
         }
 
         if (!is_null($filters)) {
-            $data[$this->filtersKey] = $filters;
+            $this->setDotStrAsAssoc($data, $this->filtersKey, $filters);
             $rules[$this->filtersKey] = [new RepositoryFiltration()];
         }
 
         if ($data && $rules) {
             $this->validated = Validator::make($data, $rules)->validate();
+            $this->validated = Arr::dot($this->validated);
         }
     }
 
@@ -111,5 +113,25 @@ class CriteriaValidator
         if (isset($this->validated[$this->filtersKey])) {
             $criteria->setFiltersRaw($this->validated[$this->filtersKey]);
         }
+    }
+
+    /**
+     * Merges dot notated string in the given array as an associative array.
+     *
+     * @param  array &$into
+     * @param  string $dotStr
+     * @param  mixed $value
+     * @return void
+     */
+    protected function setDotStrAsAssoc(array &$into, string $str, mixed $value): void
+    {
+        $pieces = explode('.', $str);
+        $current = &$into[array_shift($pieces)];
+
+        foreach ($pieces as $piece) {
+            $current = &$current[$piece];
+        }
+
+        $current = $value;
     }
 }

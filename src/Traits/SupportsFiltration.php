@@ -42,7 +42,7 @@ trait SupportsFiltration
             $filters->add($filter);
         }
 
-        $filters = App::make(FilterOptimizerContract::class)->optimize($filters);
+        App::make(FilterOptimizerContract::class)->optimize($filters);
         $this->setFilters($filters);
 
         return $this;
