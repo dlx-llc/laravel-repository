@@ -39,10 +39,7 @@ class FilterOptimizer implements FilterOptimizerContract
         if (is_a($filter, FilterContract::class)) {
             $operator = $filter->getOperator();
 
-            if (
-                $operator === FilterOperator::EXISTS ||
-                $operator === FilterOperator::DOES_NOT_EXIST
-            ) {
+            if ($operator === FilterOperator::EXISTS) {
                 $value = $filter->getValue();
 
                 if (!is_null($value)) {
