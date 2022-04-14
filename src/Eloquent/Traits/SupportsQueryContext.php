@@ -310,7 +310,7 @@ trait SupportsQueryContext
                     foreach ($record->{$relation} as $relRecord) {
                         $loaded->add($relRecord);
                     }
-                } else {
+                } elseif ($record->{$relation}) {
                     $loaded->add($record->{$relation});
                 }
             }
