@@ -59,11 +59,7 @@ trait SupportsFiltration
     /** @inheritdoc */
     public function where(string $attr, mixed $operator, mixed $value = null): static
     {
-        if (func_num_args() === 2) {
-            $value = $operator;
-            $operator = FilterOperator::EQUALS_TO;
-        }
-
+        list($attr, $operator, $value) = $this->prepareWhereArgs(...func_get_args());
         $this->addFilter($attr, $operator, $value, BooleanOperator::AND);
 
         return $this;
@@ -72,11 +68,7 @@ trait SupportsFiltration
     /** @inheritdoc */
     public function orWhere(string $attr, mixed $operator, mixed $value = null): static
     {
-        if (func_num_args() === 2) {
-            $value = $operator;
-            $operator = FilterOperator::EQUALS_TO;
-        }
-
+        list($attr, $operator, $value) = $this->prepareWhereArgs(...func_get_args());
         $this->addFilter($attr, $operator, $value, BooleanOperator::OR);
 
         return $this;
@@ -136,5 +128,29 @@ trait SupportsFiltration
 
             return LaRepo::newFilter($attr, $operator, $value, $boolean);
         }
+    }
+
+    /**
+     * Prepares (or)Where method arguments.
+     *
+     * @param  string $attr
+     * @param  mixed $operator
+     * @param  mixed  $value
+     * @return array
+     */
+    protected function prepareWhereArgs(string $attr, mixed $operator, mixed $value = null): array
+    {
+        if (
+            func_num_args() === 2 &&
+            $operator !== FilterOperator::IS_NULL &&
+            $operator !== FilterOperator::IS_NOT_NULL &&
+            $operator !== FilterOperator::EXISTS &&
+            $operator !== FilterOperator::DOES_NOT_EXIST
+        ) {
+            $value = $operator;
+            $operator = FilterOperator::EQUALS_TO;
+        }
+
+        return [$attr, $operator, $value];
     }
 }
