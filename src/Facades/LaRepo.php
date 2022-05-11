@@ -7,10 +7,13 @@ use Illuminate\Support\Facades\Facade;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\SortingContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
+use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
@@ -25,6 +28,8 @@ use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
  * @method static DataMapperContract newDataMapper()  Creates a new data mapper object.
  * @method static FilterContract newFilter(string $attr, string $operator, mixed $value, string $boolean = BooleanOperator::AND)  Creates a new filter object.
  * @method static FiltersCollectionContract newFiltersCollection(string $boolean = BooleanOperator::AND, FiltersCollectionContract|FilterContract ...$items)  Creates a new filters collection object.
+ * @method static SortingContract newSorting(DataAttrContract|string $attr, string $dir)  Creates a new sorting object.
+ * @method static TextSearchContract newTextSearch(string $text, DataAttrContract|string ...$attrs)  Creates a new text search object.
  *
  * @see \Deluxetech\LaRepo\RepositoryUtils
  */

@@ -3,8 +3,8 @@
 namespace Deluxetech\LaRepo\Traits;
 
 use Illuminate\Support\Facades\App;
+use Deluxetech\LaRepo\Facades\LaRepo;
 use Deluxetech\LaRepo\Contracts\SortingContract;
-use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
 
 trait SupportsSorting
@@ -31,13 +31,8 @@ trait SupportsSorting
             throw new \Exception(__('larepo::exceptions.invalid_sorting_string'));
         }
 
-        $attr = App::makeWith(DataAttrContract::class, [$params[0]]);
-        $this->setSorting(
-            App::makeWith(SortingContract::class, [
-                'attr' => $attr,
-                'dir' => $params[1],
-            ])
-        );
+        $sorting = LaRepo::newSorting($params[0], $params[1]);
+        $this->setSorting($sorting);
 
         return $this;
     }

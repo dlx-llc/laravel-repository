@@ -7,11 +7,13 @@ use Illuminate\Support\Facades\App;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\SortingContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\TextSearchContract;
 use Deluxetech\LaRepo\Rules\Validators\CriteriaValidator;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Rules\Validators\PaginationValidator;
@@ -253,5 +255,42 @@ class RepositoryUtils
         FiltersCollectionContract|FilterContract ...$items
     ): FiltersCollectionContract {
         return App::makeWith(FiltersCollectionContract::class, [$boolean, ...$items]);
+    }
+
+    /**
+     * Creates a new sorting object.
+     *
+     * @param  DataAttrContract|string $attr
+     * @param  string $dir
+     * @return SortingContract
+     */
+    public function newSorting(DataAttrContract|string $attr, string $dir): SortingContract
+    {
+        if (is_string($attr)) {
+            $attr = App::makeWith(DataAttrContract::class, [$attr]);
+        }
+
+        return App::makeWith(SortingContract::class, [
+            'attr' => $attr,
+            'dir' => $dir,
+        ]);
+    }
+
+    /**
+     * Creates a new text search object.
+     *
+     * @param  string $text
+     * @param  DataAttrContract|string ...$attrs
+     * @return TextSearchContract
+     */
+    public function newTextSearch(string $text, DataAttrContract|string ...$attrs): TextSearchContract
+    {
+        foreach ($attrs as $i => $attr) {
+            if (is_string($attr)) {
+                $attrs[$i] = App::makeWith(DataAttrContract::class, [$attr]);
+            }
+        }
+
+        return App::makeWith(TextSearchContract::class, [$text, ...$attrs]);
     }
 }
