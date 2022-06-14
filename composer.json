@@ -1,5 +1,5 @@
 {
-    "name": "deluxetech/laravel-repository",
+    "name": "dlx-llc/laravel-repository",
     "type": "library",
     "description": "Repository design pattern implementation for Laravel framework.",
     "keywords": [
