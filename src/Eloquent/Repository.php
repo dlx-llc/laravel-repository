@@ -2,7 +2,7 @@
 
 namespace Deluxetech\LaRepo\Eloquent;
 
-abstract class EloquentRepository extends GenericEloquentRepository
+abstract class Repository extends GenericRepository
 {
     /**
      * Returns the fully qualified eloquent model class name.

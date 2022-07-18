@@ -11,8 +11,9 @@ use Illuminate\Database\Eloquent\Builder;
 use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
+use Deluxetech\LaRepo\Contracts\RepositoryContract;
 
-class GenericEloquentRepository
+class GenericRepository implements RepositoryContract
 {
     use Traits\SupportsSorting;
     use Traits\SupportsFiltration;
@@ -166,6 +167,22 @@ class GenericEloquentRepository
     public function first(): ?object
     {
         return $this->fetch('first');
+    }
+
+    /** @inheritdoc */
+    public function where(): static
+    {
+        $this->criteria->where(...func_get_args());
+
+        return $this;
+    }
+
+    /** @inheritdoc */
+    public function orWhere(): static
+    {
+        $this->criteria->orWhere(...func_get_args());
+
+        return $this;
     }
 
     /**

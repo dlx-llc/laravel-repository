@@ -154,19 +154,25 @@ interface RepositoryContract
     public function loadMissing(object $records, ?CriteriaContract $criteria): void;
 
     /**
-     * Filters records. Simplifies access to the criteria.
-     * Should accept the same params as CriteriaContract::where() method.
+     * Filters records. Simplifies access to the criteria where() method.
+     * Should accept the same params as CriteriaContract::where().
      *
+     * @param  string $attr
+     * @param  mixed $operator
+     * @param  mixed  $value
      * @return static
      * @see \Deluxetech\LaRepo\Contracts\CriteriaContract::where()
      */
     public function where(): static;
 
     /**
-     * Filters records. Simplifies access to the criteria.
-     * Should accept the same params as CriteriaContract::orWhere() method.
+     * Filters records. Simplifies access to the criteria orWhere() method.
+     * Should accept the same params as CriteriaContract::orWhere().
      *
-     * @return static
+     * @param  string $attr
+     * @param  mixed $operator
+     * @param  mixed  $value
+     * @return static\
      * @see \Deluxetech\LaRepo\Contracts\CriteriaContract::orWhere()
      */
     public function orWhere(): static;
