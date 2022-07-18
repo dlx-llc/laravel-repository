@@ -11,7 +11,6 @@ interface TextSearchContract
      *
      * @param  string $text
      * @param  DataAttrContract ...$attrs
-     * @return void
      */
     public function __construct(string $text, DataAttrContract ...$attrs);
 

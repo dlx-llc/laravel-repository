@@ -47,7 +47,6 @@ class CriteriaValidator
      * @param  string|null $textSearchKey
      * @param  string|null $sortingKey
      * @param  string|null $filtersKey
-     * @return void
      */
     public function __construct(
         ?string $textSearchKey = null,

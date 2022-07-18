@@ -13,8 +13,6 @@ abstract class EloquentRepository extends GenericEloquentRepository
 
     /**
      * Class constructor.
-     *
-     * @return void
      */
     public function __construct()
     {

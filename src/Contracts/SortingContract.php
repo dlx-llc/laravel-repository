@@ -11,7 +11,6 @@ interface SortingContract
      *
      * @param  DataAttrContract $attr  The sorting data attribute.
      * @param  string $dir  The sorting direction.
-     * @return void
      */
     public function __construct(DataAttrContract $attr, string $dir);
 

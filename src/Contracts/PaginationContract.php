@@ -11,7 +11,6 @@ interface PaginationContract
      * @param  int $perPage
      * @param  string $pageName
      * @param  string $perPageName
-     * @return void
      */
     public function __construct(
         int $page,

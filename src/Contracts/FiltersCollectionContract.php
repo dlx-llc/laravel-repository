@@ -14,7 +14,6 @@ interface FiltersCollectionContract extends Iterator, Countable, ArrayAccess
      *
      * @param  string $boolean  The boolean operator by which the filters collection will be combined with others.
      * @param  FiltersCollectionContract|FilterContract ...$items
-     * @return void
      */
     public function __construct(
         string $boolean = BooleanOperator::AND,

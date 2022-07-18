@@ -44,7 +44,6 @@ class GenericEloquentRepository
      * Class constructor.
      *
      * @param  string $model
-     * @return void
      */
     public function __construct(string $model)
     {

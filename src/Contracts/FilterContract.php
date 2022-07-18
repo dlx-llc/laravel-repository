@@ -23,7 +23,6 @@ interface FilterContract
      * @param  string $operator  The filter operator.
      * @param  mixed $value  The filter value.
      * @param  string $boolean  The boolean operator by which the filter will be combined with others.
-     * @return void
      */
     public function __construct(
         DataAttrContract $attr,

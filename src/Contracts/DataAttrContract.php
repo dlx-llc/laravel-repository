@@ -8,7 +8,6 @@ interface DataAttrContract
      * Class constructor.
      *
      * @param  string ...$segments
-     * @return void
      */
     public function __construct(string ...$segments);
 

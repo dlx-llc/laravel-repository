@@ -36,7 +36,6 @@ class PaginationValidator
      *
      * @param  string|null $pageName
      * @param  string|null $perPageName
-     * @return void
      */
     public function __construct(
         ?string $pageName = null,
