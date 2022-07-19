@@ -194,6 +194,24 @@ class GenericRepository implements RepositoryContract
      */
     protected function fetch(string $method, mixed ...$args): mixed
     {
+        $this->prepareQuery();
+        $result = $this->query->{$method}(...$args);
+        $this->reset();
+
+        foreach ($this->resultCallbacks as $callback) {
+            call_user_func($callback, $result);
+        }
+
+        return $result;
+    }
+
+    /**
+     * Prepares the query object. Applies criteria and executes fetch callbacks.
+     *
+     * @return void
+     */
+    protected function prepareQuery(): void
+    {
         foreach ($this->fetchCallbacks as $callback) {
             call_user_func($callback, $this->criteria);
         }
@@ -203,14 +221,6 @@ class GenericRepository implements RepositoryContract
         }
 
         QueryHelper::instance()->preventAmbiguousQuery($this->query);
-        $result = $this->query->{$method}(...$args);
-        $this->reset();
-
-        foreach ($this->resultCallbacks as $callback) {
-            call_user_func($callback, $result);
-        }
-
-        return $result;
     }
 
     /**
