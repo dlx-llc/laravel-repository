@@ -108,6 +108,14 @@ interface RepositoryContract
     public function lazy(int $chunkSize = 1000): LazyCollection;
 
     /**
+     * Fetches results in chunks and passes iterable chunks to the callback.
+     *
+     * @param  int $chunkSize
+     * @return void
+     */
+    public function chunk(int $chunkSize = 1000, callable $callback): void;
+
+    /**
      * Fetches paginated results.
      *
      * @param  PaginationContract $pagination

@@ -132,6 +132,12 @@ class GenericRepository implements RepositoryContract
     }
 
     /** @inheritdoc */
+    public function chunk(int $chunkSize = 1000, callable $callback): void
+    {
+        return $this->fetch('chunk', $chunkSize, $callback);
+    }
+
+    /** @inheritdoc */
     public function paginate(PaginationContract $pagination): Paginator
     {
         $page = $pagination->getPage();
