@@ -4,6 +4,7 @@ namespace Deluxetech\LaRepo\Eloquent\Traits;
 
 use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Deluxetech\LaRepo\Contracts\SortingContract;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
@@ -12,12 +13,12 @@ trait SupportsSorting
     /**
      * Applies the given sorting params on the query.
      *
-     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  QueryBuilder|EloquentBuilder|Relation $query
      * @param  SortingContract $sorting
      * @return void
      */
     protected function applySorting(
-        QueryBuilder|EloquentBuilder $query,
+        QueryBuilder|EloquentBuilder|Relation $query,
         SortingContract $sorting
     ): void {
         $attr = $sorting->getAttr();

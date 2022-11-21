@@ -5,6 +5,7 @@ namespace Deluxetech\LaRepo\Eloquent\Traits;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
+use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
@@ -55,12 +56,12 @@ trait SupportsFiltration
     /**
      * Applies the given filters on the query.
      *
-     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  QueryBuilder|EloquentBuilder|Relation $query
      * @param  FiltersCollectionContract $filters
      * @return void
      */
     protected function applyFilters(
-        QueryBuilder|EloquentBuilder $query,
+        QueryBuilder|EloquentBuilder|Relation $query,
         FiltersCollectionContract $filters
     ): void {
         $method = match ($filters->getBoolean()) {
@@ -82,12 +83,12 @@ trait SupportsFiltration
     /**
      * Applies the given filter on the given query.
      *
-     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  QueryBuilder|EloquentBuilder|Relation $query
      * @param  FilterContract $filter
      * @return void
      */
     protected function applyFilter(
-        QueryBuilder|EloquentBuilder $query,
+        QueryBuilder|EloquentBuilder|Relation $query,
         FilterContract $filter
     ): void {
         $operator = $filter->getOperator();
@@ -104,7 +105,7 @@ trait SupportsFiltration
      * @return void
      */
     protected function applyFilterByDefaultStrategy(
-        QueryBuilder|EloquentBuilder $query,
+        QueryBuilder|EloquentBuilder|Relation $query,
         FilterContract $filter
     ): void {
         $args = $this->getFilterQueryArgs($filter);
@@ -129,7 +130,7 @@ trait SupportsFiltration
     /**
      * Applies relation exists filter.
      *
-     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  QueryBuilder|EloquentBuilder|Relation $query
      * @param  FilterContract $filter
      * @return void
      */
@@ -150,7 +151,7 @@ trait SupportsFiltration
     /**
      * Applies relation does not exist filter.
      *
-     * @param  QueryBuilder|EloquentBuilder $query
+     * @param  QueryBuilder|EloquentBuilder|Relation $query
      * @param  FilterContract $filter
      * @return void
      */
