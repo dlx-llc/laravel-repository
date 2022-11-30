@@ -147,7 +147,7 @@ class DataMapper implements DataMapperContract
                 $attr->setName($attrName);
             }
 
-            $attr->removeFromBeginning($prefix);
+            $attr->removeFromBeginning(...explode('.', $prefix));
         }
     }
 }
