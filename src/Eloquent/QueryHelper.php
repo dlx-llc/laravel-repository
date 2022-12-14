@@ -99,7 +99,7 @@ class QueryHelper
      */
     protected function addTableNameToSelect(QueryBuilder $query, string $table): void
     {
-        if (!empty($query->bindings['select'])) {
+        if (!empty($query->bindings['select']) || !empty($query->columns)) {
             return;
         }
 
