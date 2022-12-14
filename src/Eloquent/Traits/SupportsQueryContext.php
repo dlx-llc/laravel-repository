@@ -28,14 +28,6 @@ trait SupportsQueryContext
     protected CriteriaContract $criteria;
 
     /**
-     * An array of criteria which were applied on the query.
-     * Used for deferred loading of relations and relation counts after the main query execution.
-     *
-     * @var array<CriteriaContract>
-     */
-    protected array $appliedCriteria = [];
-
-    /**
      * Relation resolvers map.
      *
      * @var array[string => callable]
@@ -102,6 +94,14 @@ trait SupportsQueryContext
             $query->select($attrs);
         }
 
+        if ($relations = $criteria->getRelations()) {
+            $this->loadRelations($query, $relations);
+        }
+
+        if ($counts = $criteria->getRelationCounts()) {
+            $this->loadRelationCounts($query, $counts);
+        }
+
         if ($textSearch = $criteria->getTextSearch()) {
             $this->applyTextSearch($query, $textSearch);
         }
@@ -113,8 +113,6 @@ trait SupportsQueryContext
         if ($filters = $criteria->getFilters()) {
             $this->applyFilters($query, $filters);
         }
-
-        $this->appliedCriteria[] = $criteria;
     }
 
     /**
@@ -135,9 +133,9 @@ trait SupportsQueryContext
      * @param  string $relation
      * @return callable
      */
-    protected function getRelationResolver(string $relation): callable
+    protected function getRelationResolver(string $relation): ?callable
     {
-        return $this->relationResolvers[$relation] ?? [$this, 'loadMissingRelation'];
+        return $this->relationResolvers[$relation] ?? null;
     }
 
     /**
@@ -221,6 +219,32 @@ trait SupportsQueryContext
     }
 
     /**
+     * Loads the required relations.
+     *
+     * @param  object $query
+     * @param  array $relations
+     * @return void
+     */
+    protected function loadRelations(object $query, array $relations): void
+    {
+        foreach ($relations as $key => $value) {
+            $relation = is_int($key) ? $value : $key;
+            $resolver = $this->getRelationResolver($relation);
+            $criteria = is_object($value) && is_subclass_of($value, CriteriaContract::class)
+                ? $value
+                : null;
+
+            if ($resolver) {
+                call_user_func_array($resolver, [$query, $relation, $criteria]);
+            } elseif ($criteria) {
+                $query->with($key, fn($q) => $this->applyCriteria($q, $value));
+            } else {
+                $query->with($relation);
+            }
+        }
+    }
+
+    /**
      * Loads missing relations.
      *
      * @param  Collection $records
@@ -235,7 +259,7 @@ trait SupportsQueryContext
 
         foreach ($relations as $key => $value) {
             $relation = is_int($key) ? $value : $key;
-            $resolver = $this->getRelationResolver($relation);
+            $resolver = $this->getRelationResolver($relation) ?? [$this, 'loadMissingRelation'];
             $criteria = is_object($value) && is_subclass_of($value, CriteriaContract::class)
                 ? $value
                 : null;
@@ -320,6 +344,43 @@ trait SupportsQueryContext
         }
 
         return true;
+    }
+
+    /**
+     * Loads the required relation counts.
+     *
+     * @param  object $query
+     * @param  array $counts
+     * @return void
+     */
+    protected function loadRelationCounts(object $query, array $counts): void
+    {
+        $countArgs = [];
+
+        foreach ($counts as $key => $value) {
+            $relation = is_int($key) ? $value : $key;
+            $countAttr = $relation . 'Count';
+            $resolver = $this->getRelationCountResolver($relation);
+            $criteria = is_object($value) && is_subclass_of($value, CriteriaContract::class)
+                ? $value
+                : null;
+
+            if ($resolver) {
+                call_user_func_array($resolver, [$query, $relation, $countAttr, $criteria]);
+            } else {
+                $countExpression = "{$relation} as {$countAttr}";
+
+                if ($criteria) {
+                    $countArgs[$countExpression] = fn($q) => $this->applyCriteria($q, $criteria);
+                } else {
+                    $countArgs[] = $countExpression;
+                }
+            }
+        }
+
+        if ($countArgs) {
+            $query->withCount($countArgs);
+        }
     }
 
     /**
