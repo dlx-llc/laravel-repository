@@ -4,6 +4,7 @@ namespace Deluxetech\LaRepo\Eloquent\Traits;
 
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -25,6 +26,14 @@ trait SupportsQueryContext
      * @var CriteriaContract
      */
     protected CriteriaContract $criteria;
+
+    /**
+     * An array of criteria which were applied on the query.
+     * Used for deferred loading of relations and relation counts after the main query execution.
+     *
+     * @var array<CriteriaContract>
+     */
+    protected array $appliedCriteria = [];
 
     /**
      * Relation resolvers map.
@@ -67,6 +76,8 @@ trait SupportsQueryContext
     {
         if (!$criteria) {
             return;
+        } elseif (is_a($records, Paginator::class)) {
+            $records = Collection::make($records->items());
         } elseif (!is_a($records, Collection::class)) {
             $records = Collection::make([$records]);
         }
@@ -91,14 +102,6 @@ trait SupportsQueryContext
             $query->select($attrs);
         }
 
-        if ($relations = $criteria->getRelations()) {
-            $this->loadRelations($query, $relations);
-        }
-
-        if ($counts = $criteria->getRelationCounts()) {
-            $this->loadRelationCounts($query, $counts);
-        }
-
         if ($textSearch = $criteria->getTextSearch()) {
             $this->applyTextSearch($query, $textSearch);
         }
@@ -110,53 +113,8 @@ trait SupportsQueryContext
         if ($filters = $criteria->getFilters()) {
             $this->applyFilters($query, $filters);
         }
-    }
 
-    /**
-     * Loads the required relations.
-     *
-     * @param  object $query
-     * @param  array $relations
-     * @return void
-     */
-    protected function loadRelations(object $query, array $relations): void
-    {
-        foreach ($relations as $key => $value) {
-            if (is_int($key)) {
-                $query->with($value);
-            } elseif (is_string($key)) {
-                if (is_subclass_of($value, CriteriaContract::class)) {
-                    $query->with($key, fn($q) => $this->applyCriteria($q, $value));
-                } else {
-                    $query->with($key);
-                }
-            }
-        }
-    }
-
-    /**
-     * Loads the required relation counts.
-     *
-     * @param  object $query
-     * @param  array $counts
-     * @return void
-     */
-    protected function loadRelationCounts(object $query, array $counts): void
-    {
-        $countArgs = [];
-
-        foreach ($counts as $key => $value) {
-            $relation = is_int($key) ? $value : $key;
-            $countExpression = "{$relation} as {$relation}Count";
-
-            if (is_object($value) && is_subclass_of($value, CriteriaContract::class)) {
-                $countArgs[$countExpression] = fn($q) => $this->applyCriteria($q, $value);
-            } else {
-                $countArgs[] = $countExpression;
-            }
-        }
-
-        $query->withCount($countArgs);
+        $this->appliedCriteria[] = $criteria;
     }
 
     /**

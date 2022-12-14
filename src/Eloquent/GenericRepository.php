@@ -75,6 +75,7 @@ class GenericRepository implements RepositoryContract
     /** @inheritdoc */
     public function reset(): static
     {
+        $this->appliedCriteria = [];
         $this->setCriteria(LaRepo::newCriteria());
         $this->query = $this->query->getModel()->newQuery();
 
@@ -202,6 +203,11 @@ class GenericRepository implements RepositoryContract
     {
         $this->prepareQuery();
         $result = $this->query->{$method}(...$args);
+
+        foreach ($this->appliedCriteria as $criteria) {
+            $this->loadMissing($result, $criteria);
+        }
+
         $this->reset();
 
         foreach ($this->resultCallbacks as $callback) {
