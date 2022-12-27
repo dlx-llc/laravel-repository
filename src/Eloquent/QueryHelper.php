@@ -57,10 +57,11 @@ class QueryHelper
             return;
         }
 
-        $table = $this->tableName($query);
-        $this->addTableNameToSelect($query, $table);
-        $this->addTableNameToWheres($query, $table);
-        $this->addTableNameToOrders($query, $table);
+        if ($table = $this->tableName($query)) {
+            $this->addTableNameToSelect($query, $table);
+            $this->addTableNameToWheres($query, $table);
+            $this->addTableNameToOrders($query, $table);
+        }
     }
 
     /**
@@ -99,12 +100,21 @@ class QueryHelper
      */
     protected function addTableNameToSelect(QueryBuilder $query, string $table): void
     {
-        if (!empty($query->bindings['select']) || !empty($query->columns)) {
-            return;
-        }
+        if (empty($query->columns)) {
+            $query->select("{$table}.*");
+        } else {
+            $prepared = [];
 
-        $selectStr = isset($table) ? "{$table}.*" : '*';
-        $query->select($selectStr);
+            foreach ($query->columns as $column) {
+                if (!is_string($column) || str_contains($column, '.')) {
+                    $prepared[] = $column;
+                } else {
+                    $prepared[] = "{$table}.{$column}";
+                }
+            }
+
+            $query->select($prepared);
+        }
     }
 
     /**
