@@ -103,17 +103,11 @@ class QueryHelper
         if (empty($query->columns)) {
             $query->select("{$table}.*");
         } else {
-            $prepared = [];
-
-            foreach ($query->columns as $column) {
-                if (!is_string($column) || str_contains($column, '.')) {
-                    $prepared[] = $column;
-                } else {
-                    $prepared[] = "{$table}.{$column}";
+            foreach ($query->columns as $i => $column) {
+                if (is_string($column) && !str_contains($column, '.')) {
+                    $query->columns[$i] = "{$table}.{$column}";
                 }
             }
-
-            $query->select($prepared);
         }
     }
 
