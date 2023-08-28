@@ -2,6 +2,7 @@
 
 namespace Deluxetech\LaRepo\Eloquent\Traits;
 
+use Closure;
 use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Deluxetech\LaRepo\Contracts\SortingContract;
 use Illuminate\Database\Eloquent\Relations\Relation;
@@ -10,6 +11,18 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait SupportsSorting
 {
+    /**
+     * Returns custom relation join method if applicable.
+     * The custom method should accept
+     *
+     * @param string $relation
+     * @return ?Closure
+     */
+    protected function getRelationJoinMethod(string $relation): ?Closure
+    {
+        return null;
+    }
+
     /**
      * Applies the given sorting params on the query.
      *
@@ -25,7 +38,13 @@ trait SupportsSorting
 
         if ($attr->isSegmented()) {
             $relation = $attr->getNameExceptLastSegment();
-            $query->leftJoinRelation($relation)->distinct();
+
+            if ($customJoinMethod = $this->getRelationJoinMethod($relation)) {
+                $customJoinMethod($query);
+            } else {
+                $query->leftJoinRelation($relation)->distinct();
+            }
+
             $lastJoin = last($query->getQuery()->joins);
             $lastJoinTable = QueryHelper::instance()->tableName($lastJoin);
             $attr = $lastJoinTable . '.' . $attr->getNameLastSegment();
