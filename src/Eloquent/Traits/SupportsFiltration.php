@@ -108,18 +108,33 @@ trait SupportsFiltration
         QueryBuilder|EloquentBuilder|Relation $query,
         FilterContract $filter
     ): void {
-        $args = $this->getFilterQueryArgs($filter);
-        $method = $this->getFilterQueryMethod($filter);
-        $attr = $filter->getAttr();
+        $this->checkHasRelation(
+            $query,
+            $filter->getBoolean(),
+            $this->getFilterQueryMethod($filter),
+            $this->getFilterQueryArgs($filter),
+            $filter->getAttr()->getNameSegmented()
+        );
+    }
 
-        if ($attr->isSegmented()) {
-            $relation = $attr->getNameExceptLastSegment();
-            $relMethod = $filter->getBoolean() === BooleanOperator::OR
+    protected function checkHasRelation(
+        QueryBuilder|EloquentBuilder|Relation $query,
+        string $boolean = BooleanOperator::AND,
+        string $method,
+        array $args,
+        array $column
+    ): void {
+        if (count($column) > 1) {
+            $relation = array_shift($column);
+            $relation = $query->getRelation($relation);
+            $relMethod = $boolean === BooleanOperator::OR
                 ? 'orWhereHas' : 'whereHas';
 
-            $query->{$relMethod}($relation, fn($q) => $q->{$method}(...$args));
+            $query->{$relMethod}($relation, function ($q) use ($boolean, $method, $args, $column) {
+                $this->checkHasRelation($q, $boolean, $method, $args, $column);
+            });
         } else {
-            if ($filter->getBoolean() === BooleanOperator::OR) {
+            if ($boolean === BooleanOperator::OR) {
                 $method = 'or' . ucfirst($method);
             }
 
