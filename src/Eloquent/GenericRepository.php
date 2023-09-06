@@ -19,6 +19,7 @@ class GenericRepository implements RepositoryContract
     use Traits\SupportsFiltration;
     use Traits\SupportsTextSearch;
     use Traits\SupportsQueryContext;
+    use Traits\TransformsRelationships;
 
     /**
      * The current query object.
@@ -56,7 +57,6 @@ class GenericRepository implements RepositoryContract
         $this->registerDefaultFilterHandlers();
     }
 
-    /** @inheritdoc */
     public function offset(int $offset): static
     {
         $this->query->skip($offset);
@@ -64,7 +64,6 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function limit(int $count): static
     {
         $this->query->limit($count);
@@ -72,7 +71,6 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function reset(): static
     {
         $this->setCriteria(LaRepo::newCriteria());
@@ -81,7 +79,6 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function addFetchCallback(callable $callback): static
     {
         $this->fetchCallbacks[] = $callback;
@@ -89,7 +86,6 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function clearFetchCallbacks(): static
     {
         $this->fetchCallbacks = [];
@@ -97,7 +93,6 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function addResultCallback(callable $callback): static
     {
         $this->resultCallbacks[] = $callback;
@@ -105,7 +100,6 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function clearResultCallbacks(): static
     {
         $this->resultCallbacks = [];
@@ -113,31 +107,26 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function get(): Collection
     {
         return $this->fetch('get');
     }
 
-    /** @inheritdoc */
     public function cursor(): LazyCollection
     {
         return $this->fetch('cursor');
     }
 
-    /** @inheritdoc */
     public function lazy(int $chunkSize = 1000): LazyCollection
     {
         return $this->fetch('lazy', $chunkSize);
     }
 
-    /** @inheritdoc */
     public function chunk(int $chunkSize = 1000, callable $callback): void
     {
         $this->fetch('chunk', $chunkSize, $callback);
     }
 
-    /** @inheritdoc */
     public function paginate(PaginationContract $pagination): Paginator
     {
         $page = $pagination->getPage();
@@ -151,31 +140,26 @@ class GenericRepository implements RepositoryContract
         return $result;
     }
 
-    /** @inheritdoc */
     public function count(): int
     {
         return $this->fetch('count');
     }
 
-    /** @inheritdoc */
     public function exists(): bool
     {
         return $this->fetch('exists');
     }
 
-    /** @inheritdoc */
     public function find(int|string $id): ?object
     {
         return $this->fetch('find', $id);
     }
 
-    /** @inheritdoc */
     public function first(): ?object
     {
         return $this->fetch('first');
     }
 
-    /** @inheritdoc */
     public function where(): static
     {
         $this->criteria->where(...func_get_args());
@@ -183,7 +167,6 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function orWhere(): static
     {
         $this->criteria->orWhere(...func_get_args());

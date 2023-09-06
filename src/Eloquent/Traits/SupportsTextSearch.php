@@ -50,16 +50,32 @@ trait SupportsTextSearch
         string $text,
         bool $orCond
     ): void {
-        $field = $attr->getNameLastSegment();
-        $method = $orCond ? 'orWhere' : 'where';
-        $args = [$field, 'like', '%' . $text . '%'];
+        $this->joinRelationOrSearch(
+            $query,
+            $attr->getNameSegmented(),
+            $text,
+            $orCond
+        );
+    }
 
-        if ($attr->isSegmented()) {
-            $method .= 'Has';
-            $relation = $attr->getNameExceptLastSegment();
-            $query->{$method}($relation, fn($q) => $q->where(...$args));
+    protected function joinRelationOrSearch(
+        QueryBuilder|EloquentBuilder|Relation $query,
+        array $column,
+        string $text,
+        bool $orCond
+    ): void {
+        if (count($column) > 1) {
+            $relationName = array_shift($column);
+            $relation = $query->getRelation($relationName);
+            $relation = $this->transformRelationship($query, $relationName, $relation);
+            $relMethod = $orCond ? 'orWhereHas' : 'whereHas';
+
+            $query->{$relMethod}($relation, function ($q) use ($column, $text, $orCond) {
+                $this->joinRelationOrSearch($q, $column, $text, $orCond);
+            });
         } else {
-            $query->{$method}(...$args);
+            $method = $orCond ? 'orWhere' : 'where';
+            $query->{$method}($column[0], 'like', '%' . $text . '%');
         }
     }
 }

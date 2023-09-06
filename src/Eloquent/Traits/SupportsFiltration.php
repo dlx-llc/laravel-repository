@@ -108,7 +108,7 @@ trait SupportsFiltration
         QueryBuilder|EloquentBuilder|Relation $query,
         FilterContract $filter
     ): void {
-        $this->checkHasRelation(
+        $this->applyHasRelationConstraint(
             $query,
             $filter->getBoolean(),
             $this->getFilterQueryMethod($filter),
@@ -117,7 +117,7 @@ trait SupportsFiltration
         );
     }
 
-    protected function checkHasRelation(
+    protected function applyHasRelationConstraint(
         QueryBuilder|EloquentBuilder|Relation $query,
         string $boolean = BooleanOperator::AND,
         string $method,
@@ -125,13 +125,14 @@ trait SupportsFiltration
         array $column
     ): void {
         if (count($column) > 1) {
-            $relation = array_shift($column);
-            $relation = $query->getRelation($relation);
+            $relationName = array_shift($column);
+            $relation = $query->getRelation($relationName);
+            $relation = $this->transformRelationship($query, $relationName, $relation);
             $relMethod = $boolean === BooleanOperator::OR
                 ? 'orWhereHas' : 'whereHas';
 
             $query->{$relMethod}($relation, function ($q) use ($boolean, $method, $args, $column) {
-                $this->checkHasRelation($q, $boolean, $method, $args, $column);
+                $this->applyHasRelationConstraint($q, $boolean, $method, $args, $column);
             });
         } else {
             if ($boolean === BooleanOperator::OR) {

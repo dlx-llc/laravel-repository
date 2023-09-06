@@ -18,13 +18,11 @@ class EqualsToFilter extends Filter
 {
     use Traits\SanitizesScalarValue;
 
-    /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
     {
         return $this->sanitizeScalarValue($value);
     }
 
-    /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
         $validator = new Validator();

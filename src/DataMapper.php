@@ -25,7 +25,6 @@ class DataMapper implements DataMapperContract
      */
     protected array $subMaps = [];
 
-    /** @inheritdoc */
     public function set(
         string $domainAttr,
         string $dataAttr,
@@ -40,7 +39,6 @@ class DataMapper implements DataMapperContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function get(string $domainAttr): string
     {
         // Returns the direct match if set.
@@ -68,7 +66,6 @@ class DataMapper implements DataMapperContract
     }
 
 
-    /** @inheritdoc */
     public function applyOnCriteria(CriteriaContract $criteria): void
     {
         if ($textSearch = $criteria->getTextSearch()) {

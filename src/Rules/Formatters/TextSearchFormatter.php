@@ -7,7 +7,6 @@ use Deluxetech\LaRepo\Contracts\TextSearchFormatterContract;
 
 class TextSearchFormatter implements TextSearchFormatterContract
 {
-    /** @inheritdoc */
     public function parse(string $str): ?array
     {
         $regex = '/(?(DEFINE)(?<attr>(?:[a-zA-Z_]\w*\.)*[a-zA-Z_]\w*))^(.+)\,\[((?:(?P>attr)\,)*(?P>attr))\]$/';
@@ -22,7 +21,6 @@ class TextSearchFormatter implements TextSearchFormatterContract
         return [$text, $attrs];
     }
 
-    /** @inheritdoc */
     public function stringify(TextSearchContract $textSearch): string
     {
         $text = $textSearch->getText();

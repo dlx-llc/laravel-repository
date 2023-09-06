@@ -20,13 +20,11 @@ trait SupportsFiltration
      */
     protected ?FiltersCollectionContract $filters = null;
 
-    /** @inheritdoc */
     public function getFilters(): ?FiltersCollectionContract
     {
         return $this->filters;
     }
 
-    /** @inheritdoc */
     public function setFiltersRaw(string $rawStr): static
     {
         $dataArr = App::make(FiltersCollectionFormatterContract::class)->parse($rawStr);
@@ -48,7 +46,6 @@ trait SupportsFiltration
         return $this;
     }
 
-    /** @inheritdoc */
     public function setFilters(?FiltersCollectionContract $filters): static
     {
         $this->filters = $filters;
@@ -56,7 +53,6 @@ trait SupportsFiltration
         return $this;
     }
 
-    /** @inheritdoc */
     public function where(string $attr, mixed $operator, mixed $value = null): static
     {
         list($attr, $operator, $value) = $this->prepareWhereArgs(...func_get_args());
@@ -65,7 +61,6 @@ trait SupportsFiltration
         return $this;
     }
 
-    /** @inheritdoc */
     public function orWhere(string $attr, mixed $operator, mixed $value = null): static
     {
         list($attr, $operator, $value) = $this->prepareWhereArgs(...func_get_args());

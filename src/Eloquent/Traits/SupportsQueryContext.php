@@ -41,7 +41,6 @@ trait SupportsQueryContext
      */
     protected array $relationCountResolvers = [];
 
-    /** @inheritdoc */
     public function addCriteria(CriteriaContract $criteria): static
     {
         $this->criteria->merge($criteria);
@@ -49,7 +48,6 @@ trait SupportsQueryContext
         return $this;
     }
 
-    /** @inheritdoc */
     public function setCriteria(CriteriaContract $criteria): static
     {
         $this->criteria = $criteria;
@@ -57,13 +55,11 @@ trait SupportsQueryContext
         return $this;
     }
 
-    /** @inheritdoc */
     public function getCriteria(): CriteriaContract
     {
         return $this->criteria;
     }
 
-    /** @inheritdoc */
     public function loadMissing(object $records, ?CriteriaContract $criteria): void
     {
         if (!$criteria) {

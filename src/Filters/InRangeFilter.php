@@ -18,7 +18,6 @@ class InRangeFilter extends Filter
 {
     use Traits\SanitizesScalarValue;
 
-    /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
     {
         if (is_array($value)) {
@@ -33,7 +32,6 @@ class InRangeFilter extends Filter
         }
     }
 
-    /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
         $validator = new Validator();

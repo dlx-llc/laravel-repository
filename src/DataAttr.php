@@ -33,44 +33,37 @@ class DataAttr implements DataAttrContract
      */
     protected ?string $exceptLastSegment;
 
-    /** @inheritdoc */
     public function __construct(string ...$segments)
     {
         $this->setName(...$segments);
     }
 
-    /** @inheritdoc */
     public function __toString(): string
     {
         return $this->getName();
     }
 
-    /** @inheritdoc */
     public function isSegmented(): bool
     {
         return $this->isSegmented;
     }
 
-    /** @inheritdoc */
     public function countSegments(): int
     {
         return count($this->segments);
     }
 
-    /** @inheritdoc */
     public function setName(string ...$segments): void
     {
         $this->segments = [];
         $this->addSegments(true, ...$segments);
     }
 
-    /** @inheritdoc */
     public function addFromBeginning(string ...$segments): void
     {
         $this->addSegments(false, ...$segments);
     }
 
-    /** @inheritdoc */
     public function removeFromBeginning(string ...$segments): void
     {
         foreach ($segments as $i => $segment) {
@@ -86,25 +79,21 @@ class DataAttr implements DataAttrContract
         $this->setName(...$newSegments);
     }
 
-    /** @inheritdoc */
     public function getName(): string
     {
         return $this->name;
     }
 
-    /** @inheritdoc */
     public function getNameSegmented(): array
     {
         return $this->segments;
     }
 
-    /** @inheritdoc */
     public function getNameFirstSegment(): ?string
     {
         return $this->segments[0] ?? null;
     }
 
-    /** @inheritdoc */
     public function getNameLastSegment(): ?string
     {
         $i = count($this->segments) - 1;
@@ -112,7 +101,6 @@ class DataAttr implements DataAttrContract
         return $this->segments[$i] ?? null;
     }
 
-    /** @inheritdoc */
     public function getNameExceptLastSegment(): ?string
     {
         return $this->exceptLastSegment;

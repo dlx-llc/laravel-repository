@@ -22,7 +22,6 @@ class FiltersCollection implements FiltersCollectionContract
      */
     protected array $items;
 
-    /** {@inheritdoc} */
     public function __construct(
         protected string $boolean = BooleanOperator::AND,
         FiltersCollectionContract|FilterContract ...$items
@@ -30,7 +29,6 @@ class FiltersCollection implements FiltersCollectionContract
         $this->items = $items;
     }
 
-    /** @inheritdoc */
     public function clone(): static
     {
         $clone = new static();
@@ -40,13 +38,11 @@ class FiltersCollection implements FiltersCollectionContract
         return $clone;
     }
 
-    /** {@inheritdoc} */
     public function getBoolean(): string
     {
         return $this->boolean;
     }
 
-    /** {@inheritdoc} */
     public function setBoolean(string $boolean): static
     {
         $this->boolean = $boolean;
@@ -54,7 +50,6 @@ class FiltersCollection implements FiltersCollectionContract
         return $this;
     }
 
-    /** {@inheritdoc} */
     public function containsBoolOr(): bool
     {
         $count = count($this->items);
@@ -72,7 +67,6 @@ class FiltersCollection implements FiltersCollectionContract
         return false;
     }
 
-    /** {@inheritdoc} */
     public function checkBooleansAreSame(): bool
     {
         $count = count($this->items);
@@ -96,25 +90,21 @@ class FiltersCollection implements FiltersCollectionContract
         return true;
     }
 
-    /** {@inheritdoc} */
     public function getItems(): array
     {
         return $this->items;
     }
 
-    /** {@inheritdoc} */
     public function isEmpty(): bool
     {
         return empty($this->items);
     }
 
-    /** {@inheritdoc} */
     public function isNotEmpty(): bool
     {
         return !empty($this->items);
     }
 
-    /** {@inheritdoc} */
     public function setItems(FiltersCollectionContract|FilterContract ...$items): static
     {
         $this->items = $items;
@@ -123,13 +113,11 @@ class FiltersCollection implements FiltersCollectionContract
         return $this;
     }
 
-    /** {@inheritdoc} */
     public function pop(): FiltersCollectionContract|FilterContract|null
     {
         return array_pop($this->items);
     }
 
-    /** {@inheritdoc} */
     public function add(FiltersCollectionContract|FilterContract $item): static
     {
         $this->items[] = $item;
@@ -137,7 +125,6 @@ class FiltersCollection implements FiltersCollectionContract
         return $this;
     }
 
-    /** {@inheritdoc} */
     public function splice(
         int $offset,
         int $length,
@@ -148,43 +135,36 @@ class FiltersCollection implements FiltersCollectionContract
         return $this;
     }
 
-    /** {@inheritdoc} */
     public function rewind(): void
     {
         $this->cursor = 0;
     }
 
-    /** {@inheritdoc} */
     public function current(): FiltersCollectionContract|FilterContract|null
     {
         return $this->items[$this->cursor] ?? null;
     }
 
-    /** {@inheritdoc} */
     public function key(): int
     {
         return $this->cursor;
     }
 
-    /** {@inheritdoc} */
     public function next(): void
     {
         ++$this->cursor;
     }
 
-    /** {@inheritdoc} */
     public function valid(): bool
     {
         return isset($this->items[$this->cursor]);
     }
 
-    /** {@inheritdoc} */
     public function count(): int
     {
         return count($this->items);
     }
 
-    /** {@inheritdoc} */
     public function offsetSet(mixed $offset, mixed $value): void
     {
         if (is_null($offset)) {
@@ -198,19 +178,16 @@ class FiltersCollection implements FiltersCollectionContract
         }
     }
 
-    /** {@inheritdoc} */
     public function offsetExists(mixed $offset): bool
     {
         return isset($this->items[$offset]);
     }
 
-    /** {@inheritdoc} */
     public function offsetUnset(mixed $offset): void
     {
         unset($this->items[$offset]);
     }
 
-    /** {@inheritdoc} */
     public function offsetGet(mixed $offset): mixed
     {
         return $this->items[$offset] ?? null;

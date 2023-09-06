@@ -16,13 +16,11 @@ trait SupportsTextSearch
      */
     protected ?TextSearchContract $textSearch = null;
 
-    /** @inheritdoc */
     public function getTextSearch(): ?TextSearchContract
     {
         return $this->textSearch;
     }
 
-    /** @inheritdoc */
     public function setTextSearchRaw(string $rawStr): static
     {
         $params = App::make(TextSearchFormatterContract::class)->parse($rawStr);
@@ -37,7 +35,6 @@ trait SupportsTextSearch
         return $this;
     }
 
-    /** @inheritdoc */
     public function setTextSearch(?TextSearchContract $textSearch): static
     {
         $this->textSearch = $textSearch;

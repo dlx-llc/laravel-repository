@@ -11,7 +11,6 @@ class Criteria implements CriteriaContract
     use Traits\SupportsFiltration;
     use Traits\DefinesQueryContext;
 
-    /** @inheritdoc */
     public function merge(CriteriaContract $criteria): static
     {
         if ($attributes = $criteria->getAttributes()) {
@@ -50,7 +49,6 @@ class Criteria implements CriteriaContract
         return $this;
     }
 
-    /** @inheritdoc */
     public function clone(): static
     {
         $clone = new static();

@@ -2,8 +2,6 @@
 
 namespace Deluxetech\LaRepo\Eloquent\Traits;
 
-use Closure;
-use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Deluxetech\LaRepo\Contracts\SortingContract;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
@@ -11,18 +9,6 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 
 trait SupportsSorting
 {
-    /**
-     * Returns custom relation join method if applicable.
-     * The custom method should accept
-     *
-     * @param string $relation
-     * @return ?Closure
-     */
-    protected function getRelationJoinMethod(string $relation): ?Closure
-    {
-        return null;
-    }
-
     /**
      * Applies the given sorting params on the query.
      *
@@ -34,23 +20,29 @@ trait SupportsSorting
         QueryBuilder|EloquentBuilder|Relation $query,
         SortingContract $sorting
     ): void {
-        $attr = $sorting->getAttr();
+        $direction = $sorting->getDir();
+        $column = $sorting->getAttr()->getNameSegmented();
 
-        if ($attr->isSegmented()) {
-            $relation = $attr->getNameExceptLastSegment();
+        $this->joinRelationOrSort($query, $query, $direction, $column);
+    }
 
-            if ($customJoinMethod = $this->getRelationJoinMethod($relation)) {
-                $customJoinMethod($query);
-            } else {
-                $query->leftJoinRelation($relation)->distinct();
-            }
+    protected function joinRelationOrSort(
+        QueryBuilder|EloquentBuilder|Relation $query,
+        QueryBuilder|EloquentBuilder|Relation $relationQuery,
+        string $direction,
+        array $column
+    ): void {
+        if (count($column) > 1) {
+            $relationName = array_shift($column);
+            $relation = $relationQuery->getRelation($relationName);
+            $relation = $this->transformRelationship($relationQuery, $relationName, $relation);
+            $query->leftJoinRelation($relation)->distinct();
 
-            $lastJoin = last($query->getQuery()->joins);
-            $lastJoinTable = QueryHelper::instance()->tableName($lastJoin);
-            $attr = $lastJoinTable . '.' . $attr->getNameLastSegment();
-            $query->orderBy($attr, $sorting->getDir());
+            $relationQuery = $relation->getQuery();
+            $this->joinRelationOrSort($query, $relationQuery, $direction, $column);
         } else {
-            $query->orderBy($attr->getName(), $sorting->getDir());
+            $column = $relationQuery->from . '.' . $column[0];
+            $query->orderBy($column, $direction);
         }
     }
 }

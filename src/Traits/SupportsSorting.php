@@ -16,13 +16,11 @@ trait SupportsSorting
      */
     protected ?SortingContract $sorting = null;
 
-    /** @inheritdoc */
     public function getSorting(): ?SortingContract
     {
         return $this->sorting;
     }
 
-    /** @inheritdoc */
     public function setSortingRaw(string $rawStr): static
     {
         $params = App::make(SortingFormatterContract::class)->parse($rawStr);
@@ -37,7 +35,6 @@ trait SupportsSorting
         return $this;
     }
 
-    /** @inheritdoc */
     public function setSorting(?SortingContract $sorting): static
     {
         $this->sorting = $sorting;

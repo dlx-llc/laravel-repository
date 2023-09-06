@@ -29,7 +29,6 @@ class RelationExistsFilter extends Filter
 {
     use Traits\SanitizesFiltersCollection;
 
-    /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
     {
         if (empty($value)) {
@@ -39,7 +38,6 @@ class RelationExistsFilter extends Filter
         return $this->sanitizeFiltersCollection($value);
     }
 
-    /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
         if (is_null($value)) {

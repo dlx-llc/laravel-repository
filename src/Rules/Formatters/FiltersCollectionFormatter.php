@@ -9,13 +9,11 @@ use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 
 class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
 {
-    /** @inheritdoc */
     public function parse(string $str): ?array
     {
         return json_decode($str, true);
     }
 
-    /** @inheritdoc */
     public function stringify(FiltersCollectionContract $collection): string
     {
         return json_encode([

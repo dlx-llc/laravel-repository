@@ -15,13 +15,11 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
  */
 class IsNullFilter extends Filter
 {
-    /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
     {
         return null;
     }
 
-    /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
         $validator = new Validator();

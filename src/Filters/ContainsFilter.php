@@ -18,7 +18,6 @@ class ContainsFilter extends Filter
 {
     use Traits\SanitizesArrayOfScalarValues;
 
-    /** @inheritdoc */
     protected function sanitizeValue(mixed $value): mixed
     {
         if (is_array($value)) {
@@ -28,7 +27,6 @@ class ContainsFilter extends Filter
         }
     }
 
-    /** @inheritdoc */
     public static function validateValue(string $attribute, mixed $value): array
     {
         $validator = new Validator();

@@ -8,7 +8,6 @@ use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
 
 class SortingFormatter implements SortingFormatterContract
 {
-    /** @inheritdoc */
     public function parse(string $str): ?array
     {
         $dirs = join('|', SortingDirection::cases());
@@ -24,7 +23,6 @@ class SortingFormatter implements SortingFormatterContract
         return [$attr, $dir];
     }
 
-    /** @inheritdoc */
     public function stringify(SortingContract $sorting): string
     {
         $attr = $sorting->getAttr()->getName();

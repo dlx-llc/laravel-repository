@@ -13,7 +13,6 @@ use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 class FilterOptimizer implements FilterOptimizerContract
 {
-    /** @inheritdoc */
     public function optimize(FiltersCollectionContract $collection): void
     {
         $result = $this->optimizeOrOmit($collection);
