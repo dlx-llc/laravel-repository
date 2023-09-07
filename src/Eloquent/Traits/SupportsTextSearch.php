@@ -71,7 +71,7 @@ trait SupportsTextSearch
             $relMethod = $orCond ? 'orWhereHas' : 'whereHas';
 
             $query->{$relMethod}($relation, function ($q) use ($column, $text, $orCond) {
-                $this->joinRelationOrSearch($q, $column, $text, $orCond);
+                $this->joinRelationOrSearch($q, $column, $text, false);
             });
         } else {
             $method = $orCond ? 'orWhere' : 'where';
