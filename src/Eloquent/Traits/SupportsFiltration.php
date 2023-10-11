@@ -110,6 +110,8 @@ trait SupportsFiltration
         QueryBuilder|EloquentBuilder|Relation $query,
         FilterContract $filter
     ): void {
+        $filter = $filter->clone();
+
         if ($filter->getAttr()->isSegmented()) {
             $this->applyHasRelationConstraint($query, $filter);
         } else {

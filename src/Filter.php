@@ -2,6 +2,7 @@
 
 namespace Deluxetech\LaRepo;
 
+use Deluxetech\LaRepo\Facades\LaRepo;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
@@ -23,6 +24,16 @@ abstract class Filter implements FilterContract
         protected string $boolean = BooleanOperator::AND
     ) {
         $this->value = $this->sanitizeValue($value);
+    }
+
+    public function clone(): static
+    {
+        return LaRepo::newFilter(
+            $this->getAttr()->getName(),
+            $this->getOperator(),
+            $this->getValue(),
+            $this->getBoolean()
+        );
     }
 
     public function getAttr(): DataAttrContract

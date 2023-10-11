@@ -5,7 +5,7 @@ namespace Deluxetech\LaRepo\Contracts;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
-interface FilterContract
+interface FilterContract extends ClonableContract
 {
     /**
      * Validates the filter value.
