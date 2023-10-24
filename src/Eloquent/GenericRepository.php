@@ -8,7 +8,6 @@ use Deluxetech\LaRepo\Facades\LaRepo;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Illuminate\Contracts\Pagination\Paginator;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
@@ -209,7 +208,7 @@ class GenericRepository implements RepositoryContract
             $this->applyCriteria($this->query, $this->criteria);
         }
 
-        QueryHelper::instance()->preventAmbiguousQuery($this->query);
+        (new Query($this->query))->preventColumnAmbiguity();
     }
 
     /**

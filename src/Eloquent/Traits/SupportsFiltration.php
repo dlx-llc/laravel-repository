@@ -2,8 +2,6 @@
 
 namespace Deluxetech\LaRepo\Eloquent\Traits;
 
-use Illuminate\Support\Facades\Schema;
-use Deluxetech\LaRepo\Eloquent\QueryHelper;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
@@ -143,7 +141,6 @@ trait SupportsFiltration
         QueryBuilder|EloquentBuilder|Relation $query,
         FilterContract $filter
     ): void {
-        $this->preventQueryColumnNameAmbiguity($query, $filter);
         $method = $this->preparePlainFilterMethod($filter);
         $args = $this->preparePlainFilterArgs($filter);
         $query->{$method}(...$args);
@@ -240,45 +237,5 @@ trait SupportsFiltration
         }
 
         return $method;
-    }
-
-    protected function preventQueryColumnNameAmbiguity(
-        QueryBuilder|EloquentBuilder|Relation $query,
-        FilterContract $filter,
-        bool $setTableNameOnlyWhenJoined = true
-    ) {
-        $baseQueryBuilder = match (get_class($query)) {
-            QueryBuilder::class => $query,
-            EloquentBuilder::class => $query->getQuery(),
-            Relation::class => $query->getQuery()->getQuery(),
-        };
-
-        $attr = $filter->getAttr();
-
-        if (
-            $attr->isSegmented() ||
-            $setTableNameOnlyWhenJoined && !$baseQueryBuilder->joins
-        ) {
-            return;
-        }
-
-        $columnName = $attr->getName();
-        $queryTableName = QueryHelper::instance()->tableName($baseQueryBuilder);
-        $queryTableColumns = Schema::getColumnListing($queryTableName);
-
-        if (in_array($columnName, $queryTableColumns)) {
-            // Query's main table has the given column
-            $attr->setName("{$queryTableName}.{$columnName}");
-        } elseif ($baseQueryBuilder->joins) {
-            foreach ($baseQueryBuilder->joins as $joinClause) {
-                $joinTableColumns = Schema::getColumnListing($joinClause->table);
-
-                if (in_array($columnName, $joinTableColumns)) {
-                    // Join table has the given column
-                    $attr->setName("{$joinClause->table}.{$columnName}");
-                    break;
-                }
-            }
-        }
     }
 }
