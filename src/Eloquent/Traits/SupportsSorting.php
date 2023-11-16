@@ -36,7 +36,10 @@ trait SupportsSorting
             $relationName = array_shift($column);
             $relation = $relationQuery->getRelation($relationName);
             $relation = $this->transformRelationship($relationQuery, $relationName, $relation);
-            $query->leftJoinRelation($relation)->distinct();
+            $query->joinRelation(
+                relation: $relation,
+                type: 'left',
+            )->distinct();
 
             $relationQuery = $relation->getQuery();
             $this->joinRelationOrSort($query, $relationQuery, $direction, $column);
