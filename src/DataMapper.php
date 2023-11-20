@@ -2,6 +2,7 @@
 
 namespace Deluxetech\LaRepo;
 
+use Traversable;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
@@ -99,22 +100,26 @@ class DataMapper implements DataMapperContract
             foreach ($filter as $item) {
                 $this->replaceFilterAttrName($item, $prefix);
             }
-        } elseif (
-            in_array($filter->getOperator(), [
-                FilterOperator::EXISTS,
-                FilterOperator::DOES_NOT_EXIST,
-            ], true)
-        ) {
-            if ($items = $filter->getValue()) {
-                $prefix = $filter->getAttr()->getName();
-
-                foreach ($items as $item) {
-                    $this->replaceFilterAttrName($item, $prefix);
-                }
-            }
         } else {
             $attr = $filter->getAttr();
             $this->replaceDataAttrName($attr, $prefix);
+
+            if (
+                in_array($filter->getOperator(), [
+                    FilterOperator::EXISTS,
+                    FilterOperator::DOES_NOT_EXIST,
+                ], true)
+            ) {
+                $items = $filter->getValue();
+
+                if (is_a($items, Traversable::class)) {
+                    $prefix = $filter->getAttr()->getName();
+
+                    foreach ($items as $item) {
+                        $this->replaceFilterAttrName($item, $prefix);
+                    }
+                }
+            }
         }
     }
 
