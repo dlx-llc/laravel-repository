@@ -1,17 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Tests\Feature;
 
 use Deluxetech\LaRepo\Facades\LaRepo;
 use Deluxetech\LaRepo\Tests\TestCase;
 use Deluxetech\LaRepo\FilterOptimizer;
+use PHPUnit\Framework\Attributes\Group;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 
-/**
- * @group feature
- * @group FilterOptimizerFeature
- */
+#[Group('feature')]
 final class FilterOptimizerTest extends TestCase
 {
     /**

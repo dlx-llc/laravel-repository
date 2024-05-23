@@ -1,32 +1,26 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Tests\Unit\FilterOptimizer;
 
 use Deluxetech\LaRepo\Tests\TestCase;
 use Deluxetech\LaRepo\FilterOptimizer;
+use PHPUnit\Framework\Attributes\Group;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Tests\Unit\Traits\CallsPrivateMethods;
 
-/**
- * @group unit
- * @group DecomposeIdleCollectionTest
- * @see FilterOptimizer::decomposeIdleCollection()
- */
+#[Group('unit')]
 final class DecomposeIdleCollectionTest extends TestCase
 {
     use CallsPrivateMethods;
 
-    /**
-     * @var string
-     */
     private const TESTEE = 'decomposeIdleCollection';
 
     /**
      * Test method returns null when empty collection is given.
-     *
-     * @return void
      */
     public function testReturnsEmptyArrayWhenEmptyCollectionGiven(): void
     {
@@ -42,8 +36,6 @@ final class DecomposeIdleCollectionTest extends TestCase
 
     /**
      * Test method returns the only item in the collection.
-     *
-     * @return void
      */
     public function testTheOnlyItemReturned(): void
     {
@@ -67,8 +59,6 @@ final class DecomposeIdleCollectionTest extends TestCase
     /**
      * Test method returns an array of collection items when it contains only filters
      * that have AND logical operators.
-     *
-     * @return void
      */
     public function testAndLogicalOperatorCollectionDecomposed(): void
     {

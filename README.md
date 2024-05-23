@@ -1,7 +1,7 @@
 # Laravel Repository
 
 [![Laravel Version](https://img.shields.io/badge/Laravel-7.x%2F8.x%2F9.x-blue)](https://laravel.com/)
-[![Latest Stable Version](http://poser.pugx.org/deluxetech/laravel-repository/v)](https://packagist.org/packages/deluxetech/laravel-repository) [![Total Downloads](http://poser.pugx.org/deluxetech/laravel-repository/downloads)](https://packagist.org/packages/deluxetech/laravel-repository) [![Latest Unstable Version](http://poser.pugx.org/deluxetech/laravel-repository/v/unstable)](https://packagist.org/packages/deluxetech/laravel-repository) [![License](http://poser.pugx.org/deluxetech/laravel-repository/license)](https://packagist.org/packages/deluxetech/laravel-repository) [![PHP Version Require](http://poser.pugx.org/deluxetech/laravel-repository/require/php)](https://packagist.org/packages/deluxetech/laravel-repository)
+[![Latest Stable Version](http://poser.pugx.org/dlx-llc/laravel-repository/v)](https://packagist.org/packages/dlx-llc/laravel-repository) [![Total Downloads](http://poser.pugx.org/dlx-llc/laravel-repository/downloads)](https://packagist.org/packages/dlx-llc/laravel-repository) [![Latest Unstable Version](http://poser.pugx.org/dlx-llc/laravel-repository/v/unstable)](https://packagist.org/packages/dlx-llc/laravel-repository) [![License](http://poser.pugx.org/dlx-llc/laravel-repository/license)](https://packagist.org/packages/dlx-llc/laravel-repository) [![PHP Version Require](http://poser.pugx.org/dlx-llc/laravel-repository/require/php)](https://packagist.org/packages/dlx-llc/laravel-repository)
 
 ## What is repository?
 Repository mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
@@ -15,7 +15,7 @@ In a large system with many domain object types and many possible queries, Repos
 Install this package using Composer:
 
 ```
-composer require deluxetech/laravel-repository
+composer require dlx-llc/laravel-repository
 ```
 
 This package uses auto-discovery for its service provider. However, if you have auto-discovery disabled for this package, you will need to manually register the service provider:
@@ -24,7 +24,7 @@ This package uses auto-discovery for its service provider. However, if you have 
 Deluxetech\LaRepo\LaRepoServiceProvider::class
 ```
 
-This package has its own exception and validation error message translations. You can override them by following the steps described in the <a href="https://laravel.com/docs/9.x/localization#overriding-package-language-files" target="_blank">Laravel documentation</a>.
+This package has its own exception and validation error message translations. You can override them by following the steps described in the <a href="https://laravel.com/docs/11.x/localization#overriding-package-language-files" target="_blank">Laravel documentation</a>.
 
 There are also configurations that you might need to replace with your own. In that case, you can publish configurations using the following command:
 
@@ -34,7 +34,7 @@ php artisan vendor:publish --tag=larepo-config
 
 ## Versioning
 
-This package was built to use with the latest version of Laravel, but it should work fine with versions >= 7.x.
+This package was built to use with the latest version of Laravel, but it should work fine with versions >= 10.x.
 
 ## Usage
 
@@ -59,4 +59,21 @@ class UserController
         return LaRepo::getManyWithRequest($this->repo);
     }
 }
+```
+
+# Running docker container
+
+Build the image:
+```
+docker build -t dlx-llc-laravel-repository .
+```
+
+Use this command to (re)start the docker container:
+```
+docker rm -f dlx-llc-laravel-repository 2> /dev/null && \
+docker run -itd \
+    --name dlx-llc-laravel-repository \
+    --mount type=bind,source="$(pwd)"/.,target=/home/larepo/app \
+    --restart on-failure:5 \
+    dlx-llc-laravel-repository
 ```

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Tests\Unit\Traits;
 
 trait CallsPrivateMethods
@@ -7,10 +9,7 @@ trait CallsPrivateMethods
     /**
      * Calls private or protected method of the given object.
      *
-     * @param  object $obj
-     * @param  string $method
-     * @param  array $args
-     * @return mixed
+     * @param array<mixed> $args
      */
     private function callPrivateMethod(object $obj, string $method, array $args = []): mixed
     {

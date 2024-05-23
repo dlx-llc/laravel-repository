@@ -180,7 +180,7 @@ interface RepositoryContract
      * @param  string $attr
      * @param  mixed $operator
      * @param  mixed  $value
-     * @return static\
+     * @return static
      * @see \Deluxetech\LaRepo\Contracts\CriteriaContract::orWhere()
      */
     public function orWhere(): static;
