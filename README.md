@@ -1,6 +1,6 @@
 # Laravel Repository
 
-[![Laravel Version](https://img.shields.io/badge/Laravel-7.x%2F8.x%2F9.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-10.x%2F11.x-blue)](https://laravel.com/)
 [![Latest Stable Version](http://poser.pugx.org/dlx-llc/laravel-repository/v)](https://packagist.org/packages/dlx-llc/laravel-repository) [![Total Downloads](http://poser.pugx.org/dlx-llc/laravel-repository/downloads)](https://packagist.org/packages/dlx-llc/laravel-repository) [![Latest Unstable Version](http://poser.pugx.org/dlx-llc/laravel-repository/v/unstable)](https://packagist.org/packages/dlx-llc/laravel-repository) [![License](http://poser.pugx.org/dlx-llc/laravel-repository/license)](https://packagist.org/packages/dlx-llc/laravel-repository) [![PHP Version Require](http://poser.pugx.org/dlx-llc/laravel-repository/require/php)](https://packagist.org/packages/dlx-llc/laravel-repository)
 
 ## What is repository?
