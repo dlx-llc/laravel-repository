@@ -9,6 +9,9 @@ use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 
 class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
 {
+    /**
+     * @return ?array<mixed>
+     */
     public function parse(string $str): ?array
     {
         return json_decode($str, true);
@@ -16,51 +19,41 @@ class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
 
     public function stringify(FiltersCollectionContract $collection): string
     {
-        return json_encode([
-            'boolean' => $collection->getBoolean(),
-            'items' => $this->stringifyArray($collection->getItems()),
-        ]) ?: '';
+        return json_encode($this->convertFiltersCollectionToArray($collection, false)) ?: '';
     }
 
-    /**
-     * Converts a filters array to string.
-     *
-     * @param  array $items
-     * @return string
-     */
-    protected function stringifyArray(array $items): string
+    protected function convertFiltersCollectionToArray(FiltersCollectionContract $collection, bool $withBoolean): array
     {
-        $arr = [];
+        $items = array_map(function (FilterContract|FiltersCollectionContract $item): array {
+            if ($item instanceof FilterContract) {
+                return $this->convertFilterToArray($item);
+            }
 
-        foreach ($items as $item) {
-            $arr[] = match (get_class($item)) {
-                FilterContract::class => $this->stringifyFilterObject($item),
-                FiltersCollectionContract::class => $this->stringify($item),
-            };
-        }
+            return $this->convertFiltersCollectionToArray($item, true);
+        }, $collection->getItems());
 
-        return json_encode($arr) ?: '';
+        return $withBoolean ? [
+            'boolean' => $collection->getBoolean(),
+            'items' => $items,
+        ] : $items;
     }
 
     /**
-     * Converts a filter object to string.
-     *
-     * @param  FilterContract $filter
-     * @return string
+     * @return array<string,mixed>
      */
-    protected function stringifyFilterObject(FilterContract $filter): string
+    protected function convertFilterToArray(FilterContract $filter): array
     {
         $value = $filter->getValue();
 
         if (is_object($value) && is_a($value, FiltersCollectionContract::class)) {
-            $value = $this->stringifyArray($value->getItems());
+            $value = $this->convertFiltersCollectionToArray($value, false);
         }
 
-        return json_encode([
+        return [
             'boolean' => $filter->getBoolean(),
             'attr' => $filter->getAttr()->getName(),
-            'operator' => FilterRegistry::getOperator(get_class($filter)),
+            'operator' => FilterRegistry::getOperator($filter::class),
             'value' => $value,
-        ]) ?: '';
+        ];
     }
 }
