@@ -22,8 +22,6 @@ class GenericRepository implements RepositoryContract
 
     /**
      * The current query object.
-     *
-     * @var Builder
      */
     protected Builder $query;
 
@@ -42,9 +40,7 @@ class GenericRepository implements RepositoryContract
     protected array $resultCallbacks = [];
 
     /**
-     * Class constructor.
-     *
-     * @param  string $model
+     * @param class-string<Model> $model
      */
     public function __construct(string $model)
     {
@@ -53,6 +49,8 @@ class GenericRepository implements RepositoryContract
 
         $this->query = $model::query();
         $this->criteria = LaRepo::newCriteria();
+        $this->initializeFilterValueTransformer();
+        $this->setDateFilterValueTransformersFromModel();
         $this->registerDefaultFilterHandlers();
     }
 
@@ -175,10 +173,7 @@ class GenericRepository implements RepositoryContract
 
     /**
      * Fetches data from the current query with the given method.
-     *
-     * @param  string $method
-     * @param  mixed ...$args
-     * @return mixed
+     * Resets the query object and applies result callbacks.
      */
     protected function fetch(string $method, mixed ...$args): mixed
     {
@@ -195,8 +190,6 @@ class GenericRepository implements RepositoryContract
 
     /**
      * Prepares the query object. Applies criteria and executes fetch callbacks.
-     *
-     * @return void
      */
     protected function prepareQuery(): void
     {
@@ -211,11 +204,6 @@ class GenericRepository implements RepositoryContract
         (new Query($this->query))->preventColumnAmbiguity();
     }
 
-    /**
-     * Returns the query object.
-     *
-     * @return Builder
-     */
     protected function getQuery(): Builder
     {
         return $this->query;

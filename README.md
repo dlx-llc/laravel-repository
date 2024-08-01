@@ -1,7 +1,11 @@
 # Laravel Repository
 
 [![Laravel Version](https://img.shields.io/badge/Laravel-10.x%2F11.x-blue)](https://laravel.com/)
-[![Latest Stable Version](http://poser.pugx.org/dlx-llc/laravel-repository/v)](https://packagist.org/packages/dlx-llc/laravel-repository) [![Total Downloads](http://poser.pugx.org/dlx-llc/laravel-repository/downloads)](https://packagist.org/packages/dlx-llc/laravel-repository) [![Latest Unstable Version](http://poser.pugx.org/dlx-llc/laravel-repository/v/unstable)](https://packagist.org/packages/dlx-llc/laravel-repository) [![License](http://poser.pugx.org/dlx-llc/laravel-repository/license)](https://packagist.org/packages/dlx-llc/laravel-repository) [![PHP Version Require](http://poser.pugx.org/dlx-llc/laravel-repository/require/php)](https://packagist.org/packages/dlx-llc/laravel-repository)
+[![Latest Stable Version](https://poser.pugx.org/dlx-llc/laravel-repository/v)](https://packagist.org/packages/dlx-llc/laravel-repository)
+[![Total Downloads](https://poser.pugx.org/dlx-llc/laravel-repository/downloads)](https://packagist.org/packages/dlx-llc/laravel-repository)
+[![Latest Unstable Version](https://poser.pugx.org/dlx-llc/laravel-repository/v/unstable)](https://packagist.org/packages/dlx-llc/laravel-repository)
+[![License](https://poser.pugx.org/dlx-llc/laravel-repository/license)](https://packagist.org/packages/dlx-llc/laravel-repository)
+[![PHP Version Require](https://poser.pugx.org/dlx-llc/laravel-repository/require/php)](https://packagist.org/packages/dlx-llc/laravel-repository)
 
 ## What is repository?
 Repository mediates between the domain and data mapping layers using a collection-like interface for accessing domain objects.
@@ -42,7 +46,7 @@ You can use the generic EloquentRepository class by passing the Laravel model cl
 
 ```php
 use Deluxetech\LaRepo\Facades\LaRepo;
-use Deluxetech\LaRepo\Eloquent\EloquentRepository;
+use Deluxetech\LaRepo\Eloquent\GenericRepository;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
 
 class UserController
@@ -51,7 +55,7 @@ class UserController
 
     public function __construct()
     {
-        $this->repo = new EloquentRepository(User::class);
+        $this->repo = new GenericRepository(User::class);
     }
 
     public function index()

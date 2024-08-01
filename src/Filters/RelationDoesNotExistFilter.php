@@ -29,15 +29,6 @@ class RelationDoesNotExistFilter extends Filter
 {
     use Traits\SanitizesFiltersCollection;
 
-    protected function sanitizeValue(mixed $value): mixed
-    {
-        if (empty($value)) {
-            return null;
-        }
-
-        return $this->sanitizeFiltersCollection($value);
-    }
-
     public static function validateValue(string $attribute, mixed $value): array
     {
         if (is_null($value)) {
@@ -48,5 +39,19 @@ class RelationDoesNotExistFilter extends Filter
         $validator->validateFiltersArr($attribute, $value);
 
         return $validator->getErrors();
+    }
+
+    public function hasValue(): bool
+    {
+        return isset($this->value);
+    }
+
+    protected function sanitizeValue(mixed $value): mixed
+    {
+        if (empty($value)) {
+            return null;
+        }
+
+        return $this->sanitizeFiltersCollection($value);
     }
 }

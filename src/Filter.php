@@ -53,6 +53,11 @@ abstract class Filter implements FilterContract
         return $this->operator;
     }
 
+    public function hasValue(): bool
+    {
+        return true;
+    }
+
     public function getValue(): mixed
     {
         return $this->value;

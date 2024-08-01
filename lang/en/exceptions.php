@@ -10,4 +10,5 @@ return [
     'invalid_filters_string' => 'Invalid filters string!',
     'invalid_sorting_string' => 'Invalid sorting string!',
     'invalid_text_search_string' => 'Invalid text search string!',
+    'invalid_filter_value_for_attr' => 'Invalid filter value for the :attr attribute!',
 ];
