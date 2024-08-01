@@ -1,9 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Facades\Validator;
+use Carbon\Exceptions\InvalidFormatException;
 use Deluxetech\LaRepo\Exceptions\InvalidFilterValueException;
 
 /**
@@ -17,9 +19,10 @@ class DateFilterValueParser
     private const DATETIME_FORMAT = 'Y-m-d H:i:s';
 
     /**
+     * @return string|array<string>
      * @throws InvalidFilterValueException
      */
-    public static function parseDate(mixed $value, string $attr): string|false
+    public static function parseDate(mixed $value, string $attr): string|array
     {
         return is_array($value)
             ? array_map(static fn ($v) => self::parse($v, $attr, false), $value)
@@ -27,9 +30,10 @@ class DateFilterValueParser
     }
 
     /**
+     * @return string|array<string>
      * @throws InvalidFilterValueException
      */
-    public static function parseDatetime(mixed $value, string $attr): string|false
+    public static function parseDatetime(mixed $value, string $attr): string|array
     {
         return is_array($value)
             ? array_map(static fn ($v) => self::parse($v, $attr, true), $value)
@@ -43,14 +47,16 @@ class DateFilterValueParser
      */
     private static function parse(mixed $value, string $attr, bool $withTime): string
     {
-        $validator = Validator::make(['value' => $value], ['value' => 'required|date']);
-
-        if ($validator->fails()) {
+        if (!is_string($value) || !$value) {
             throw new InvalidFilterValueException($attr);
         }
 
         $format = $withTime ? self::DATETIME_FORMAT : self::DATE_FORMAT;
 
-        return Carbon::parse($value)->format($format);
+        try {
+            return Carbon::parse($value)->format($format);
+        } catch (InvalidFormatException $exp) {
+            throw new InvalidFilterValueException($attr, $exp);
+        }
     }
 }

@@ -6,10 +6,10 @@ use Closure;
 use Illuminate\Support\Facades\App;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
-use Deluxetech\LaRepo\FilterValueTransformer;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Illuminate\Database\Eloquent\Relations\Relation;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Deluxetech\LaRepo\Eloquent\FilterValueTransformerMap;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Deluxetech\LaRepo\Exceptions\InvalidFilterValueException;
@@ -26,45 +26,12 @@ trait SupportsFiltration
      */
     protected array $filterHandlers = [];
 
-    protected FilterValueTransformer $filterValueTransformer;
+    protected bool $autoSetupFilterValueTransformers = true;
+    protected FilterValueTransformerMap $filterValueTransformerMap;
 
-    protected function initializeFilterValueTransformer(): void
+    protected function initializeFilterValueTransformerMap(): void
     {
-        $this->filterValueTransformer = App::make(FilterValueTransformer::class);
-    }
-
-    /**
-     * Checks the model for standard datetime columns (creation, update, deletion).
-     * If found, sets the corresponding transformers.
-     * Also checks the model for casted date(time) attributes and sets the corresponding transformers.
-     */
-    protected function setDateFilterValueTransformersFromModel(): void
-    {
-        $model = $this->query->getModel();
-
-        if ($model->usesTimestamps()) {
-            if ($createdAtColumn = $model->getCreatedAtColumn()) {
-                $this->filterValueTransformer->shouldBeDatetime($createdAtColumn);
-            }
-
-            if ($updatedAtColumn = $model->getUpdatedAtColumn()) {
-                $this->filterValueTransformer->shouldBeDatetime($updatedAtColumn);
-            }
-        }
-
-        if (method_exists($model, 'getDeletedAtColumn')) {
-            if ($deletedAtColumn = $model->getDeletedAtColumn()) {
-                $this->filterValueTransformer->shouldBeDatetime($deletedAtColumn);
-            }
-        }
-
-        foreach ($model->getCasts() as $attr => $cast) {
-            match ($cast) {
-                'date', 'immutable_date' => $this->filterValueTransformer->shouldBeDate($attr),
-                'datetime', 'immutable_datetime' => $this->filterValueTransformer->shouldBeDatetime($attr),
-                default => null,
-            };
-        }
+        $this->filterValueTransformerMap = App::make(FilterValueTransformerMap::class);
     }
 
     protected function registerDefaultFilterHandlers(): void
@@ -106,15 +73,13 @@ trait SupportsFiltration
                 if (is_a($filter, FiltersCollectionContract::class)) {
                     $this->applyFilters($query, $filter);
                 } else {
+                    $this->transformFilterValue($query, $filter);
                     $this->applyFilter($query, $filter);
                 }
             }
         });
     }
 
-    /**
-     * @throws InvalidFilterValueException
-     */
     protected function applyFilter(
         QueryBuilder|EloquentBuilder|Relation $query,
         FilterContract $filter,
@@ -122,15 +87,42 @@ trait SupportsFiltration
         $operator = $filter->getOperator();
         $handler = $this->getFilterHandler($operator);
 
-        if ($filter->hasValue()) {
-            $attr = $filter->getAttr()->getName();
+        call_user_func_array($handler, [$query, $filter]);
+    }
 
-            if ($this->filterValueTransformer->shouldBeTransformed($attr)) {
-                $filter->setValue($this->filterValueTransformer->transform($attr, $filter->getValue()));
+    /**
+     * @throws InvalidFilterValueException
+     */
+    protected function transformFilterValue(
+        QueryBuilder|EloquentBuilder|Relation $query,
+        FilterContract $filter,
+    ): void {
+        if ($query instanceof QueryBuilder) {
+            return;
+        }
+
+        $model = is_a($query, Relation::class) ? $query->getRelated() : $query->getModel();
+        $transformer = $this->filterValueTransformerMap->get($model);
+
+        if (!$transformer) {
+            if ($this->autoSetupFilterValueTransformers) {
+                $transformer = $this->filterValueTransformerMap
+                    ->create($model)
+                    ->addTimestamps()
+                    ->addSoftDeleteTimestamp()
+                    ->addCasts();
+            } else {
+                return;
             }
         }
 
-        call_user_func_array($handler, [$query, $filter]);
+        $attr = $filter->getAttr()->getName();
+
+        if ($transformer->shouldBeTransformed($attr)) {
+            $value = $filter->getValue();
+            $transformed = $transformer->transform($attr, $value);
+            $filter->setValue($transformed);
+        }
     }
 
     protected function applyFilterByDefaultStrategy(
@@ -179,6 +171,7 @@ trait SupportsFiltration
         } else {
             $query->{$relMethod}($relation, function ($subQuery) use ($filter) {
                 $filter->setBoolean(BooleanOperator::AND);
+                $this->transformFilterValue($subQuery, $filter);
                 $this->applyFilter($subQuery, $filter, false);
             });
         }

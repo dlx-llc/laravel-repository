@@ -49,8 +49,7 @@ class GenericRepository implements RepositoryContract
 
         $this->query = $model::query();
         $this->criteria = LaRepo::newCriteria();
-        $this->initializeFilterValueTransformer();
-        $this->setDateFilterValueTransformersFromModel();
+        $this->initializeFilterValueTransformerMap();
         $this->registerDefaultFilterHandlers();
     }
 
