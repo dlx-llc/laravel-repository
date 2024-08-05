@@ -118,7 +118,7 @@ trait SupportsFiltration
 
         $attr = $filter->getAttr()->getName();
 
-        if ($transformer->shouldBeTransformed($attr)) {
+        if ($filter->hasValue() && $transformer->shouldBeTransformed($attr)) {
             $value = $filter->getValue();
             $transformed = $transformer->transform($attr, $value);
             $filter->setValue($transformed);
