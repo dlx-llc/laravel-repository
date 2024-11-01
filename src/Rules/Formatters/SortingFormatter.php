@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Formatters;
 
 use Deluxetech\LaRepo\Enums\SortingDirection;

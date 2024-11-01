@@ -1,14 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Enums;
 
 class FilterOperator
 {
-    /**
-     * Valid cases.
-     *
-     * @var string
-     */
     public const IS_LIKE = 'like';
     public const IS_NOT_LIKE = '!like';
     public const EQUALS_TO = '=';
@@ -29,8 +26,6 @@ class FilterOperator
     public const DOES_NOT_EXIST = '!exists';
 
     /**
-     * Get valid cases.
-     *
      * @return array<string>
      */
     public static function cases(): array

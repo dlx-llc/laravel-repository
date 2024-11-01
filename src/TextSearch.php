@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Contracts\DataAttrContract;

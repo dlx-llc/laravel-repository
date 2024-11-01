@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Deluxetech\LaRepo;
 
 use Closure;
-use Deluxetech\LaRepo\DateFilterValueParser;
 use Deluxetech\LaRepo\Exceptions\InvalidFilterValueException;
 
 class FilterValueTransformer

@@ -1,41 +1,50 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Eloquent;
 
+use Closure;
 use Deluxetech\LaRepo\ClassUtils;
 use Illuminate\Support\Collection;
 use Deluxetech\LaRepo\Facades\LaRepo;
 use Illuminate\Support\LazyCollection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
+use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Eloquent\Criteria\CriteriaProcessor;
 
+/**
+ * @template-implements RepositoryContract<Model>
+ */
 class GenericRepository implements RepositoryContract
 {
-    use Traits\SupportsSorting;
-    use Traits\SupportsFiltration;
-    use Traits\SupportsTextSearch;
-    use Traits\SupportsQueryContext;
-    use Traits\TransformsRelationships;
-
     /**
      * The current query object.
      */
     protected Builder $query;
 
     /**
+     * The current query criteria.
+     */
+    protected CriteriaContract $criteria;
+
+    protected CriteriaProcessor $criteriaProcessor;
+
+    /**
      * Callback functions that will be triggered before fetching data.
      *
-     * @var array<callable>
+     * @var array<Closure(CriteriaContract):void>
      */
     protected array $fetchCallbacks = [];
 
     /**
      * Callback functions that will be triggered after fetching data on results.
      *
-     * @var array<callable>
+     * @var array<Closure(iterable<TResult>):void>
      */
     protected array $resultCallbacks = [];
 
@@ -49,8 +58,26 @@ class GenericRepository implements RepositoryContract
 
         $this->query = $model::query();
         $this->criteria = LaRepo::newCriteria();
-        $this->initializeFilterValueTransformerMap();
-        $this->registerDefaultFilterHandlers();
+        $this->criteriaProcessor = new CriteriaProcessor($model);
+    }
+
+    public function addCriteria(CriteriaContract $criteria): static
+    {
+        $this->criteria->merge($criteria);
+
+        return $this;
+    }
+
+    public function setCriteria(CriteriaContract $criteria): static
+    {
+        $this->criteria = $criteria;
+
+        return $this;
+    }
+
+    public function getCriteria(): CriteriaContract
+    {
+        return $this->criteria;
     }
 
     public function offset(int $offset): static
@@ -75,7 +102,7 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    public function addFetchCallback(callable $callback): static
+    public function addFetchCallback(Closure $callback): static
     {
         $this->fetchCallbacks[] = $callback;
 
@@ -89,7 +116,7 @@ class GenericRepository implements RepositoryContract
         return $this;
     }
 
-    public function addResultCallback(callable $callback): static
+    public function addResultCallback(Closure $callback): static
     {
         $this->resultCallbacks[] = $callback;
 
@@ -101,6 +128,17 @@ class GenericRepository implements RepositoryContract
         $this->resultCallbacks = [];
 
         return $this;
+    }
+
+    public function loadMissing(iterable $records, ?CriteriaContract $criteria): void
+    {
+        if (!$criteria) {
+            return;
+        } elseif (!is_a($records, Collection::class)) {
+            $records = Collection::make($records);
+        }
+
+        $this->criteriaProcessor->loadMissing($records, $criteria);
     }
 
     public function get(): Collection
@@ -118,12 +156,12 @@ class GenericRepository implements RepositoryContract
         return $this->fetch('lazy', $chunkSize);
     }
 
-    public function chunk(int $chunkSize = 1000, callable $callback): void
+    public function chunk(int $chunkSize, Closure $callback): void
     {
         $this->fetch('chunk', $chunkSize, $callback);
     }
 
-    public function paginate(PaginationContract $pagination): Paginator
+    public function paginate(PaginationContract $pagination): LengthAwarePaginator
     {
         $page = $pagination->getPage();
         $pageName = $pagination->getPageName();
@@ -181,7 +219,7 @@ class GenericRepository implements RepositoryContract
         $this->reset();
 
         foreach ($this->resultCallbacks as $callback) {
-            call_user_func($callback, $result);
+            $callback($result);
         }
 
         return $result;
@@ -193,11 +231,11 @@ class GenericRepository implements RepositoryContract
     protected function prepareQuery(): void
     {
         foreach ($this->fetchCallbacks as $callback) {
-            call_user_func($callback, $this->criteria);
+            $callback($this->criteria);
         }
 
         if (isset($this->criteria)) {
-            $this->applyCriteria($this->query, $this->criteria);
+            $this->criteriaProcessor->processCriteria($this->query, $this->criteria);
         }
 
         (new Query($this->query))->preventColumnAmbiguity();

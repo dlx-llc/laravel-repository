@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Deluxetech\LaRepo\Tests\Unit\Traits;
 
+use ReflectionClass;
+
 trait CallsPrivateMethods
 {
     /**
@@ -13,7 +15,7 @@ trait CallsPrivateMethods
      */
     private function callPrivateMethod(object $obj, string $method, array $args = []): mixed
     {
-        $class = new \ReflectionClass($obj);
+        $class = new ReflectionClass($obj);
         $method = $class->getMethod($method);
         $method->setAccessible(true);
 

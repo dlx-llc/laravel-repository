@@ -1,18 +1,17 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Validators\Traits;
 
 use Deluxetech\LaRepo\FilterRegistry;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
+use Deluxetech\LaRepo\Contracts\FilterContract;
 
 trait ValidatesFilters
 {
     /**
      * Checks if the given value is a valid filters array.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     public function validateFiltersArr(string $attribute, mixed $value): bool
     {
@@ -35,10 +34,6 @@ trait ValidatesFilters
 
     /**
      * Checks if the given value is a valid filters collection.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     public function validateFiltersCollection(string $attribute, mixed $value): bool
     {
@@ -69,10 +64,6 @@ trait ValidatesFilters
 
     /**
      * Checks if the given value is a valid filter.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     public function validateFilter(string $attribute, mixed $value): bool
     {
@@ -90,8 +81,9 @@ trait ValidatesFilters
             $this->validateFilterAttr("{$attribute}.attr", $attr);
 
             if ($this->validateFilterOperator("{$attribute}.operator", $operator)) {
-                $filterVal = $value['value'] ?? null;
+                /** @var class-string<FilterContract<mixed>> $filterClass */
                 $filterClass = FilterRegistry::getClass($operator);
+                $filterVal = $value['value'] ?? null;
 
                 if ($errors = $filterClass::validateValue("{$attribute}.value", $filterVal)) {
                     $this->addErrors(...$errors);
@@ -104,12 +96,8 @@ trait ValidatesFilters
 
     /**
      * Validates the given filter boolean operator.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
-    public function validateBooleanOperator(string $attribute, mixed $value): bool
+    protected function validateBooleanOperator(string $attribute, mixed $value): bool
     {
         if (!in_array($value, BooleanOperator::cases(), true)) {
             $this->addError('in', $attribute);
@@ -122,10 +110,6 @@ trait ValidatesFilters
 
     /**
      * Validates the given value to be a valid data attribute.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     protected function validateFilterAttr(string $attribute, mixed $value): bool
     {
@@ -133,34 +117,30 @@ trait ValidatesFilters
             $this->addError('string', $attribute);
 
             return false;
-        } else {
-            $min = 1;
-            $max = 255;
-            $len = strlen($value);
-
-            if ($len < $min || $len > $max) {
-                $this->addError('between.string', compact('attribute', 'min', 'max'));
-
-                return false;
-            } elseif (!preg_match('/^[A-Za-z_]$/', $value[0])) {
-                $values = 'a-z, A-Z, _';
-                $this->addError('starts_with', compact('attribute', 'values'));
-
-                return false;
-            }
-
-            return true;
         }
+
+        $min = 1;
+        $max = 255;
+        $len = strlen($value);
+
+        if ($len < $min || $len > $max) {
+            $this->addError('between.string', compact('attribute', 'min', 'max'));
+
+            return false;
+        } elseif (!preg_match('/^[A-Za-z_]$/', $value[0])) {
+            $values = 'a-z, A-Z, _';
+            $this->addError('starts_with', compact('attribute', 'values'));
+
+            return false;
+        }
+
+        return true;
     }
 
     /**
      * Validates the given filter operator.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
-    public function validateFilterOperator(string $attribute, mixed $value): bool
+    protected function validateFilterOperator(string $attribute, mixed $value): bool
     {
         if (is_null($value)) {
             $this->addError('required', $attribute);

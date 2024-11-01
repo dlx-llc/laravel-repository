@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Contracts\SortingContract;
@@ -12,9 +14,8 @@ class Sorting implements SortingContract
 {
     public function __construct(
         protected DataAttrContract $attr,
-        protected string $dir
+        protected string $dir,
     ) {
-        //
     }
 
     public function getAttr(): DataAttrContract

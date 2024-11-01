@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Validators;
 
 class Validator
@@ -17,8 +19,6 @@ class Validator
 
     /**
      * Checks if there are validation errors.
-     *
-     * @return bool
      */
     public function hasErrors(): bool
     {
@@ -36,11 +36,7 @@ class Validator
     }
 
     /**
-     * Adds an error message.
-     *
-     * @param  string $transKey
-     * @param  string|array $params
-     * @return void
+     * @param string|array<string,bool|int|float|string> $params
      */
     protected function addError(string $transKey, string|array $params): void
     {
@@ -49,15 +45,12 @@ class Validator
         }
 
         $transKey = 'larepo::validation.' . $transKey;
-        $this->errors[] = __($transKey, $params);
+
+        /** @var string $error */
+        $error = __($transKey, $params);
+        $this->errors[] = $error;
     }
 
-    /**
-     * Adds error messages.
-     *
-     * @param  string ...$messages
-     * @return void
-     */
     protected function addErrors(string ...$messages): void
     {
         $this->errors = [...$this->errors, ...$messages];

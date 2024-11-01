@@ -1,56 +1,44 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Validators;
 
 use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 
 class PaginationValidator
 {
     /**
-     * The request page input name.
-     *
-     * @var string
+     * The request page query parameter name.
      */
     protected string $pageName;
 
     /**
-     * The request per page input name.
-     *
-     * @var string
+     * The request page query parameter name.
      */
     protected string $perPageName;
 
     /**
      * The validated data.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected array $validated = [];
 
-    /**
-     * Class constructor.
-     *
-     * @param  string|null $pageName
-     * @param  string|null $perPageName
-     */
     public function __construct(
         ?string $pageName = null,
-        ?string $perPageName = null
+        ?string $perPageName = null,
     ) {
         $this->pageName = $pageName ?? Config::get('larepo.request_page_key');
         $this->perPageName = $perPageName ?? Config::get('larepo.request_per_page_key');
     }
 
     /**
-     * Validates criteria params.
-     *
-     * @param  bool $require
-     * @param  int|null $perPageMax
-     * @return void
      * @throws ValidationException
      */
     public function validate(bool $require, ?int $perPageMax = null): void
@@ -82,8 +70,6 @@ class PaginationValidator
 
     /**
      * Creates a pagination object from the validated data.
-     *
-     * @return PaginationContract|null
      */
     public function createFromValidated(): ?PaginationContract
     {
@@ -91,7 +77,7 @@ class PaginationValidator
             return null;
         }
 
-        return App::makeWith(PaginationContract::class, [
+        return App::make(PaginationContract::class, [
             'page' => $this->validated[$this->pageName],
             'perPage' => $this->validated[$this->perPageName],
             'pageName' => $this->pageName,

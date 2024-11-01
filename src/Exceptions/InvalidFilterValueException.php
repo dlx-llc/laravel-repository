@@ -10,10 +10,13 @@ class InvalidFilterValueException extends LaRepoException
 {
     public function __construct(string $attribute, ?Throwable $previous = null)
     {
+        /** @var string $message */
+        $message = __('larepo::exceptions.invalid_filter_value_for_attr', [
+            'attr' => $attribute,
+        ]);
+
         parent::__construct(
-            message: __('larepo::exceptions.invalid_filter_value_for_attr', [
-                'attr' => $attribute,
-            ]),
+            message: $message,
             previous: $previous,
         );
     }

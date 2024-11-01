@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Validators;
 
 use Illuminate\Support\Arr;
@@ -7,6 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Validator;
 use Deluxetech\LaRepo\Rules\RepositorySorting;
+use Illuminate\Validation\ValidationException;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Rules\RepositoryFiltration;
 use Deluxetech\LaRepo\Rules\RepositoryTextSearch;
@@ -15,43 +18,30 @@ class CriteriaValidator
 {
     /**
      * The criteria text search parameter request key.
-     *
-     * @var string
      */
     protected string $textSearchKey;
 
     /**
      * The criteria sorting parameter request key.
-     *
-     * @var string
      */
     protected string $sortingKey;
 
     /**
      * The criteria filtration parameter request key.
-     *
-     * @var string
      */
     protected string $filtersKey;
 
     /**
      * The validated data.
      *
-     * @var array
+     * @var array<string,mixed>
      */
     protected array $validated = [];
 
-    /**
-     * Class constructor.
-     *
-     * @param  string|null $textSearchKey
-     * @param  string|null $sortingKey
-     * @param  string|null $filtersKey
-     */
     public function __construct(
         ?string $textSearchKey = null,
         ?string $sortingKey = null,
-        ?string $filtersKey = null
+        ?string $filtersKey = null,
     ) {
         $this->textSearchKey = $textSearchKey ?? Config::get('larepo.request_text_search_key');
         $this->sortingKey = $sortingKey ?? Config::get('larepo.request_sorting_key');
@@ -59,9 +49,6 @@ class CriteriaValidator
     }
 
     /**
-     * Validates criteria params.
-     *
-     * @return void
      * @throws ValidationException
      */
     public function validate(): void
@@ -95,9 +82,6 @@ class CriteriaValidator
 
     /**
      * Fills the validated parameters into the given criteria object.
-     *
-     * @param  CriteriaContract $criteria
-     * @return void
      */
     public function fillValidated(CriteriaContract $criteria): void
     {
@@ -117,10 +101,7 @@ class CriteriaValidator
     /**
      * Merges dot notated string in the given array as an associative array.
      *
-     * @param  array &$into
-     * @param  string $dotStr
-     * @param  mixed $value
-     * @return void
+     * @param array<mixed> &$into
      */
     protected function setDotStrAsAssoc(array &$into, string $str, mixed $value): void
     {

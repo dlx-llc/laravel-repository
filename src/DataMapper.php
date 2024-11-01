@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Traversable;
@@ -15,21 +17,21 @@ class DataMapper implements DataMapperContract
     /**
      * A map of domain model attributes to source data attributes.
      *
-     * @var array
+     * @var array<string,string>
      */
     protected array $map = [];
 
     /**
      * Sub maps.
      *
-     * @var array
+     * @var array<string,DataMapperContract>
      */
     protected array $subMaps = [];
 
     public function set(
         string $domainAttr,
         string $dataAttr,
-        ?DataMapperContract $subMap = null
+        ?DataMapperContract $subMap = null,
     ): static {
         $this->map[$domainAttr] = $dataAttr;
 
@@ -66,7 +68,6 @@ class DataMapper implements DataMapperContract
         return $domainAttr;
     }
 
-
     public function applyOnCriteria(CriteriaContract $criteria): void
     {
         if ($textSearch = $criteria->getTextSearch()) {
@@ -87,14 +88,10 @@ class DataMapper implements DataMapperContract
 
     /**
      * Recursively maps domain model attributes of the given filter.
-     *
-     * @param  FiltersCollectionContract|FilterContract $filter
-     * @param  string|null $prefix
-     * @return void
      */
     protected function replaceFilterAttrName(
         FiltersCollectionContract|FilterContract $filter,
-        ?string $prefix = null
+        ?string $prefix = null,
     ): void {
         if (is_a($filter, FiltersCollectionContract::class)) {
             foreach ($filter as $item) {
@@ -125,10 +122,6 @@ class DataMapper implements DataMapperContract
 
     /**
      * Replaces the domain model attribute data attributes map if set.
-     *
-     * @param  DataAttrContract $attr
-     * @param  string|null $prefix
-     * @return void
      */
     protected function replaceDataAttrName(DataAttrContract $attr, ?string $prefix = null): void
     {

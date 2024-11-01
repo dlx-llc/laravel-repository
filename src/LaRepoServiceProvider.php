@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\ServiceProvider;
@@ -21,11 +23,9 @@ use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 class LaRepoServiceProvider extends ServiceProvider
 {
     /**
-     * Register any package services.
-     *
-     * @return void
+     * Registers the package services.
      */
-    public function register()
+    public function register(): void
     {
         $this->mergeConfigFrom(__DIR__ . '/../config/larepo.php', 'larepo');
 
@@ -34,7 +34,7 @@ class LaRepoServiceProvider extends ServiceProvider
         $this->app->singleton(TextSearchFormatterContract::class, TextSearchFormatter::class);
         $this->app->singleton(FiltersCollectionFormatterContract::class, FiltersCollectionFormatter::class);
 
-        $this->app->singleton('larepo-utils', function($app) {
+        $this->app->singleton('larepo-utils', function ($app) {
             return new RepositoryUtils();
         });
 
@@ -57,16 +57,14 @@ class LaRepoServiceProvider extends ServiceProvider
     }
 
     /**
-     * Bootstrap any package services.
-     *
-     * @return void
+     * Bootstraps the package services.
      */
-    public function boot()
+    public function boot(): void
     {
         $this->loadTranslationsFrom(__DIR__ . '/../lang', 'larepo');
 
         $this->publishes([
-            __DIR__ . '/../config/larepo.php' => config_path('larepo.php')
+            __DIR__ . '/../config/larepo.php' => config_path('larepo.php'),
         ], 'larepo-config');
     }
 }

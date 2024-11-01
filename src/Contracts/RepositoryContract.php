@@ -1,71 +1,58 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Contracts;
 
+use Closure;
 use Illuminate\Support\Collection;
 use Illuminate\Support\LazyCollection;
-use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Pagination\LengthAwarePaginator;
 
+/**
+ * @template TResult of object
+ */
 interface RepositoryContract
 {
     /**
      * Adds query criteria.
-     *
-     * @param  CriteriaContract $criteria
-     * @return static
      */
     public function addCriteria(CriteriaContract $criteria): static;
 
     /**
      * Specifies the query criteria. Removes the previously specified criteria(s).
-     *
-     * @param  CriteriaContract $criteria
-     * @return static
      */
     public function setCriteria(CriteriaContract $criteria): static;
 
     /**
      * Returns the current query criteria.
-     *
-     * @return CriteriaContract
      */
     public function getCriteria(): CriteriaContract;
 
     /**
      * Specifies the number of results that should be skipped.
-     *
-     * @param  int $count
-     * @return static
      */
     public function offset(int $offset): static;
 
     /**
      * Limits the number of results.
-     *
-     * @param  int $count
-     * @return static
      */
     public function limit(int $count): static;
 
     /**
      * Resets the query to its initial state.
-     *
-     * @return static
      */
     public function reset(): static;
 
     /**
      * Adds a function that will be called before fetching data.
      *
-     * @param  callable $callback
-     * @return static
+     * @param Closure(CriteriaContract):void $callback
      */
-    public function addFetchCallback(callable $callback): static;
+    public function addFetchCallback(Closure $callback): static;
 
     /**
-     * Removes all the fetch callbacks specified before.
-     *
-     * @return static
+     * Removes all the fetch callback functions specified before.
      */
     public function clearFetchCallbacks(): static;
 
@@ -73,115 +60,92 @@ interface RepositoryContract
      * Adds a function that will be called with the fetched results as its first
      * parameter.
      *
-     * @param  callable $callback
-     * @return static
+     * @param Closure(iterable<TResult>):void $callback
      */
-    public function addResultCallback(callable $callback): static;
+    public function addResultCallback(Closure $callback): static;
 
     /**
-     * Removes all the result callbacks specified before.
-     *
-     * @return static
+     * Removes all the result callback functions specified before.
      */
     public function clearResultCallbacks(): static;
 
     /**
-     * Fetches results.
-     *
-     * @return Collection
+     * @return Collection<int,TResult>
      */
     public function get(): Collection;
 
     /**
      * Fetches results via lazy collection.
      *
-     * @return LazyCollection
+     * @return LazyCollection<int,TResult>
      */
     public function cursor(): LazyCollection;
 
     /**
      * Fetches results in chunks via lazy collection.
      *
-     * @param  int $chunkSize
-     * @return LazyCollection
+     * @return LazyCollection<int,TResult>
      */
     public function lazy(int $chunkSize = 1000): LazyCollection;
 
     /**
      * Fetches results in chunks and passes iterable chunks to the callback.
      *
-     * @param  int $chunkSize
-     * @return void
+     * @param Closure(Collection<int,TResult>):void $callback
      */
-    public function chunk(int $chunkSize = 1000, callable $callback): void;
+    public function chunk(int $chunkSize, Closure $callback): void;
 
     /**
      * Fetches paginated results.
      *
-     * @param  PaginationContract $pagination
-     * @return Paginator
+     * @return LengthAwarePaginator<int,TResult>
      */
-    public function paginate(PaginationContract $pagination): Paginator;
+    public function paginate(PaginationContract $pagination): LengthAwarePaginator;
 
     /**
-     * Returns the number of records matching the query.
-     *
-     * @return int
+     * Returns the number of records matching the specified criteria.
      */
     public function count(): int;
 
     /**
-     * Checks if records matching the query exist.
-     *
-     * @return bool
+     * Checks if records matching the specified criteria exist.
      */
     public function exists(): bool;
 
     /**
      * Fetches a single record by ID.
      *
-     * @param  int|string $id
-     * @return object|null
+     * @return ?TResult
      */
     public function find(int|string $id): ?object;
 
     /**
      * Fetches the first matching record.
      *
-     * @return object|null
+     * @return ?TResult
      */
     public function first(): ?object;
 
     /**
      * Loads missing parameters in accordance with the given criteria.
      *
-     * @param  object $records
-     * @param  CriteriaContract|null $criteria
-     * @return void
+     * @param iterable<TResult> $records
      */
-    public function loadMissing(object $records, ?CriteriaContract $criteria): void;
+    public function loadMissing(iterable $records, ?CriteriaContract $criteria): void;
 
     /**
-     * Filters records. Simplifies access to the criteria where() method.
+     * Simplifies access to the criteria where() method.
      * Should accept the same params as CriteriaContract::where().
      *
-     * @param  string $attr
-     * @param  mixed $operator
-     * @param  mixed  $value
-     * @return static
-     * @see \Deluxetech\LaRepo\Contracts\CriteriaContract::where()
+     * @see CriteriaContract::where()
      */
     public function where(): static;
 
     /**
-     * Filters records. Simplifies access to the criteria orWhere() method.
+     * Simplifies access to the criteria orWhere() method.
      * Should accept the same params as CriteriaContract::orWhere().
      *
-     * @param  string $attr
-     * @param  mixed $operator
-     * @param  mixed  $value
-     * @return static
-     * @see \Deluxetech\LaRepo\Contracts\CriteriaContract::orWhere()
+     * @see CriteriaContract::orWhere()
      */
     public function orWhere(): static;
 }

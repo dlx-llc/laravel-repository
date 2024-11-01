@@ -1,39 +1,40 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
+
+use UnexpectedValueException;
 
 class ClassUtils
 {
     /**
      * Checks whether or not the given class is loaded.
      *
-     * @param  string $class
-     * @return void
-     * @throws \Exception
+     * @throws UnexpectedValueException
      */
     public static function checkClassExists(string $class): void
     {
         if (!class_exists($class, true)) {
-            $msg = __('larepo::exceptions.class_not_defined', compact('class'));
+            /** @var string $message */
+            $message = __('larepo::exceptions.class_not_defined', compact('class'));
 
-            throw new \Exception($msg);
+            throw new UnexpectedValueException($message);
         }
     }
 
     /**
      * Checks whether or not the given class is loaded.
      *
-     * @param  string $class
-     * @param  string $interface
-     * @return void
-     * @throws \Exception
+     * @throws UnexpectedValueException
      */
     public static function checkClassImplements(string $class, string $interface): void
     {
         if (!is_subclass_of($class, $interface)) {
-            $msg = __('larepo::exceptions.does_not_implement', compact('class', 'interface'));
+            /** @var string $message */
+            $message = __('larepo::exceptions.does_not_implement', compact('class', 'interface'));
 
-            throw new \Exception($msg);
+            throw new UnexpectedValueException($message);
         }
     }
 }

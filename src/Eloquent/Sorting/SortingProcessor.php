@@ -1,25 +1,23 @@
 <?php
 
-namespace Deluxetech\LaRepo\Eloquent\Traits;
+declare(strict_types=1);
 
+namespace Deluxetech\LaRepo\Eloquent\Sorting;
+
+use Illuminate\Database\Eloquent\Builder;
 use Deluxetech\LaRepo\Contracts\SortingContract;
 use Illuminate\Database\Eloquent\Relations\Relation;
-use Illuminate\Database\Query\Builder as QueryBuilder;
-use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Deluxetech\LaRepo\Eloquent\Relationship\RelationshipTransformerMap;
 
-trait SupportsSorting
+class SortingProcessor
 {
-    /**
-     * Applies the given sorting params on the query.
-     *
-     * @param  QueryBuilder|EloquentBuilder|Relation $query
-     * @param  SortingContract $sorting
-     * @return void
-     */
-    protected function applySorting(
-        QueryBuilder|EloquentBuilder|Relation $query,
-        SortingContract $sorting
-    ): void {
+    public function __construct(
+        public RelationshipTransformerMap $relationshipTransformersMap,
+    ) {
+    }
+
+    public function processSorting(Relation|Builder $query, SortingContract $sorting): void
+    {
         $direction = $sorting->getDir();
         $column = $sorting->getAttr()->getNameSegmented();
 
@@ -27,15 +25,19 @@ trait SupportsSorting
     }
 
     protected function joinRelationOrSort(
-        QueryBuilder|EloquentBuilder|Relation $query,
-        QueryBuilder|EloquentBuilder|Relation $relationQuery,
+        Relation|Builder $query,
+        Relation|Builder $relationQuery,
         string $direction,
-        array $column
+        array $column,
     ): void {
         if (count($column) > 1) {
             $relationName = array_shift($column);
             $relation = $relationQuery->getRelation($relationName);
-            $relation = $this->transformRelationship($relationQuery, $relationName, $relation);
+
+            if ($relationTransformer = $this->relationshipTransformersMap->get($relationName)) {
+                $relation = $relationTransformer->transform($query, $relation);
+            }
+
             $query->joinRelation(
                 relation: $relation,
                 type: 'left',

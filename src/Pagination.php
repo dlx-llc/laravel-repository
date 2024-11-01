@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Contracts\PaginationContract;
@@ -12,7 +14,6 @@ class Pagination implements PaginationContract
         protected string $pageName,
         protected string $perPageName
     ) {
-        //
     }
 
     public function getPage(): int

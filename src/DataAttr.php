@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
@@ -13,25 +15,14 @@ class DataAttr implements DataAttrContract
      */
     public const DELIMITER = '.';
 
+    protected string $name;
+    protected bool $isSegmented;
+    protected ?string $nameWithoutLastSegment;
+
     /**
      * @var array<string>
      */
     protected array $segments;
-
-    /**
-     * @var bool
-     */
-    protected bool $isSegmented;
-
-    /**
-     * @var string
-     */
-    protected string $name;
-
-    /**
-     * @var string|null
-     */
-    protected ?string $exceptLastSegment;
 
     public function __construct(string ...$segments)
     {
@@ -103,15 +94,11 @@ class DataAttr implements DataAttrContract
 
     public function getNameExceptLastSegment(): ?string
     {
-        return $this->exceptLastSegment;
+        return $this->nameWithoutLastSegment;
     }
 
     /**
      * Adds segments to the attribute name.
-     *
-     * @param  bool $fromEnd
-     * @param  string ...$segments
-     * @return void
      */
     protected function addSegments(bool $fromEnd, string ...$segments): void
     {
@@ -137,9 +124,9 @@ class DataAttr implements DataAttrContract
 
         if ($segmentsCount) {
             $lastSegmentLen = strlen($this->segments[$segmentsCount - 1]) + 1;
-            $this->exceptLastSegment = substr($this->name, 0, -$lastSegmentLen) ?: null;
+            $this->nameWithoutLastSegment = substr($this->name, 0, -$lastSegmentLen) ?: null;
         } else {
-            $this->exceptLastSegment = null;
+            $this->nameWithoutLastSegment = null;
         }
     }
 }

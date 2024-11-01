@@ -1,6 +1,6 @@
 {
     "name": "dlx-llc/laravel-repository",
-    "version": "3.0.1",
+    "version": "4.0.0",
     "type": "library",
     "description": "Repository design pattern implementation for Laravel framework.",
     "keywords": [
@@ -22,8 +22,10 @@
         "reedware/laravel-relation-joins": "^6.0"
     },
     "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
         "orchestra/testbench": "^9.0",
         "phpcompatibility/php-compatibility": "*",
+        "phpstan/phpstan": "^1.12",
         "phpunit/phpunit": "^11.0"
     },
     "config": {
@@ -47,7 +49,9 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Deluxetech\\LaRepo\\Tests\\": "tests/"
+            "Deluxetech\\LaRepo\\Tests\\": "tests/",
+            "Deluxetech\\LaRepo\\Tests\\App\\": "tests/src/app/",
+            "Deluxetech\\LaRepo\\Tests\\Database\\Factories\\": "tests/src/database/factories/"
         }
     },
     "minimum-stability": "dev",

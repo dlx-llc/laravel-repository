@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Formatters;
 
 use Deluxetech\LaRepo\FilterRegistry;
@@ -9,9 +11,6 @@ use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
 
 class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
 {
-    /**
-     * @return ?array<mixed>
-     */
     public function parse(string $str): ?array
     {
         return json_decode($str, true);
@@ -22,8 +21,13 @@ class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
         return json_encode($this->convertFiltersCollectionToArray($collection, false)) ?: '';
     }
 
-    protected function convertFiltersCollectionToArray(FiltersCollectionContract $collection, bool $withBoolean): array
-    {
+    /**
+     * @return array<mixed>
+     */
+    protected function convertFiltersCollectionToArray(
+        FiltersCollectionContract $collection,
+        bool $withBoolean,
+    ): array {
         $items = array_map(function (FilterContract|FiltersCollectionContract $item): array {
             if ($item instanceof FilterContract) {
                 return $this->convertFilterToArray($item);
@@ -39,6 +43,7 @@ class FiltersCollectionFormatter implements FiltersCollectionFormatterContract
     }
 
     /**
+     * @param FilterContract<mixed> $filter
      * @return array<string,mixed>
      */
     protected function convertFilterToArray(FilterContract $filter): array

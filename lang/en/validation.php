@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'array' => 'The :attribute must be an array.',
     'boolean' => 'The :attribute field must be true or false.',

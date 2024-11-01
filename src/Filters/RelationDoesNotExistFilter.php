@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Filters;
 
 use Deluxetech\LaRepo\Filter;
 use Deluxetech\LaRepo\Rules\Validators\Validator;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 
 /**
  * Example:
@@ -24,6 +27,8 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
  *     }
  *   ]
  * }
+ *
+ * @extends Filter<?FiltersCollectionContract>
  */
 class RelationDoesNotExistFilter extends Filter
 {

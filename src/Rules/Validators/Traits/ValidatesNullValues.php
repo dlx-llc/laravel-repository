@@ -1,15 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Validators\Traits;
 
 trait ValidatesNullValues
 {
     /**
      * Checks if the given value is equal to null.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     public function validateNull(string $attribute, mixed $value): bool
     {

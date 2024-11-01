@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Contracts;
 
 interface SortingFormatterContract
@@ -8,15 +10,12 @@ interface SortingFormatterContract
      * Converts sorting raw string. Returns an array of parameters to make a
      * sorting object.
      *
-     * @return array|null
+     * @return ?array<mixed>
      */
     public function parse(string $str): ?array;
 
     /**
-     * Converts sorting to a raw string.
-     *
-     * @param  SortingContract $sorting
-     * @return string
+     * Converts sorting object to a raw string.
      */
     public function stringify(SortingContract $sorting): string;
 }

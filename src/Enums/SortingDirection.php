@@ -1,20 +1,15 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Enums;
 
 class SortingDirection
 {
-    /**
-     * Valid cases.
-     *
-     * @var string
-     */
     public const ASC = 'asc';
     public const DESC = 'desc';
 
     /**
-     * Get valid cases.
-     *
      * @return array<string>
      */
     public static function cases(): array

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Filters;
 
 use Deluxetech\LaRepo\Filter;
@@ -13,10 +15,20 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
  *   "operator": "range",
  *   "value": ["1990-01-01", "1999-12-31"]
  * }
+ *
+ * @extends Filter<array{0:bool|int|float|string,1:bool|int|float|string}>
  */
 class InRangeFilter extends Filter
 {
     use Traits\SanitizesScalarValue;
+
+    public static function validateValue(string $attribute, mixed $value): array
+    {
+        $validator = new Validator();
+        $validator->validateArrayOfScalar($attribute, $value);
+
+        return $validator->getErrors();
+    }
 
     protected function sanitizeValue(mixed $value): mixed
     {
@@ -27,16 +39,8 @@ class InRangeFilter extends Filter
                 $this->sanitizeScalarValue($value[0]),
                 $this->sanitizeScalarValue($value[1]),
             ];
-        } else {
-            return [0, 0];
         }
-    }
 
-    public static function validateValue(string $attribute, mixed $value): array
-    {
-        $validator = new Validator();
-        $validator->validateArrayOfScalar($attribute, $value);
-
-        return $validator->getErrors();
+        return [0, 0];
     }
 }

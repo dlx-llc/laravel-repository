@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'per_page_max' => 1000,
     'per_page_default' => 15,

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Facades\LaRepo;
@@ -7,16 +9,11 @@ use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
 
+/**
+ * @template TValue
+ */
 abstract class Filter implements FilterContract
 {
-    /**
-     * Sanitizes the filter value.
-     *
-     * @param  mixed $value
-     * @return mixed
-     */
-    abstract protected function sanitizeValue(mixed $value): mixed;
-
     public function __construct(
         protected DataAttrContract $attr,
         protected string $operator,
@@ -81,4 +78,6 @@ abstract class Filter implements FilterContract
 
         return $this;
     }
+
+    abstract protected function sanitizeValue(mixed $value): mixed;
 }

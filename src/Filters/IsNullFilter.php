@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Filters;
 
 use Deluxetech\LaRepo\Filter;
@@ -12,6 +14,8 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
  *   "attr": "deleted_at",
  *   "operator": "null"
  * }
+ *
+ * @extends Filter<null>
  */
 class IsNullFilter extends Filter
 {

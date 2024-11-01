@@ -1,7 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 return [
     'undefined_repo_filter_operator' => 'Undefined repository filter operator!',
+    'unsupported_filter_operator' => 'Unsupported filter operator ":operator"!',
     'illegal_filters_collection_offset' => 'Illegal filters collection offset!',
     'illegal_filters_collection_item' => 'Illegal filters collection item!',
     'db_context_not_supported' => ':type DB context class isn\'t supported!',

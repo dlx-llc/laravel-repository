@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Deluxetech\LaRepo\Eloquent;
+namespace Deluxetech\LaRepo\Eloquent\Filtration;
 
 use Illuminate\Database\Eloquent\Model;
 use Deluxetech\LaRepo\FilterValueTransformer as BaseFilterValueTransformer;

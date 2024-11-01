@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Filters\Traits;
 
 trait SanitizesArrayOfScalarValues
@@ -7,10 +9,7 @@ trait SanitizesArrayOfScalarValues
     use SanitizesScalarValue;
 
     /**
-     * Sanitize a value that should be an array.
-     *
-     * @param  mixed $value
-     * @return array
+     * @return array<bool|int|float|string>
      */
     protected function sanitizeArrayOfScalarValues(mixed $value): array
     {
@@ -22,8 +21,8 @@ trait SanitizesArrayOfScalarValues
             }
 
             return $value;
-        } else {
-            return [];
         }
+
+        return [];
     }
 }

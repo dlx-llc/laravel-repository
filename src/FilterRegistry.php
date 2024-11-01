@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Enums\FilterOperator;
@@ -8,9 +10,9 @@ use Deluxetech\LaRepo\Contracts\FilterContract;
 final class FilterRegistry
 {
     /**
-     * A registry of filter operators and corresponding filter class names.
+     * Filter operator to filter class mapping.
      *
-     * @var array
+     * @var array<string,class-string<FilterContract>>
      */
     public array $registry = [
         FilterOperator::IS_LIKE => Filters\IsLikeFilter::class,
@@ -35,17 +37,18 @@ final class FilterRegistry
 
     /**
      * The only instance of this class.
-     *
-     * @var self|null
      */
     private static ?self $instance = null;
+
+    private function __construct()
+    {
+        // Prevents instantiation outside the class.
+    }
 
     /**
      * Registers a new filter operator with the corresponding filter class.
      *
-     * @param  string $operator
-     * @param  string $filterClass
-     * @return void
+     * @param class-string<FilterContract> $filterClass
      */
     public static function register(string $operator, string $filterClass): void
     {
@@ -58,9 +61,6 @@ final class FilterRegistry
 
     /**
      * Checks if the given filter operator is registered.
-     *
-     * @param  string $operator
-     * @return bool
      */
     public static function isRegistered(string $operator): bool
     {
@@ -70,8 +70,7 @@ final class FilterRegistry
     /**
      * Returns the corresponding filter class for the given filter operator.
      *
-     * @param  string $operator
-     * @return string|null
+     * @return ?class-string<FilterContract<mixed>>
      */
     public static function getClass(string $operator): ?string
     {
@@ -81,8 +80,7 @@ final class FilterRegistry
     /**
      * Returns the corresponding filter operator for the given filter class.
      *
-     * @param  string $class
-     * @return string|null
+     * @param class-string<FilterContract> $class
      */
     public static function getOperator(string $class): ?string
     {
@@ -93,9 +91,7 @@ final class FilterRegistry
     }
 
     /**
-     * Returns the instance of this class.
-     *
-     * @return self
+     * Returns the only instance of this class.
      */
     private static function getInstance(): self
     {
@@ -104,15 +100,5 @@ final class FilterRegistry
         }
 
         return self::$instance;
-    }
-
-    /**
-     * Class constructor.
-     *
-     * @return void
-     */
-    private function __construct()
-    {
-        // Prevents instantiation outside the class.
     }
 }

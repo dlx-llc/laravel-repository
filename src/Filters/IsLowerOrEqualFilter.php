@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Filters;
 
 use Deluxetech\LaRepo\Filter;
@@ -13,15 +15,12 @@ use Deluxetech\LaRepo\Rules\Validators\Validator;
  *   "operator": "<=",
  *   "value": "17"
  * }
+ *
+ * @extends Filter<bool|int|float|string>
  */
 class IsLowerOrEqualFilter extends Filter
 {
     use Traits\SanitizesScalarValue;
-
-    protected function sanitizeValue(mixed $value): mixed
-    {
-        return $this->sanitizeScalarValue($value);
-    }
 
     public static function validateValue(string $attribute, mixed $value): array
     {
@@ -29,5 +28,10 @@ class IsLowerOrEqualFilter extends Filter
         $validator->validateNotEmptyScalar($attribute, $value);
 
         return $validator->getErrors();
+    }
+
+    protected function sanitizeValue(mixed $value): mixed
+    {
+        return $this->sanitizeScalarValue($value);
     }
 }

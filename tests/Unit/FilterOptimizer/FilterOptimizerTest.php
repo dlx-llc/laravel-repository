@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Deluxetech\LaRepo\Tests\Feature;
+namespace Deluxetech\LaRepo\Tests\Unit\FilterOptimizer;
 
 use Deluxetech\LaRepo\Facades\LaRepo;
 use Deluxetech\LaRepo\Tests\TestCase;
@@ -11,13 +11,11 @@ use PHPUnit\Framework\Attributes\Group;
 use Deluxetech\LaRepo\Enums\FilterOperator;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 
-#[Group('feature')]
+#[Group('unit')]
 final class FilterOptimizerTest extends TestCase
 {
     /**
      * Test optimizer works correctly.
-     *
-     * @return void
      */
     public function testFilterOptimizer(): void
     {

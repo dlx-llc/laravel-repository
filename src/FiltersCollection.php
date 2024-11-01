@@ -1,7 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
+use OutOfBoundsException;
+use UnexpectedValueException;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
@@ -10,21 +14,17 @@ class FiltersCollection implements FiltersCollectionContract
 {
     /**
      * The iterator's cursor.
-     *
-     * @var int
      */
     protected int $cursor = 0;
 
     /**
-     * The collection items.
-     *
      * @var array<FiltersCollectionContract|FilterContract>
      */
     protected array $items;
 
     public function __construct(
         protected string $boolean = BooleanOperator::AND,
-        FiltersCollectionContract|FilterContract ...$items
+        FiltersCollectionContract|FilterContract ...$items,
     ) {
         $this->items = $items;
     }
@@ -165,14 +165,24 @@ class FiltersCollection implements FiltersCollectionContract
         return count($this->items);
     }
 
+    /**
+     * @throws OutOfBoundsException
+     * @throws UnexpectedValueException
+     */
     public function offsetSet(mixed $offset, mixed $value): void
     {
         if (is_null($offset)) {
             $this->items[] = $value;
         } elseif (!is_int($offset)) {
-            throw new \Exception(__('larepo::exceptions.illegal_filters_collection_offset'));
+            /** @var string $message */
+            $message = __('larepo::exceptions.illegal_filters_collection_offset');
+
+            throw new OutOfBoundsException($message);
         } elseif (!is_object($value) || !is_a($value, FilterContract::class) && !is_a($value, static::class)) {
-            throw new \Exception(__('larepo::exceptions.illegal_filters_collection_item'));
+            /** @var string $message */
+            $message = __('larepo::exceptions.illegal_filters_collection_item');
+
+            throw new UnexpectedValueException($message);
         } else {
             $this->items[$offset] = $value;
         }

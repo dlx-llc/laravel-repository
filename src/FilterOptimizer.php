@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo;
 
 use Illuminate\Support\Facades\App;
@@ -29,11 +31,10 @@ class FilterOptimizer implements FilterOptimizerContract
     /**
      * Optimizes the given filter (collection).
      *
-     * @param  FiltersCollectionContract $collection
      * @return FiltersCollectionContract|FilterContract|array<FiltersCollectionContract|FilterContract>|null
      */
     protected function optimizeOrOmit(
-        FiltersCollectionContract|FilterContract $filter
+        FiltersCollectionContract|FilterContract $filter,
     ): FiltersCollectionContract|FilterContract|array|null {
         if (is_a($filter, FilterContract::class)) {
             $operator = $filter->getOperator();
@@ -56,38 +57,37 @@ class FilterOptimizer implements FilterOptimizerContract
             }
 
             return $filter;
-        } else {
-            $this->combineSameRelationFilters($filter);
-
-            $i = 0;
-
-            while (isset($filter[$i])) {
-                $item = $this->optimizeOrOmit($filter[$i]);
-
-                if (is_null($item)) {
-                    $filter->splice($i, 1);
-                } elseif (is_array($item)) {
-                    $filter->splice($i, 1, ...$item);
-                    $subCount = count($item);
-                    $i += $subCount;
-                } else {
-                    $filter[$i] = $item;
-                    $i++;
-                }
-            }
-
-            return $this->decomposeIdleCollection($filter);
         }
+
+        $this->combineSameRelationFilters($filter);
+
+        $i = 0;
+
+        while (isset($filter[$i])) {
+            $item = $this->optimizeOrOmit($filter[$i]);
+
+            if (is_null($item)) {
+                $filter->splice($i, 1);
+            } elseif (is_array($item)) {
+                $filter->splice($i, 1, ...$item);
+                $subCount = count($item);
+                $i += $subCount;
+            } else {
+                $filter[$i] = $item;
+                $i++;
+            }
+        }
+
+        return $this->decomposeIdleCollection($filter);
     }
 
     /**
      * Decomposes the given filters collection if it has no effect.
      *
-     * @param  FiltersCollectionContract $collection
      * @return FiltersCollectionContract|FilterContract|array<FiltersCollectionContract|FilterContract>|null
      */
     protected function decomposeIdleCollection(
-        FiltersCollectionContract $collection
+        FiltersCollectionContract $collection,
     ): FiltersCollectionContract|FilterContract|array|null {
         if ($collection->isEmpty()) {
             return null;
@@ -97,25 +97,22 @@ class FilterOptimizer implements FilterOptimizerContract
             $item->setBoolean($collection->getBoolean());
 
             return $item;
-        } else {
-            // If there is at least one boolean OR operator then we can't
-            // decompose the collection.
-            if ($collection->containsBoolOr()) {
-                return $collection;
-            }
-
-            // Otherwise, it should be decomposed as it has no effect.
-            $collection[0]->setBoolean($collection->getBoolean());
-
-            return $collection->getItems();
         }
+
+        // If there is at least one boolean OR operator then we can't
+        // decompose the collection.
+        if ($collection->containsBoolOr()) {
+            return $collection;
+        }
+
+        // Otherwise, it should be decomposed as it has no effect.
+        $collection[0]->setBoolean($collection->getBoolean());
+
+        return $collection->getItems();
     }
 
     /**
      * Combines filters having the same relation in the given collection.
-     *
-     * @param  FiltersCollectionContract $collection
-     * @return void
      */
     protected function combineSameRelationFilters(FiltersCollectionContract $collection): void
     {
@@ -163,8 +160,7 @@ class FilterOptimizer implements FilterOptimizerContract
     /**
      * Checks whether the given items have the same relation.
      *
-     * @param  array $items
-     * @return bool
+     * @param array<FilterContract|FiltersCollectionContract> $items
      */
     protected function isSameRelationFiltersArr(array $items): bool
     {
@@ -206,9 +202,7 @@ class FilterOptimizer implements FilterOptimizerContract
     /**
      * Combines validated same relation filters.
      *
-     * @param  array $items
-     * @param  string $boolean
-     * @return FilterContract
+     * @param array<FilterContract|FiltersCollectionContract> $items
      */
     protected function combineSameRelationFiltersArr(array $items, string $boolean): FilterContract
     {
@@ -242,15 +236,13 @@ class FilterOptimizer implements FilterOptimizerContract
     /**
      * Combines and replaces the given chunk of filters in the filters source.
      *
-     * @param  array &$source
-     * @param  array $chunk
-     * @param  int $offset
-     * @return void
+     * @param array<FilterContract|FiltersCollectionContract> $source
+     * @param array<FilterContract|FiltersCollectionContract> $chunk
      */
     protected function combineReplaceFilters(
         array &$source,
         array $chunk,
-        int $offset
+        int $offset,
     ): void {
         $chunkCount = count($chunk);
 

@@ -1,15 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Rules\Validators\Traits;
 
 trait ValidatesScalarValues
 {
     /**
      * Checks if the given value is of a scalar type and isn't empty.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     public function validateNotEmptyScalar(string $attribute, mixed $value): bool
     {
@@ -26,10 +24,6 @@ trait ValidatesScalarValues
 
     /**
      * Checks if the given value is of a scalar type.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     public function validateScalar(string $attribute, mixed $value): bool
     {
@@ -44,11 +38,6 @@ trait ValidatesScalarValues
 
     /**
      * Checks if the given value is an array of not empty scalar values.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @param  int|null $size
-     * @return bool
      */
     public function validateArrayOfNotEmptyScalar(
         string $attribute,
@@ -76,11 +65,6 @@ trait ValidatesScalarValues
 
     /**
      * Checks if the given value is an array of scalar values.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @param  int|null $size
-     * @return bool
      */
     public function validateArrayOfScalar(
         string $attribute,
@@ -108,10 +92,6 @@ trait ValidatesScalarValues
 
     /**
      * Checks if the given value is a scalar value or an array of scalar values.
-     *
-     * @param  string $attribute
-     * @param  mixed $value
-     * @return bool
      */
     public function validateScalarOrArrayOfScalar(string $attribute, mixed $value): bool
     {
@@ -119,10 +99,10 @@ trait ValidatesScalarValues
             return $this->validateArrayOfScalar($attribute, $value);
         } elseif (is_scalar($value)) {
             return $this->validateScalar($attribute, $value);
-        } else {
-            $this->addError('array_or_scalar', $attribute);
-
-            return false;
         }
+
+        $this->addError('array_or_scalar', $attribute);
+
+        return false;
     }
 }

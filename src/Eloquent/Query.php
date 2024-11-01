@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Deluxetech\LaRepo\Eloquent;
 
 use Illuminate\Support\Facades\Schema;
@@ -10,25 +12,27 @@ use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 class Query
 {
     private QueryBuilder $builder;
-
     private string $mainTableName;
-
     private string $mainTableAlias;
 
     /**
      * Database table name to the alias name map.
      * Contains the query main table and joined tables.
+     *
+     * @var array<string,string>
      */
     private array $tables = [];
 
     /**
      * Database table name to its columns map.
+     *
+     * @var array<string,array<string>>
      */
     private array $columns = [];
 
     public function __construct(
         private QueryBuilder|EloquentBuilder|JoinClause $query,
-        private bool $isNested = false
+        private bool $isNested = false,
     ) {
         $this->builder = is_a($query, EloquentBuilder::class)
             ? $query->getQuery()
@@ -45,8 +49,6 @@ class Query
 
     /**
      * Adds table name to columns used in selects, where conditions and orders.
-     *
-     * @return void
      */
     public function preventColumnAmbiguity(): void
     {
@@ -122,7 +124,7 @@ class Query
         foreach ($this->tables as $tableName => $tableAlias) {
             $tableColumns = $this->getTableColumns($tableName);
 
-            if (in_array($column, $tableColumns)) {
+            if (in_array($column, $tableColumns, true)) {
                 return $tableAlias;
             }
         }
@@ -130,6 +132,9 @@ class Query
         return $this->mainTableAlias;
     }
 
+    /**
+     * @return array<string>
+     */
     private function getTableColumns(string $table): array
     {
         if (!isset($this->columns[$table])) {
@@ -157,9 +162,12 @@ class Query
         }
     }
 
+    /**
+     * @return array{string,string}
+     */
     private function getTableName(QueryBuilder|JoinClause $query): array
     {
-        $table = $query->from ?? $query->table;
+        $table = $query->from ?? $query->table ?? '';
 
         if (str_contains($table, ' ')) {
             $table = str_replace(' as ', ' ', $table);
