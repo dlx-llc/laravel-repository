@@ -18,8 +18,8 @@
     ],
     "require": {
         "php": ">=8.2",
-        "laravel/framework": "10.0 - 11",
-        "reedware/laravel-relation-joins": "^6.0"
+        "laravel/framework": "10.0 - 12",
+        "reedware/laravel-relation-joins": "^8.0"
     },
     "require-dev": {
         "orchestra/testbench": "^9.0",
