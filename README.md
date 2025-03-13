@@ -1,6 +1,6 @@
 # Laravel Repository
 
-[![Laravel Version](https://img.shields.io/badge/Laravel-10.x%2F11.x-blue)](https://laravel.com/)
+[![Laravel Version](https://img.shields.io/badge/Laravel-10.x%2F12.x-blue)](https://laravel.com/)
 [![Latest Stable Version](https://poser.pugx.org/dlx-llc/laravel-repository/v)](https://packagist.org/packages/dlx-llc/laravel-repository)
 [![Total Downloads](https://poser.pugx.org/dlx-llc/laravel-repository/downloads)](https://packagist.org/packages/dlx-llc/laravel-repository)
 [![Latest Unstable Version](https://poser.pugx.org/dlx-llc/laravel-repository/v/unstable)](https://packagist.org/packages/dlx-llc/laravel-repository)
