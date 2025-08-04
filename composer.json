@@ -1,6 +1,6 @@
 {
     "name": "dlx-llc/laravel-repository",
-    "version": "3.1.0",
+    "version": "3.1.1",
     "type": "library",
     "description": "Repository design pattern implementation for Laravel framework.",
     "keywords": [
