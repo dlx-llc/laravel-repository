@@ -2,21 +2,22 @@
 
 namespace Deluxetech\LaRepo;
 
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\App;
-use Deluxetech\LaRepo\Enums\BooleanOperator;
-use Illuminate\Contracts\Pagination\Paginator;
-use Deluxetech\LaRepo\Contracts\FilterContract;
-use Deluxetech\LaRepo\Contracts\SortingContract;
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
 use Deluxetech\LaRepo\Contracts\DataAttrContract;
 use Deluxetech\LaRepo\Contracts\DataMapperContract;
+use Deluxetech\LaRepo\Contracts\FilterContract;
+use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\RequestQueryContract;
+use Deluxetech\LaRepo\Contracts\SortingContract;
 use Deluxetech\LaRepo\Contracts\TextSearchContract;
+use Deluxetech\LaRepo\Enums\BooleanOperator;
 use Deluxetech\LaRepo\Rules\Validators\CriteriaValidator;
-use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Rules\Validators\PaginationValidator;
+use Illuminate\Contracts\Pagination\Paginator;
+use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\App;
 
 /**
  * Contains methods that make it easy to retrieve data from repositories by
@@ -194,6 +195,30 @@ class RepositoryUtils
         $validator->fillValidated($criteria);
 
         return $criteria;
+    }
+
+    public function getRequestQuery(
+        ?CriteriaContract $criteria = null,
+        ?DataMapperContract $dataMapper = null,
+        bool $requirePagination = true,
+    ): RequestQueryContract {
+        $query = App::make(RequestQueryContract::class);
+
+        $pagination = $this->getRequestPagination($requirePagination);
+        $query->setPagination($pagination);
+
+        $requestCriteria = $this->getRequestCriteria();
+        $query->addCriteria($requestCriteria);
+
+        if ($criteria) {
+            $query->addCriteria($criteria);
+        }
+
+        if ($dataMapper) {
+            $query->applyDataMapper($dataMapper);
+        }
+
+        return $query;
     }
 
     /**

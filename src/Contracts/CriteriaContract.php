@@ -176,15 +176,4 @@ interface CriteriaContract
      * @return array
      */
     public function getRelationCounts(): array;
-
-    /**
-     * Converts the criteria to an array suitable for request query parameters.
-     *
-     * @return array<string,string>
-     */
-    public function toRequestQueryArray(
-        ?string $textSearchKey = null,
-        ?string $sortingKey = null,
-        ?string $filtersKey = null,
-    ): array;
 }

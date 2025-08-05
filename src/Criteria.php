@@ -3,11 +3,6 @@
 namespace Deluxetech\LaRepo;
 
 use Deluxetech\LaRepo\Contracts\CriteriaContract;
-use Deluxetech\LaRepo\Contracts\FiltersCollectionFormatterContract;
-use Deluxetech\LaRepo\Contracts\SortingFormatterContract;
-use Deluxetech\LaRepo\Contracts\TextSearchFormatterContract;
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Config;
 
 class Criteria implements CriteriaContract
 {
@@ -65,33 +60,5 @@ class Criteria implements CriteriaContract
         $clone->setFilters($this->getFilters()?->clone());
 
         return $clone;
-    }
-
-    public function toRequestQueryArray(
-        ?string $textSearchKey = null,
-        ?string $sortingKey = null,
-        ?string $filtersKey = null,
-    ): array {
-        $textSearchKey = $textSearchKey ?? Config::get('larepo.request_text_search_key');
-        $sortingKey = $sortingKey ?? Config::get('larepo.request_sorting_key');
-        $filtersKey = $filtersKey ?? Config::get('larepo.request_filters_key');
-        $query = [];
-
-        if ($sorting = $this->getSorting()) {
-            $sorting = App::make(SortingFormatterContract::class)->stringify($sorting);
-            $query[$sortingKey] = $sorting;
-        }
-
-        if ($textSearch = $this->getTextSearch()) {
-            $textSearch = App::make(TextSearchFormatterContract::class)->stringify($textSearch);
-            $query[$textSearchKey] = $textSearch;
-        }
-
-        if ($filters = $this->getFilters()) {
-            $filters = App::make(FiltersCollectionFormatterContract::class)->stringify($filters);
-            $query[$filtersKey] = $filters;
-        }
-
-        return $query;
     }
 }
