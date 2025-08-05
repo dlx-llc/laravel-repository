@@ -9,6 +9,7 @@ use Deluxetech\LaRepo\Contracts\FilterContract;
 use Deluxetech\LaRepo\Contracts\FiltersCollectionContract;
 use Deluxetech\LaRepo\Contracts\PaginationContract;
 use Deluxetech\LaRepo\Contracts\RepositoryContract;
+use Deluxetech\LaRepo\Contracts\RequestQueryContract;
 use Deluxetech\LaRepo\Contracts\SortingContract;
 use Deluxetech\LaRepo\Contracts\TextSearchContract;
 use Deluxetech\LaRepo\Enums\BooleanOperator;
