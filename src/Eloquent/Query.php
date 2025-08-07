@@ -2,10 +2,11 @@
 
 namespace Deluxetech\LaRepo\Eloquent;
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Query\JoinClause;
-use Illuminate\Database\Query\Builder as QueryBuilder;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
+use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Database\Query\Expression;
+use Illuminate\Database\Query\JoinClause;
+use Illuminate\Support\Facades\Schema;
 
 class Query
 {
@@ -69,8 +70,9 @@ class Query
                 } elseif ($column === '*') {
                     $this->builder->columns[$i] = "{$this->mainTableAlias}.*";
                 } elseif (!str_contains($column, '.')) {
-                    $tableName = $this->getColumnTable($column);
-                    $this->builder->columns[$i] = "{$tableName}.{$column}";
+                    if ($tableName = $this->getColumnTable($column)) {
+                        $this->builder->columns[$i] = "{$tableName}.{$column}";
+                    }
                 }
             }
         }
@@ -85,8 +87,10 @@ class Query
         foreach ($this->builder->orders as $i => $item) {
             if (isset($item['column']) && !str_contains($item['column'], '.')) {
                 $column = $item['column'];
-                $tableName = $this->getColumnTable($column);
-                $this->builder->orders[$i]['column'] = "{$tableName}.{$column}";
+
+                if ($tableName = $this->getColumnTable($column)) {
+                    $this->builder->orders[$i]['column'] = "{$tableName}.{$column}";
+                }
             } elseif (isset($item['query']) && is_a($item['query'], QueryBuilder::class)) {
                 $subQuery = new static($item['query']);
                 $subQuery->preventColumnAmbiguity();
@@ -106,8 +110,10 @@ class Query
             if (isset($item['column']) && !str_contains($item['column'], '.')) {
                 if ($shouldAddTableName) {
                     $column = $item['column'];
-                    $tableName = $this->getColumnTable($column);
-                    $this->builder->wheres[$i]['column'] = "{$tableName}.{$column}";
+
+                    if ($tableName = $this->getColumnTable($column)) {
+                        $this->builder->wheres[$i]['column'] = "{$tableName}.{$column}";
+                    }
                 }
             } elseif (isset($item['query']) && is_a($item['query'], QueryBuilder::class)) {
                 $isNested = isset($item['type']) && $item['type'] === 'Nested';
@@ -117,17 +123,17 @@ class Query
         }
     }
 
-    private function getColumnTable(string $column): string
+    private function getColumnTable(string $column): string|false
     {
         foreach ($this->tables as $tableName => $tableAlias) {
             $tableColumns = $this->getTableColumns($tableName);
 
-            if (in_array($column, $tableColumns)) {
+            if (in_array($column, $tableColumns, true)) {
                 return $tableAlias;
             }
         }
 
-        return $this->mainTableAlias;
+        return false;
     }
 
     private function getTableColumns(string $table): array
@@ -160,6 +166,10 @@ class Query
     private function getTableName(QueryBuilder|JoinClause $query): array
     {
         $table = $query->from ?? $query->table;
+
+        if ($table instanceof Expression) {
+            $table = $table->getValue($query->getGrammar());
+        }
 
         if (str_contains($table, ' ')) {
             $table = str_replace(' as ', ' ', $table);
