@@ -12,6 +12,11 @@ use Stringable;
  */
 interface RequestQueryContract extends Stringable, Arrayable
 {
+    /**
+     * @param array<int|string,mixed> $query
+     */
+    public function fillFromArray(array $query): static;
+
     public function setPagination(?PaginationContract $pagination): static;
 
     public function addCriteria(CriteriaContract $criteria): static;

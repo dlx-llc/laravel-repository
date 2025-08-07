@@ -22,11 +22,26 @@ class RequestQuery implements RequestQueryContract
     protected string $sortingKey;
     protected string $filtersKey;
 
+    /**
+     * @var array<int|string,mixed>
+     */
+    protected array $extraParameters = [];
+
     public function __construct()
     {
         $this->textSearchKey = Config::get('larepo.request_text_search_key');
         $this->sortingKey = Config::get('larepo.request_sorting_key');
         $this->filtersKey = Config::get('larepo.request_filters_key');
+    }
+
+    public function fillFromArray(array $query): static
+    {
+        $this->extraParameters = [
+            ...$this->extraParameters,
+            ...$query,
+        ];
+
+        return $this;
     }
 
     public function setPagination(?PaginationContract $pagination): static
@@ -77,7 +92,7 @@ class RequestQuery implements RequestQueryContract
 
     public function toArray(): array
     {
-        $query = [];
+        $query = $this->extraParameters;
 
         if ($this->pagination) {
             $query[$this->pagination->getPageName()] = $this->pagination->getPage();

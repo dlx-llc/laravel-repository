@@ -197,12 +197,20 @@ class RepositoryUtils
         return $criteria;
     }
 
+    /**
+     * Creates a new request query object using the parameters of the request.
+     * Non-package related parameters can be passed in extra parameters.
+     *
+     * @param array<int|string,mixed> $extraParameters
+     */
     public function getRequestQuery(
         ?CriteriaContract $criteria = null,
         ?DataMapperContract $dataMapper = null,
+        array $extraParameters = [],
         bool $requirePagination = true,
     ): RequestQueryContract {
         $query = App::make(RequestQueryContract::class);
+        $query->fillFromArray($extraParameters);
 
         $pagination = $this->getRequestPagination($requirePagination);
         $query->setPagination($pagination);
