@@ -107,13 +107,23 @@ class Query
         $shouldAddTableName = $this->isNested || $this->hasJoins();
 
         foreach ($this->builder->wheres as $i => $item) {
-            if (isset($item['column']) && !str_contains($item['column'], '.')) {
-                if ($shouldAddTableName) {
-                    $column = $item['column'];
+            if (isset($item['column'])) {
+                if (!$shouldAddTableName) {
+                    continue;
+                }
 
-                    if ($tableName = $this->getColumnTable($column)) {
-                        $this->builder->wheres[$i]['column'] = "{$tableName}.{$column}";
-                    }
+                $column = $item['column'];
+
+                if ($column instanceof Expression) {
+                    $column = $column->getValue($this->builder->getGrammar());
+                }
+
+                if (!is_string($column) || str_contains($column, '.')) {
+                    continue;
+                }
+
+                if ($tableName = $this->getColumnTable($column)) {
+                    $this->builder->wheres[$i]['column'] = "{$tableName}.{$column}";
                 }
             } elseif (isset($item['query']) && is_a($item['query'], QueryBuilder::class)) {
                 $isNested = isset($item['type']) && $item['type'] === 'Nested';

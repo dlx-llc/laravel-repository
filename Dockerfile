@@ -1,5 +1,5 @@
 # Define base image
-FROM php:8.2.19-fpm-alpine3.19
+FROM php:8.5-fpm-alpine
 
 # Install alpine packages
 RUN apk update && apk add --no-cache bash

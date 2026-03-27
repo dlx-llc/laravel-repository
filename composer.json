@@ -1,6 +1,6 @@
 {
     "name": "dlx-llc/laravel-repository",
-    "version": "3.1.4",
+    "version": "3.1.5",
     "type": "library",
     "description": "Repository design pattern implementation for Laravel framework.",
     "keywords": [
@@ -12,7 +12,7 @@
     "authors": [
         {
             "name": "Tigran Koshetsyan",
-            "email": "tka7573@gmail.com",
+            "email": "koshetsyan.tigran@gmail.com",
             "homepage": "https://github.com/koshetsyan"
         }
     ],
